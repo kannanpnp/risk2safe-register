@@ -12,7 +12,7 @@
 <style>
 :root{
   --bg:#0e1117;--s1:#161b25;--s2:#1c2130;--s3:#222840;
-  --bd:#2a3148;--bd2:#343d5c;--tx:#e2e8f5;--txd:#8b96b2;--txm:#505878;
+  --bd:#2a3148;--bd2:#343d5c;--tx:#f0f4ff;--txd:#bbc8e8;--txm:#8898c0;
   --ac:#4f83f5;--ac-bg:rgba(79,131,245,.10);--ac-bd:rgba(79,131,245,.30);
   --ok:#2db87a;--ok-bg:rgba(45,184,122,.10);--ok-bd:rgba(45,184,122,.30);
   --wn:#f0a500;--wn-bg:rgba(240,165,0,.10);--wn-bd:rgba(240,165,0,.25);
@@ -21,8 +21,8 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:13px;line-height:1.6;min-height:100vh}
-input,textarea,select,button{font-family:var(--sans);font-size:13px}
+body{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:16px;line-height:1.65;min-height:100vh}
+input,textarea,select,button{font-family:var(--sans);font-size:15px}
 input,textarea,select{background:var(--s1);color:var(--tx);border:1px solid var(--bd);border-radius:var(--r);padding:7px 10px;width:100%;outline:none;transition:border-color .15s}
 input:focus,textarea:focus,select:focus{border-color:var(--ac)}
 textarea{resize:vertical;min-height:60px}
@@ -32,35 +32,35 @@ select option{background:var(--s2)}
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:300;align-items:center;justify-content:center}
 .modal-bg.open{display:flex}
 .modal-box{background:var(--s2);border:1px solid var(--bd2);border-radius:12px;padding:28px;max-width:500px;width:92%;box-shadow:0 24px 64px rgba(0,0,0,.65)}
-.modal-title{font-size:15px;font-weight:600;color:var(--tx);margin-bottom:6px;display:flex;align-items:center;gap:10px}
-.modal-sub{font-size:12px;color:var(--txm);margin-bottom:18px;line-height:1.6}
-.modal-note{font-size:11px;color:var(--txm);margin-top:12px;padding:10px 12px;background:var(--s3);border-radius:6px;line-height:1.5;display:flex;gap:6px;align-items:flex-start}
+.modal-title{font-size:16px;font-weight:600;color:var(--tx);margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.modal-sub{font-size:14px;color:var(--txm);margin-bottom:18px;line-height:1.6}
+.modal-note{font-size:13px;color:var(--txm);margin-top:12px;padding:10px 12px;background:var(--s3);border-radius:6px;line-height:1.5;display:flex;gap:6px;align-items:flex-start}
 .modal-actions{display:flex;gap:8px;margin-top:18px;justify-content:flex-end}
 
 /* ── HEADER ── */
 .hdr{background:var(--s1);border-bottom:1px solid var(--bd);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:100;gap:12px}
 .hdr-brand{display:flex;align-items:center;gap:9px;flex-shrink:0}
 .hdr-brand i{font-size:20px;color:var(--ac)}
-.hdr-brand span{font-size:14px;font-weight:600;letter-spacing:-.01em}
-.badge{border-radius:4px;font-size:10px;font-weight:600;padding:2px 7px;font-family:var(--mono);letter-spacing:.05em}
+.hdr-brand span{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.badge{border-radius:4px;font-size:12px;font-weight:600;padding:2px 7px;font-family:var(--mono);letter-spacing:.05em}
 .badge-iso{background:var(--ac-bg);color:var(--ac);border:1px solid var(--ac-bd)}
 .badge-ai{background:var(--ai-bg);color:var(--ai);border:1px solid var(--ai-bd);display:inline-flex;align-items:center;gap:4px;cursor:pointer;transition:all .15s}
 .badge-ai:hover{background:rgba(168,85,247,.18)}
 .badge-ai.connected{background:var(--ok-bg);color:var(--ok);border-color:var(--ok-bd)}
 .hdr-right{display:flex;align-items:center;gap:10px}
-.prog-lbl{font-family:var(--mono);font-size:10px;color:var(--txm);white-space:nowrap}
+.prog-lbl{font-family:var(--mono);font-size:12px;color:var(--txm);white-space:nowrap}
 .prog-track{width:110px;height:3px;background:var(--bd);border-radius:2px;overflow:hidden}
 .prog-fill{height:100%;background:var(--ac);border-radius:2px;transition:width .4s}
 
 /* ── STEP NAV ── */
 .step-nav{background:var(--s1);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;scrollbar-width:none}
 .step-nav::-webkit-scrollbar{display:none}
-.snav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 12px;cursor:pointer;font-size:11px;font-weight:500;color:var(--txm);border-right:1px solid var(--bd);border-bottom:2px solid transparent;min-width:85px;text-align:center;transition:color .15s,background .15s;white-space:nowrap;user-select:none}
+.snav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 12px;cursor:pointer;font-size:13px;font-weight:500;color:var(--txm);border-right:1px solid var(--bd);border-bottom:2px solid transparent;min-width:85px;text-align:center;transition:color .15s,background .15s;white-space:nowrap;user-select:none}
 .snav:hover{color:var(--txd);background:rgba(255,255,255,.02)}
 .snav.active{color:var(--ac);background:var(--ac-bg);border-bottom-color:var(--ac)}
 .snav.done{color:var(--ok)}
-.snav i{font-size:15px}
-.snav .cl{font-family:var(--mono);font-size:9px;color:var(--txm);letter-spacing:.06em}
+.snav i{font-size:16px}
+.snav .cl{font-family:var(--mono);font-size:13px;color:var(--txd);letter-spacing:.06em}
 .snav.active .cl{color:var(--ac);opacity:.7}
 .snav.done .cl{color:var(--ok);opacity:.7}
 
@@ -68,21 +68,21 @@ select option{background:var(--s2)}
 .main{max-width:1100px;margin:0 auto;padding:22px 18px 60px}
 .panel{display:none;flex-direction:column;gap:15px}
 .panel.active{display:flex}
-.sec-lbl{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.12em;margin-bottom:5px}
-.cl-ref{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--ac);background:var(--ac-bg);border:1px solid var(--ac-bd);padding:4px 10px;border-radius:4px}
+.sec-lbl{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.12em;margin-bottom:5px}
+.cl-ref{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;color:var(--ac);background:var(--ac-bg);border:1px solid var(--ac-bd);padding:4px 10px;border-radius:4px}
 
 /* ── CARDS ── */
 .card{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:15px}
-.card-t{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.card-t{font-size:16px;font-weight:700;color:var(--tx);margin-bottom:12px;display:flex;align-items:center;gap:8px}
 
 /* ── INFO BOXES ── */
-.info-b{background:var(--ac-bg);border:1px solid var(--ac-bd);color:var(--ac);border-radius:8px;padding:9px 13px;font-size:12px;display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+.info-b{background:var(--ac-bg);border:1px solid var(--ac-bd);color:var(--ac);border-radius:8px;padding:9px 13px;font-size:14px;display:flex;gap:8px;align-items:flex-start;line-height:1.5}
 .info-b i,.ai-b i{flex-shrink:0;margin-top:1px}
-.ai-b{background:var(--ai-bg);border:1px solid var(--ai-bd);color:var(--ai);border-radius:8px;padding:9px 13px;font-size:12px;display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+.ai-b{background:var(--ai-bg);border:1px solid var(--ai-bd);color:var(--ai);border-radius:8px;padding:9px 13px;font-size:14px;display:flex;gap:8px;align-items:flex-start;line-height:1.5}
 
 /* ── FORMS ── */
 .fg{display:flex;flex-direction:column;gap:4px}
-.fg label{font-size:11px;color:var(--txd);font-weight:500}
+.fg label{font-size:13px;color:var(--txd);font-weight:500}
 .f2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .f3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
 
@@ -93,32 +93,32 @@ select option{background:var(--s2)}
 .dept-card.sel{border-color:var(--ac);background:var(--ac-bg)}
 .dept-card i{font-size:17px;color:var(--txm);display:block;margin-bottom:5px}
 .dept-card.sel i{color:var(--ac)}
-.dept-card .dn{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:2px}
+.dept-card .dn{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:2px}
 .dept-card.sel .dn{color:var(--ac)}
-.dept-card .ds{font-size:10px;color:var(--txm)}
+.dept-card .ds{font-size:12px;color:var(--txm)}
 
 /* ── PRINCIPLE CHIPS ── */
 .princ-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .p-chip{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:9px 11px;cursor:pointer;display:flex;align-items:flex-start;gap:9px;transition:all .14s}
 .p-chip:hover{border-color:var(--bd2)}
 .p-chip.sel{border-color:var(--ac);background:var(--ac-bg)}
-.p-chip i{font-size:15px;color:var(--txm);margin-top:1px;flex-shrink:0}
+.p-chip i{font-size:16px;color:var(--txm);margin-top:1px;flex-shrink:0}
 .p-chip.sel i{color:var(--ac)}
-.p-chip-l{font-size:11px;font-weight:600;color:var(--tx)}
+.p-chip-l{font-size:13px;font-weight:600;color:var(--tx)}
 .p-chip.sel .p-chip-l{color:var(--ac)}
-.p-chip-s{font-size:10px;color:var(--txm);margin-top:1px}
+.p-chip-s{font-size:12px;color:var(--txm);margin-top:1px}
 
 /* ── CRIT TABLE ── */
 .crit-w{overflow-x:auto;border:1px solid var(--bd);border-radius:8px}
 .crit-t{width:100%;border-collapse:collapse;min-width:560px}
-.crit-t th{background:var(--s3);padding:7px 11px;text-align:left;font-family:var(--mono);font-size:9px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid var(--bd);white-space:nowrap}
-.crit-t td{padding:7px 11px;border-bottom:1px solid var(--bd);font-size:12px;color:var(--txd)}
+.crit-t th{background:var(--s3);padding:7px 11px;text-align:left;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid var(--bd);white-space:nowrap}
+.crit-t td{padding:7px 11px;border-bottom:1px solid var(--bd);font-size:14px;color:var(--txd)}
 .crit-t tr:last-child td{border-bottom:none}
 
 /* ── CTX ── */
 .ctx-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .ctx-b{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:13px}
-.ctx-t{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.ctx-t{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:7px;display:flex;align-items:center;gap:7px}
 .ctx-t i{color:var(--ac)}
 
 /* ── RISK LIST ── */
@@ -129,31 +129,31 @@ select option{background:var(--s2)}
 .ri:hover{border-color:var(--bd2)}
 .ri.click{cursor:pointer}
 .ri-body{flex:1;min-width:0}
-.ri-title{font-size:12px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ri-meta{font-size:10px;color:var(--txm);margin-top:2px;display:flex;gap:7px;flex-wrap:wrap}
+.ri-title{font-size:14px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ri-meta{font-size:12px;color:var(--txm);margin-top:2px;display:flex;gap:7px;flex-wrap:wrap}
 .ri-right{display:flex;gap:5px;align-items:center;flex-shrink:0}
 
 /* ── FN CHIPS ── */
 .fn-wrap{display:flex;flex-wrap:wrap;gap:5px}
-.fn-chip{padding:3px 9px;border:1px solid var(--bd);border-radius:18px;font-size:11px;cursor:pointer;color:var(--txd);background:var(--s2);transition:all .12s}
+.fn-chip{padding:3px 9px;border:1px solid var(--bd);border-radius:18px;font-size:13px;cursor:pointer;color:var(--txd);background:var(--s2);transition:all .12s}
 .fn-chip:hover{border-color:var(--bd2)}
 .fn-chip.sel{background:var(--ac-bg);border-color:var(--ac);color:var(--ac)}
 
 /* ── AI PANEL ── */
 .ai-panel{background:linear-gradient(135deg,rgba(168,85,247,.07),rgba(79,131,245,.07));border:1px solid var(--ai-bd);border-radius:10px;padding:15px;display:flex;flex-direction:column;gap:11px}
-.ai-panel-title{font-size:13px;font-weight:600;color:var(--ai);display:flex;align-items:center;gap:7px}
+.ai-panel-title{font-size:15px;font-weight:600;color:var(--ai);display:flex;align-items:center;gap:7px}
 .ai-grid{display:flex;flex-direction:column;gap:7px;max-height:440px;overflow-y:auto;padding-right:2px}
 .ai-grid::-webkit-scrollbar{width:4px}
 .ai-grid::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
 .ai-card{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:11px;transition:border-color .14s}
 .ai-card:hover{border-color:var(--ai-bd)}
 .ai-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:3px}
-.ai-card-title{font-size:12px;font-weight:600;color:var(--tx);flex:1}
-.ai-card-meta{font-size:10px;color:var(--txm);margin-bottom:5px;display:flex;gap:7px;flex-wrap:wrap}
-.ai-card-desc{font-size:11px;color:var(--txd);line-height:1.5}
-.ai-card-rationale{font-size:10px;color:var(--txm);margin-top:4px;font-style:italic}
+.ai-card-title{font-size:14px;font-weight:600;color:var(--tx);flex:1}
+.ai-card-meta{font-size:12px;color:var(--txm);margin-bottom:5px;display:flex;gap:7px;flex-wrap:wrap}
+.ai-card-desc{font-size:13px;color:var(--txd);line-height:1.5}
+.ai-card-rationale{font-size:12px;color:var(--txm);margin-top:4px;font-style:italic}
 .ai-card-footer{margin-top:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
-.ai-loading{display:flex;align-items:center;gap:10px;padding:18px 12px;color:var(--ai);font-size:12px}
+.ai-loading{display:flex;align-items:center;gap:10px;padding:18px 12px;color:var(--ai);font-size:14px}
 .spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--ai-bd);border-top-color:var(--ai);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 .risk-form{background:var(--s1);border:1px solid var(--ac-bd);border-radius:8px;padding:15px;display:flex;flex-direction:column;gap:9px}
@@ -161,10 +161,10 @@ select option{background:var(--s2)}
 /* ── MATRIX ── */
 .matrix-wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
 .mg{display:grid;grid-template-columns:46px repeat(5,40px);grid-template-rows:repeat(5,40px) 46px;gap:3px}
-.mc{display:flex;align-items:center;justify-content:center;border-radius:4px;font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer;transition:transform .12s,opacity .12s;opacity:.55;border:2px solid transparent;user-select:none}
+.mc{display:flex;align-items:center;justify-content:center;border-radius:4px;font-family:var(--mono);font-size:13px;font-weight:700;cursor:pointer;transition:transform .12s,opacity .12s;opacity:.55;border:2px solid transparent;user-select:none}
 .mc:not(.ax):hover{transform:scale(1.1);opacity:1;z-index:2}
 .mc.sel{opacity:1;transform:scale(1.1);border-color:var(--tx);z-index:2}
-.ax{background:transparent;font-family:var(--sans);font-size:9px;font-weight:500;color:var(--txm);opacity:1;cursor:default;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.06em;text-align:center}
+.ax{background:transparent;font-family:var(--sans);font-size:13px;font-weight:500;color:var(--txm);opacity:1;cursor:default;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.06em;text-align:center}
 .ax.h{writing-mode:horizontal-tb;transform:none}
 .vl{background:rgba(79,131,245,.25);color:#90b8ff}
 .lo{background:rgba(45,184,122,.25);color:#6de0ae}
@@ -173,19 +173,19 @@ select option{background:var(--s2)}
 .cr{background:rgba(224,53,53,.30);color:#ff8585}
 .mc-ctrl{flex:1;min-width:190px;display:flex;flex-direction:column;gap:11px}
 .pick-row{display:flex;gap:4px}
-.pc{width:36px;height:36px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:700;cursor:pointer;opacity:.55;border:2px solid transparent;transition:all .12s}
+.pc{width:36px;height:36px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;font-weight:700;cursor:pointer;opacity:.55;border:2px solid transparent;transition:all .12s}
 .pc:hover{opacity:1;transform:scale(1.05)}
 .pc.sel{opacity:1;border-color:var(--tx);transform:scale(1.08)}
-.s-preview{background:var(--s3);border:1px solid var(--bd);border-radius:6px;padding:9px 13px;font-size:12px;color:var(--txd)}
+.s-preview{background:var(--s3);border:1px solid var(--bd);border-radius:6px;padding:9px 13px;font-size:14px;color:var(--txd)}
 
 /* ── BADGES ── */
-.rb{display:inline-block;padding:2px 7px;border-radius:11px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+.rb{display:inline-block;padding:2px 7px;border-radius:11px;font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
 .rb-cr{background:rgba(224,53,53,.2);color:#ff8585;border:1px solid rgba(224,53,53,.35)}
 .rb-hi{background:rgba(224,122,42,.2);color:#ffb87a;border:1px solid rgba(224,122,42,.35)}
 .rb-me{background:rgba(201,170,0,.15);color:#ffe066;border:1px solid rgba(201,170,0,.3)}
 .rb-lo{background:rgba(45,184,122,.15);color:#6de0ae;border:1px solid rgba(45,184,122,.3)}
 .rb-vl{background:rgba(79,131,245,.15);color:#90b8ff;border:1px solid rgba(79,131,245,.3)}
-.sb{width:28px;height:28px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700}
+.sb{width:28px;height:28px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:700}
 .sb-cr{background:rgba(224,53,53,.25);color:#ff8585}
 .sb-hi{background:rgba(224,122,42,.25);color:#ffb87a}
 .sb-me{background:rgba(201,170,0,.2);color:#ffe066}
@@ -193,30 +193,30 @@ select option{background:var(--s2)}
 .sb-vl{background:rgba(79,131,245,.2);color:#90b8ff}
 
 /* ── TAGS ── */
-.t-dept{padding:2px 6px;border-radius:9px;font-size:9px;font-weight:600;background:rgba(130,100,255,.15);color:#b09fff;border:1px solid rgba(130,100,255,.25)}
-.t-fn{padding:2px 6px;border-radius:9px;font-size:9px;background:var(--s3);color:var(--txm);border:1px solid var(--bd)}
-.t-ai{padding:2px 6px;border-radius:9px;font-size:9px;font-weight:600;background:var(--ai-bg);color:var(--ai);border:1px solid var(--ai-bd);display:inline-flex;align-items:center;gap:3px}
-.t-man{padding:2px 6px;border-radius:9px;font-size:9px;background:var(--s3);color:var(--txm);border:1px solid var(--bd)}
-.rid{font-family:var(--mono);font-size:9px;color:var(--txm)}
+.t-dept{padding:2px 6px;border-radius:9px;font-size:13px;font-weight:600;background:rgba(130,100,255,.15);color:#b09fff;border:1px solid rgba(130,100,255,.25)}
+.t-fn{padding:2px 6px;border-radius:9px;font-size:13px;background:var(--s3);color:var(--txm);border:1px solid var(--bd)}
+.t-ai{padding:2px 6px;border-radius:9px;font-size:13px;font-weight:600;background:var(--ai-bg);color:var(--ai);border:1px solid var(--ai-bd);display:inline-flex;align-items:center;gap:3px}
+.t-man{padding:2px 6px;border-radius:9px;font-size:13px;background:var(--s3);color:var(--txm);border:1px solid var(--bd)}
+.rid{font-family:var(--mono);font-size:13px;color:var(--txd)}
 
 /* ── TREAT ── */
 .treat-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .tc{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:11px;cursor:pointer;transition:all .12s}
 .tc:hover{border-color:var(--bd2)}
 .tc.sel{border-color:var(--ac);background:var(--ac-bg)}
-.tc-t{font-size:12px;font-weight:600;color:var(--tx);display:flex;align-items:center;gap:7px;margin-bottom:3px}
+.tc-t{font-size:14px;font-weight:600;color:var(--tx);display:flex;align-items:center;gap:7px;margin-bottom:3px}
 .tc.sel .tc-t{color:var(--ac)}
-.tc-s{font-size:10px;color:var(--txm);line-height:1.4}
+.tc-s{font-size:12px;color:var(--txm);line-height:1.4}
 
 /* ── STATS ── */
 .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
 .stat{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:11px;text-align:center}
-.stat-n{font-family:var(--mono);font-size:22px;font-weight:700;line-height:1;margin-bottom:3px}
-.stat-l{font-size:9px;color:var(--txm);text-transform:uppercase;letter-spacing:.1em;font-family:var(--mono)}
+.stat-n{font-family:var(--mono);font-size:26px;font-weight:700;line-height:1;margin-bottom:3px}
+.stat-l{font-size:13px;color:var(--txd);text-transform:uppercase;letter-spacing:.1em;font-family:var(--mono)}
 
 /* ── BUTTONS ── */
 .btn-row{display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap;padding-top:4px}
-.btn{padding:7px 14px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--bd2);background:var(--s2);color:var(--tx);transition:all .12s;white-space:nowrap}
+.btn{padding:7px 14px;border-radius:var(--r);font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--bd2);background:var(--s2);color:var(--tx);transition:all .12s;white-space:nowrap}
 .btn:hover{background:var(--s3);border-color:var(--ac)}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .btn-ac{background:var(--ac-bg);border-color:var(--ac);color:var(--ac)}
@@ -227,12 +227,12 @@ select option{background:var(--s2)}
 .btn-ai:hover{background:rgba(168,85,247,.2)}
 .btn-del{background:none;border:none;cursor:pointer;color:var(--txm);padding:3px;border-radius:4px;display:inline-flex;align-items:center;transition:all .12s}
 .btn-del:hover{color:#ff8585;background:rgba(224,53,53,.1)}
-.add-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;border:1px dashed var(--bd2);border-radius:7px;background:none;color:var(--txd);font-size:12px;cursor:pointer;transition:all .12s}
+.add-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;border:1px dashed var(--bd2);border-radius:7px;background:none;color:var(--txd);font-size:14px;cursor:pointer;transition:all .12s}
 .add-btn:hover{background:var(--s2);border-color:var(--ac);color:var(--ac)}
 
 /* ── FILTER ── */
 .filter-bar{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
-.ftag{padding:3px 9px;border:1px solid var(--bd);border-radius:18px;font-size:11px;cursor:pointer;color:var(--txd);background:var(--s2);transition:all .12s;font-family:var(--mono);letter-spacing:.04em}
+.ftag{padding:3px 9px;border:1px solid var(--bd);border-radius:18px;font-size:13px;cursor:pointer;color:var(--txd);background:var(--s2);transition:all .12s;font-family:var(--mono);letter-spacing:.04em}
 .ftag:hover,.ftag.on{border-color:var(--ac);background:var(--ac-bg);color:var(--ac)}
 
 /* ── REGISTER TABLE ── */
@@ -240,23 +240,23 @@ select option{background:var(--s2)}
 .reg-wrap::-webkit-scrollbar{height:5px}
 .reg-wrap::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
 .reg-t{width:100%;border-collapse:collapse;min-width:1200px}
-.reg-t th{padding:8px 10px;text-align:left;font-family:var(--mono);font-size:9px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid var(--bd);background:var(--s3);white-space:nowrap}
-.reg-t td{padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:top;font-size:11px;color:var(--txd)}
+.reg-t th{padding:8px 10px;text-align:left;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid var(--bd);background:var(--s3);white-space:nowrap}
+.reg-t td{padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:top;font-size:13px;color:var(--txd)}
 .reg-t tr:last-child td{border-bottom:none}
 .reg-t tbody tr:hover td{background:rgba(255,255,255,.018)}
 
 /* ── MON GRID ── */
 .mon-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .mon-card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:11px}
-.mon-t{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:5px;display:flex;align-items:center;gap:5px}
-.mon-t i{color:var(--ac);font-size:13px}
+.mon-t{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.mon-t i{color:var(--ac);font-size:15px}
 
 /* ── MISC ── */
 .sep{height:1px;background:var(--bd)}
-.empty{text-align:center;padding:26px 14px;color:var(--txm);font-size:12px}
-.empty i{font-size:26px;display:block;margin-bottom:7px;color:var(--bd2)}
-.footer{background:var(--s1);border-top:1px solid var(--bd);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-family:var(--mono);font-size:10px;color:var(--txm)}
-.err-box{color:#ff8585;padding:12px;font-size:12px;background:rgba(224,53,53,.1);border:1px solid rgba(224,53,53,.3);border-radius:8px;line-height:1.6}
+.empty{text-align:center;padding:26px 14px;color:var(--txm);font-size:14px}
+.empty i{font-size:30px;display:block;margin-bottom:7px;color:var(--bd2)}
+.footer{background:var(--s1);border-top:1px solid var(--bd);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-family:var(--mono);font-size:12px;color:var(--txm)}
+.err-box{color:#ff8585;padding:12px;font-size:14px;background:rgba(224,53,53,.1);border:1px solid rgba(224,53,53,.3);border-radius:8px;line-height:1.6}
 
 @media(max-width:680px){
   .f2,.f3,.ctx-grid,.princ-grid,.treat-grid,.mon-grid{grid-template-columns:1fr}
@@ -271,6 +271,23 @@ select option{background:var(--s2)}
   .reg-wrap{overflow:visible}
   .reg-t{min-width:unset}
 }
+
+/* ── FRAMEWORK WHEEL ── */
+.fwk-wrap{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+.fwk-svg-box{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:10px;width:300px}
+.fwk-svg-box svg{width:300px;height:300px;filter:drop-shadow(0 4px 18px rgba(0,0,0,0.5))}
+.fwk-caption{text-align:center;display:flex;flex-direction:column;gap:3px}
+.fwk-seg{transition:opacity .18s}
+.fwk-seg:hover{opacity:.82;filter:drop-shadow(0 0 10px rgba(245,200,0,.6)) !important}
+.fwk-detail-grid{flex:1;min-width:260px;display:flex;flex-direction:column;gap:8px}
+.fwk-detail-card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:11px 13px;display:flex;gap:10px;align-items:flex-start;transition:border-color .15s,background .15s}
+.fwk-detail-card:hover{border-color:#f5c800;background:rgba(245,200,0,.05)}
+.fwk-detail-card.active{border-color:#f5c800;background:rgba(245,200,0,.08)}
+.fdk-dot{width:10px;height:10px;border-radius:50%;background:#f5c800;margin-top:4px;flex-shrink:0;box-shadow:0 0 6px rgba(245,200,0,.5)}
+.fdk-title{font-size:14px;font-weight:700;color:var(--tx);margin-bottom:3px;display:flex;align-items:center;gap:7px}
+.fdk-cl{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--ac);background:var(--ac-bg);border:1px solid var(--ac-bd);padding:1px 6px;border-radius:4px;letter-spacing:.04em}
+.fdk-body{font-size:13px;color:var(--txd);line-height:1.55}
+
 </style>
 </head>
 <body>
@@ -281,7 +298,7 @@ select option{background:var(--s2)}
     <div class="modal-title"><i class="ti ti-robot" style="color:var(--ai);font-size:20px"></i>Connect OpenAI — AI Risk Analysis</div>
     <div class="modal-sub">Enter your OpenAI API key to enable GPT-4o powered risk identification and categorisation across departments and functions. The AI analyses each activity and returns structured, ISO 31000-aligned risk entries with pre-scored likelihood and consequence values that you can review, edit and import.</div>
     <div class="fg"><label>OpenAI API Key</label><input type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off" onkeydown="if(event.key==='Enter')saveApiKey()"></div>
-    <div class="modal-note"><i class="ti ti-lock" style="font-size:12px;flex-shrink:0;margin-top:1px"></i><span>Your key is stored in memory only for this browser session. It is sent directly to api.openai.com and is never stored on any server or shared. Refresh the page to clear it.</span></div>
+    <div class="modal-note"><i class="ti ti-lock" style="font-size:14px;flex-shrink:0;margin-top:1px"></i><span>Your key is stored in memory only for this browser session. It is sent directly to api.openai.com and is never stored on any server or shared. Refresh the page to clear it.</span></div>
     <div class="modal-actions">
       <button class="btn" onclick="closeApiModal()">Skip for now</button>
       <button class="btn btn-ai" onclick="saveApiKey()"><i class="ti ti-check"></i>Connect OpenAI</button>
@@ -383,6 +400,132 @@ select option{background:var(--s2)}
       </div>
     </div>
   </div>
+  <div class="card" style="margin-top:4px">
+    <div class="card-t"><i class="ti ti-circles-relation" style="color:#f5c800"></i>Risk Management Framework — BS ISO 31000:2018 Clause 5</div>
+
+<!-- ══ ISO 31000 FRAMEWORK WHEEL SVG ══ -->
+<div class="fwk-wrap">
+  <div class="fwk-svg-box">
+    <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="fwk-shadow" x="-12%" y="-12%" width="124%" height="124%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="rgba(0,0,0,0.55)"/>
+    </filter>
+    <filter id="ctr-shadow">
+      <feDropShadow dx="0" dy="1" stdDeviation="4" flood-color="rgba(0,0,0,0.6)"/>
+    </filter>
+    <radialGradient id="sg" cx="45%" cy="30%" r="70%">
+      <stop offset="0%"   stop-color="#ffe566"/>
+      <stop offset="60%"  stop-color="#f5c800"/>
+      <stop offset="100%" stop-color="#c89600"/>
+    </radialGradient>
+    <radialGradient id="sg-h" cx="45%" cy="30%" r="70%">
+      <stop offset="0%"   stop-color="#fff59d"/>
+      <stop offset="100%" stop-color="#f5c800"/>
+    </radialGradient>
+  </defs>
+  <path id="seg-integration"
+    d="M 18.263,199.951
+       A 192,192 0 0,1 141.193,30.753
+       L 171.296,109.173
+       A 108,108 0 0,0 102.148,204.348
+       Z"
+    fill="url(#sg)" filter="url(#fwk-shadow)"
+    class="fwk-seg" data-seg="integration" style="cursor:pointer"/>
+  <path id="seg-design"
+    d="M 160.307,24.542
+       A 192,192 0 0,1 359.212,89.170
+       L 293.932,142.033
+       A 108,108 0 0,0 182.048,105.680
+       Z"
+    fill="url(#sg)" filter="url(#fwk-shadow)"
+    class="fwk-seg" data-seg="design" style="cursor:pointer"/>
+  <path id="seg-implementation"
+    d="M 371.025,105.429
+       A 192,192 0 0,1 371.025,314.571
+       L 300.576,268.821
+       A 108,108 0 0,0 300.576,151.179
+       Z"
+    fill="url(#sg)" filter="url(#fwk-shadow)"
+    class="fwk-seg" data-seg="implementation" style="cursor:pointer"/>
+  <path id="seg-evaluation"
+    d="M 359.212,330.830
+       A 192,192 0 0,1 160.307,395.458
+       L 182.048,314.320
+       A 108,108 0 0,0 293.932,277.967
+       Z"
+    fill="url(#sg)" filter="url(#fwk-shadow)"
+    class="fwk-seg" data-seg="evaluation" style="cursor:pointer"/>
+  <path id="seg-improvement"
+    d="M 141.193,389.247
+       A 192,192 0 0,1 18.263,220.049
+       L 102.148,215.652
+       A 108,108 0 0,0 171.296,310.827
+       Z"
+    fill="url(#sg)" filter="url(#fwk-shadow)"
+    class="fwk-seg" data-seg="improvement" style="cursor:pointer"/>
+
+  <circle cx="210" cy="210" r="109" fill="none" stroke="#b03030" stroke-width="8"/>
+  <circle cx="210" cy="210" r="113" fill="none" stroke="rgba(200,50,50,0.18)" stroke-width="3"/>
+
+  <!-- Centre fill -->
+  <circle cx="210" cy="210" r="107" fill="#161b25" filter="url(#ctr-shadow)"/>
+  <circle cx="210" cy="210" r="103" fill="none" stroke="#e03535" stroke-width="3.5"/>
+
+  <!-- Centre text -->
+  <text x="210" y="198" text-anchor="middle" font-family="Inter,sans-serif" font-size="14.5" font-weight="700" fill="#f0f4ff">Leadership and</text>
+  <text x="210" y="217"  text-anchor="middle" font-family="Inter,sans-serif" font-size="14.5" font-weight="700" fill="#f0f4ff">Commitment</text>
+  <text x="210" y="236" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" fill="#8898c0" letter-spacing="0.5">Cl. 5.2</text>
+<g transform="translate(87.03,120.66) rotate(-54.0)"><text x="0" y="0" text-anchor="middle" font-family="Inter,sans-serif" font-size="13.5" font-weight="800" fill="#1a1200">Integration</text></g><g transform="translate(104.83,133.59) rotate(-54.0)"><text x="0" y="0" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9.5" font-weight="600" fill="#3a2800" opacity="0.9">Cl. 5.3</text></g><g transform="translate(256.97,65.44) rotate(18.0)"><text x="0" y="0" text-anchor="middle" font-family="Inter,sans-serif" font-size="13.5" font-weight="800" fill="#1a1200">Design</text></g><g transform="translate(250.17,86.36) rotate(18.0)"><text x="0" y="0" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9.5" font-weight="600" fill="#3a2800" opacity="0.9">Cl. 5.4</text></g><g transform="translate(362.00,210.00) rotate(90.0)"><text x="0" y="0" text-anchor="middle" font-family="Inter,sans-serif" font-size="13.5" font-weight="800" fill="#1a1200">Implementation</text></g><g transform="translate(340.00,210.00) rotate(90.0)"><text x="0" y="0" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9.5" font-weight="600" fill="#3a2800" opacity="0.9">Cl. 5.5</text></g><g transform="translate(256.97,354.56) rotate(-18.0)"><text x="0" y="0" text-anchor="middle" font-family="Inter,sans-serif" font-size="13.5" font-weight="800" fill="#1a1200">Evaluation</text></g><g transform="translate(250.17,333.64) rotate(-18.0)"><text x="0" y="0" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9.5" font-weight="600" fill="#3a2800" opacity="0.9">Cl. 5.6</text></g><g transform="translate(87.03,299.34) rotate(54.0)"><text x="0" y="0" text-anchor="middle" font-family="Inter,sans-serif" font-size="13.5" font-weight="800" fill="#1a1200">Improvement</text></g><g transform="translate(104.83,286.41) rotate(54.0)"><text x="0" y="0" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9.5" font-weight="600" fill="#3a2800" opacity="0.9">Cl. 5.7</text></g>
+</svg>
+    <div class="fwk-caption">
+      <span style="font-weight:700;font-size:15px;color:var(--tx)">Risk Management Framework</span>
+      <span style="font-size:12px;color:var(--txm)">BS ISO 31000:2018 — Clause 5</span>
+    </div>
+  </div>
+
+  <!-- Segment detail panel -->
+  <div class="fwk-detail-grid">
+    <div class="fwk-detail-card" id="fdk-integration">
+      <div class="fdk-dot"></div>
+      <div>
+        <div class="fdk-title">Integration <span class="fdk-cl">Cl. 5.3</span></div>
+        <div class="fdk-body">Risk management is integral to all organisational activities. The degree of integration is proportional to the relevance and significance of those activities to the achievement of objectives.</div>
+      </div>
+    </div>
+    <div class="fwk-detail-card" id="fdk-design">
+      <div class="fdk-dot"></div>
+      <div>
+        <div class="fdk-title">Design <span class="fdk-cl">Cl. 5.4</span></div>
+        <div class="fdk-body">Understanding the organisation and its context, articulating risk management commitment, assigning roles, allocating resources, and establishing communication and consultation mechanisms.</div>
+      </div>
+    </div>
+    <div class="fwk-detail-card" id="fdk-implementation">
+      <div class="fdk-dot"></div>
+      <div>
+        <div class="fdk-title">Implementation <span class="fdk-cl">Cl. 5.5</span></div>
+        <div class="fdk-body">Developing an appropriate plan including time and resources; identifying where, when and how different types of decisions are made across the organisation; modifying applicable decision-making processes.</div>
+      </div>
+    </div>
+    <div class="fwk-detail-card" id="fdk-evaluation">
+      <div class="fdk-dot"></div>
+      <div>
+        <div class="fdk-title">Evaluation <span class="fdk-cl">Cl. 5.6</span></div>
+        <div class="fdk-body">Periodically measuring risk management framework performance against its purpose, implementation plan, indicators and expected behaviour. Deciding whether the framework remains suitable to support achieving organisational objectives.</div>
+      </div>
+    </div>
+    <div class="fwk-detail-card" id="fdk-improvement">
+      <div class="fdk-dot"></div>
+      <div>
+        <div class="fdk-title">Improvement <span class="fdk-cl">Cl. 5.7</span></div>
+        <div class="fdk-body">Continually monitoring and adapting the framework to address external and internal changes; improving the value of risk management. Organisations pursuing continual improvement continually improve the risk management framework, policy and plan.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div>
+
   <div class="btn-row">
     <button class="btn" onclick="goStep(1)"><i class="ti ti-arrow-left"></i>Back</button>
     <button class="btn btn-ac" onclick="goStep(3)"><i class="ti ti-arrow-right"></i>Next: risk identification</button>
@@ -465,12 +608,12 @@ select option{background:var(--s2)}
       <div class="sec-lbl" style="margin-bottom:4px">Analysing: <span id="aRiskTitle" style="color:var(--tx);text-transform:none;letter-spacing:0"></span></div>
       <div class="matrix-wrap">
         <div>
-          <div style="font-family:var(--mono);font-size:9px;color:var(--txm);text-align:center;margin-bottom:5px;letter-spacing:.08em;text-transform:uppercase">5×5 Likelihood × Consequence</div>
+          <div style="font-family:var(--mono);font-size:13px;color:var(--txd);text-align:center;margin-bottom:5px;letter-spacing:.08em;text-transform:uppercase">5×5 Likelihood × Consequence</div>
           <div style="display:flex;align-items:flex-end;gap:5px">
-            <div style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px;color:var(--txm);letter-spacing:.07em;text-transform:uppercase">Likelihood →</div>
+            <div style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:13px;color:var(--txd);letter-spacing:.07em;text-transform:uppercase">Likelihood →</div>
             <div>
               <div class="mg" id="matrixGrid"></div>
-              <div style="font-size:9px;color:var(--txm);text-align:center;margin-top:5px;letter-spacing:.07em;text-transform:uppercase">Consequence →</div>
+              <div style="font-size:13px;color:var(--txd);text-align:center;margin-top:5px;letter-spacing:.07em;text-transform:uppercase">Consequence →</div>
             </div>
           </div>
         </div>
@@ -584,10 +727,10 @@ select option{background:var(--s2)}
   <div class="card" style="margin-top:4px">
     <div class="card-t"><i class="ti ti-eye"></i>Monitoring & review plan (Cl. 6.6)</div>
     <div class="mon-grid">
-      <div class="mon-card"><div class="mon-t"><i class="ti ti-calendar"></i>Review frequency</div><div style="font-size:11px;color:var(--txd)" id="monReview">—</div></div>
-      <div class="mon-card"><div class="mon-t"><i class="ti ti-users"></i>Stakeholder reporting (Cl. 6.7)</div><div style="font-size:11px;color:var(--txd)">Board: Quarterly · Senior management: Monthly · Department heads: Weekly (Critical only)</div></div>
-      <div class="mon-card"><div class="mon-t"><i class="ti ti-refresh"></i>Re-assessment triggers</div><div style="font-size:11px;color:var(--txd)">Context change · New critical/high risk · Control failure · Post-incident review · Regulatory change</div></div>
-      <div class="mon-card"><div class="mon-t"><i class="ti ti-file-text"></i>Recording (Cl. 6.7)</div><div style="font-size:11px;color:var(--txd)">Register maintained in document management system · Outcomes reported through governance cycle · Full audit trail maintained</div></div>
+      <div class="mon-card"><div class="mon-t"><i class="ti ti-calendar"></i>Review frequency</div><div style="font-size:13px;color:var(--txd)" id="monReview">—</div></div>
+      <div class="mon-card"><div class="mon-t"><i class="ti ti-users"></i>Stakeholder reporting (Cl. 6.7)</div><div style="font-size:13px;color:var(--txd)">Board: Quarterly · Senior management: Monthly · Department heads: Weekly (Critical only)</div></div>
+      <div class="mon-card"><div class="mon-t"><i class="ti ti-refresh"></i>Re-assessment triggers</div><div style="font-size:13px;color:var(--txd)">Context change · New critical/high risk · Control failure · Post-incident review · Regulatory change</div></div>
+      <div class="mon-card"><div class="mon-t"><i class="ti ti-file-text"></i>Recording (Cl. 6.7)</div><div style="font-size:13px;color:var(--txd)">Register maintained in document management system · Outcomes reported through governance cycle · Full audit trail maintained</div></div>
     </div>
   </div>
   <div class="btn-row">
@@ -733,14 +876,14 @@ Return ONLY the JSON array.`;
     if(!Array.isArray(arr)||!arr.length)throw new Error('No risks returned.');
     renderAiCards(arr,did,dName,fn);
   }catch(e){
-    area.innerHTML=`<div class="err-box"><i class="ti ti-alert-circle" style="margin-right:6px"></i><strong>Error:</strong> ${e.message}<br><span style="font-size:11px;color:var(--txm);display:block;margin-top:3px">Verify your API key has GPT-4o access and your network allows outbound requests to api.openai.com.</span></div>`;
+    area.innerHTML=`<div class="err-box"><i class="ti ti-alert-circle" style="margin-right:6px"></i><strong>Error:</strong> ${e.message}<br><span style="font-size:13px;color:var(--txm);display:block;margin-top:3px">Verify your API key has GPT-4o access and your network allows outbound requests to api.openai.com.</span></div>`;
   }
 }
 
 function renderAiCards(arr,did,dName,fn){
   const area=document.getElementById('aiResultsArea');
   area.innerHTML=`
-    <div style="font-size:11px;color:var(--txm);margin-bottom:9px;display:flex;align-items:center;gap:6px">
+    <div style="font-size:13px;color:var(--txm);margin-bottom:9px;display:flex;align-items:center;gap:6px">
       <i class="ti ti-robot" style="color:var(--ai)"></i>
       GPT-4o identified <strong style="color:var(--ai)">${arr.length} risks</strong> for <strong style="color:var(--tx)">${dName} / ${fn}</strong>. Review and import relevant risks.
     </div>
@@ -749,7 +892,7 @@ function renderAiCards(arr,did,dName,fn){
         const s=(r.likelihood||0)*(r.consequence||0);
         const rv=s?rat(s):null;
         return `<div class="ai-card">
-          <div class="ai-card-top"><div class="ai-card-title">${r.title||'Untitled'}</div><span class="t-ai"><i class="ti ti-robot" style="font-size:9px"></i>AI</span></div>
+          <div class="ai-card-top"><div class="ai-card-title">${r.title||'Untitled'}</div><span class="t-ai"><i class="ti ti-robot" style="font-size:13px"></i>AI</span></div>
           <div class="ai-card-meta">
             <span style="color:var(--ac)">${r.category||'—'}</span>
             ${r.source?`<span>Source: ${r.source}</span>`:''}
@@ -759,8 +902,8 @@ function renderAiCards(arr,did,dName,fn){
           <div class="ai-card-desc">${r.description||''}</div>
           ${r.rationale?`<div class="ai-card-rationale">${r.rationale}</div>`:''}
           <div class="ai-card-footer">
-            <span style="font-size:10px;color:var(--txm)">${r.consequences?`Consequences: ${r.consequences}`:''}</span>
-            <button class="btn btn-ai" style="padding:4px 10px;font-size:11px" id="aib_${i}" onclick='doImport(${i},${JSON.stringify(arr).replace(/</g,"&lt;")
+            <span style="font-size:12px;color:var(--txm)">${r.consequences?`Consequences: ${r.consequences}`:''}</span>
+            <button class="btn btn-ai" style="padding:4px 10px;font-size:13px" id="aib_${i}" onclick='doImport(${i},${JSON.stringify(arr).replace(/</g,"&lt;")
               .replace(/>/g,"&gt;")},${JSON.stringify(did)},${JSON.stringify(dName)},${JSON.stringify(fn)})'>
               <i class="ti ti-download"></i>Import
             </button>
@@ -867,7 +1010,7 @@ function renderList3(){
   if(!filt.length){list.innerHTML=`<div class="empty"><i class="ti ti-plus-circle"></i>No risks for this function yet.</div>`;return;}
   list.innerHTML=filt.map(r=>{
     const gi=risks.indexOf(r),rv=r.score?rat(r.score):null;
-    return `<div class="ri"><div class="ri-body"><div class="ri-title">${r.title}</div><div class="ri-meta"><span class="rid">${r.id}</span><span>${r.cat}</span>${r.isAI?'<span class="t-ai"><i class="ti ti-robot" style="font-size:9px"></i>AI</span>':'<span class="t-man">Manual</span>'}${r.source?`<span>Source: ${r.source}</span>`:''}${r.owner?`<span>Owner: ${r.owner}</span>`:''}</div></div><div class="ri-right">${rv?`<div class="sb ${rv.sc}">${r.score}</div><span class="rb ${rv.b}">${rv.l}</span>`:''}<button class="btn-del" onclick="delRisk(${gi})"><i class="ti ti-trash"></i></button></div></div>`;
+    return `<div class="ri"><div class="ri-body"><div class="ri-title">${r.title}</div><div class="ri-meta"><span class="rid">${r.id}</span><span>${r.cat}</span>${r.isAI?'<span class="t-ai"><i class="ti ti-robot" style="font-size:13px"></i>AI</span>':'<span class="t-man">Manual</span>'}${r.source?`<span>Source: ${r.source}</span>`:''}${r.owner?`<span>Owner: ${r.owner}</span>`:''}</div></div><div class="ri-right">${rv?`<div class="sb ${rv.sc}">${r.score}</div><span class="rb ${rv.b}">${rv.l}</span>`:''}<button class="btn-del" onclick="delRisk(${gi})"><i class="ti ti-trash"></i></button></div></div>`;
   }).join('');
 }
 
@@ -895,7 +1038,7 @@ function loadAnalysis(){
   document.getElementById('ctrlEffect').value=r.ctrlEffect||'';
   document.getElementById('analysisNotes').value=r.analysisNotes||'';
   refreshMx();
-  document.getElementById('analysisBadge').innerHTML=r.isAI?'<span class="t-ai" style="font-size:11px"><i class="ti ti-robot" style="font-size:10px"></i>AI pre-scored</span>':'';
+  document.getElementById('analysisBadge').innerHTML=r.isAI?'<span class="t-ai" style="font-size:13px"><i class="ti ti-robot" style="font-size:12px"></i>AI pre-scored</span>':'';
 }
 function setL4(v){curL=v;refreshMx();}
 function setC4(v){curC=v;refreshMx();}
@@ -908,7 +1051,7 @@ function refreshMx(){
     if(cp){cp.classList.toggle('sel',v===curC);cp.style.opacity=v===curC?'1':'.55';}
   }
   const p=document.getElementById('scorePreview');
-  if(curL&&curC){const s=curL*curC,rv=rat(s);p.innerHTML=`<strong style="font-family:var(--mono)">Inherent score: ${s}</strong> &nbsp;<span class="rb ${rv.b}">${rv.l}</span><br><span style="font-size:10px;color:var(--txm);margin-top:3px;display:block">L${curL} × C${curC} = ${s} · ${rv.l}</span>`;}
+  if(curL&&curC){const s=curL*curC,rv=rat(s);p.innerHTML=`<strong style="font-family:var(--mono)">Inherent score: ${s}</strong> &nbsp;<span class="rb ${rv.b}">${rv.l}</span><br><span style="font-size:12px;color:var(--txm);margin-top:3px;display:block">L${curL} × C${curC} = ${s} · ${rv.l}</span>`;}
   else p.textContent='Select likelihood and consequence to compute inherent risk score.';
 }
 function saveAnalysis(){
@@ -916,13 +1059,13 @@ function saveAnalysis(){
   if(!curL||!curC){alert('Set likelihood and consequence.');return;}
   const r=risks[aIdx];r.L=curL;r.C=curC;r.score=curL*curC;r.ctrlEffect=document.getElementById('ctrlEffect').value;r.analysisNotes=document.getElementById('analysisNotes').value;
   const rv=rat(r.score);
-  document.getElementById('analysisBadge').innerHTML=`<div class="sb ${rv.sc}">${r.score}</div><span class="rb ${rv.b}" style="margin-left:4px">${rv.l}</span>${r.isAI?'<span class="t-ai" style="margin-left:4px;font-size:10px"><i class="ti ti-robot" style="font-size:9px"></i>AI</span>':''}`;
+  document.getElementById('analysisBadge').innerHTML=`<div class="sb ${rv.sc}">${r.score}</div><span class="rb ${rv.b}" style="margin-left:4px">${rv.l}</span>${r.isAI?'<span class="t-ai" style="margin-left:4px;font-size:12px"><i class="ti ti-robot" style="font-size:13px"></i>AI</span>':''}`;
   renderList4();renderAnalProg();
 }
 function renderList4(){
   const list=document.getElementById('riskList4');
   if(!risks.length){list.innerHTML=`<div class="empty"><i class="ti ti-chart-bar"></i>No risks to analyse.</div>`;return;}
-  list.innerHTML=risks.map((r,i)=>{const done=r.L>0&&r.C>0,rv=done?rat(r.score):null;return`<div class="ri click" onclick="document.getElementById('selRA').value=${i};loadAnalysis()"><div class="ri-body"><div class="ri-title">${r.id} — ${r.title}</div><div class="ri-meta"><span class="t-dept">${r.deptName}</span><span class="t-fn">${r.fn}</span>${r.isAI?'<span class="t-ai"><i class="ti ti-robot" style="font-size:9px"></i>AI</span>':''}</div></div><div class="ri-right">${done?`<div class="sb ${rv.sc}">${r.score}</div><span class="rb ${rv.b}">${rv.l}</span>`:'<span style="font-size:10px;color:var(--txm)">Not analysed</span>'}</div></div>`;}).join('');
+  list.innerHTML=risks.map((r,i)=>{const done=r.L>0&&r.C>0,rv=done?rat(r.score):null;return`<div class="ri click" onclick="document.getElementById('selRA').value=${i};loadAnalysis()"><div class="ri-body"><div class="ri-title">${r.id} — ${r.title}</div><div class="ri-meta"><span class="t-dept">${r.deptName}</span><span class="t-fn">${r.fn}</span>${r.isAI?'<span class="t-ai"><i class="ti ti-robot" style="font-size:13px"></i>AI</span>':''}</div></div><div class="ri-right">${done?`<div class="sb ${rv.sc}">${r.score}</div><span class="rb ${rv.b}">${rv.l}</span>`:'<span style="font-size:12px;color:var(--txm)">Not analysed</span>'}</div></div>`;}).join('');
 }
 function renderAnalProg(){const done=risks.filter(r=>r.L>0&&r.C>0).length;document.getElementById('analysisProgress').textContent=`${done} of ${risks.length} analysed`;}
 
@@ -932,7 +1075,7 @@ function renderEval(){
   document.getElementById('evalStats').innerHTML=`<div class="stat"><div class="stat-n" style="color:#ff8585">${c.cr}</div><div class="stat-l">Critical</div></div><div class="stat"><div class="stat-n" style="color:#ffb87a">${c.hi}</div><div class="stat-l">High</div></div><div class="stat"><div class="stat-n" style="color:#ffe066">${c.me}</div><div class="stat-l">Medium</div></div><div class="stat"><div class="stat-n" style="color:#6de0ae">${c.lo}</div><div class="stat-l">Low</div></div><div class="stat"><div class="stat-n" style="color:var(--txd)">${risks.length}</div><div class="stat-l">Total</div></div>`;
   const sorted=[...risks].sort((a,b)=>b.score-a.score);
   if(!sorted.length){document.getElementById('evalList').innerHTML=`<div class="empty"><i class="ti ti-scale"></i>No risks to evaluate.</div>`;return;}
-  document.getElementById('evalList').innerHTML=sorted.map(r=>{const gi=risks.indexOf(r),rv=r.score?rat(r.score):null;return`<div class="ri" style="margin-bottom:5px"><div class="ri-body"><div class="ri-title">${r.id} — ${r.title}</div><div class="ri-meta"><span class="t-dept">${r.deptName}</span><span class="t-fn">${r.fn}</span>${r.isAI?'<span class="t-ai"><i class="ti ti-robot" style="font-size:9px"></i>AI</span>':''}</div><div style="margin-top:7px;display:flex;align-items:center;gap:7px;flex-wrap:wrap"><label style="font-size:10px;color:var(--txm)">Evaluation decision (Cl. 6.4.4):</label><select onchange="risks[${gi}].evalDecision=this.value" style="font-size:11px;padding:4px 8px;border:1px solid var(--bd);border-radius:4px;background:var(--s2);color:var(--tx);max-width:340px"><option value="">— select —</option>${EVAL_OPTS.map(d=>`<option value="${d}" ${r.evalDecision===d?'selected':''}>${d}</option>`).join('')}</select></div></div><div class="ri-right">${rv?`<div class="sb ${rv.sc}">${r.score}</div><span class="rb ${rv.b}">${rv.l}</span>`:'<span style="font-size:10px;color:var(--txm)">Not analysed</span>'}</div></div>`;}).join('');
+  document.getElementById('evalList').innerHTML=sorted.map(r=>{const gi=risks.indexOf(r),rv=r.score?rat(r.score):null;return`<div class="ri" style="margin-bottom:5px"><div class="ri-body"><div class="ri-title">${r.id} — ${r.title}</div><div class="ri-meta"><span class="t-dept">${r.deptName}</span><span class="t-fn">${r.fn}</span>${r.isAI?'<span class="t-ai"><i class="ti ti-robot" style="font-size:13px"></i>AI</span>':''}</div><div style="margin-top:7px;display:flex;align-items:center;gap:7px;flex-wrap:wrap"><label style="font-size:12px;color:var(--txm)">Evaluation decision (Cl. 6.4.4):</label><select onchange="risks[${gi}].evalDecision=this.value" style="font-size:13px;padding:4px 8px;border:1px solid var(--bd);border-radius:4px;background:var(--s2);color:var(--tx);max-width:340px"><option value="">— select —</option>${EVAL_OPTS.map(d=>`<option value="${d}" ${r.evalDecision===d?'selected':''}>${d}</option>`).join('')}</select></div></div><div class="ri-right">${rv?`<div class="sb ${rv.sc}">${r.score}</div><span class="rb ${rv.b}">${rv.l}</span>`:'<span style="font-size:12px;color:var(--txm)">Not analysed</span>'}</div></div>`;}).join('');
 }
 
 // ─── STEP 6 ───
@@ -953,7 +1096,7 @@ function saveTreatment(){
 }
 function renderTreatList(){
   const done=risks.filter(r=>r.treatOption).length;document.getElementById('treatProgress').textContent=`${done} of ${risks.length} complete`;
-  document.getElementById('treatList').innerHTML=risks.map((r,i)=>{const o=TREATS.find(t=>t.id===r.treatOption);return`<div class="ri click" onclick="document.getElementById('selRT').value=${i};loadTreatment()"><div class="ri-body"><div class="ri-title">${r.id} — ${r.title}</div><div class="ri-meta">${o?`<span>${o.label}</span>`:''}${r.treatDate?`<span>Target: ${r.treatDate}</span>`:''}${r.treatOwner?`<span>Owner: ${r.treatOwner}</span>`:''}</div></div><div class="ri-right">${o?'<span class="rb rb-lo">Planned</span>':'<span style="font-size:10px;color:var(--txm)">Not planned</span>'}</div></div>`;}).join('');
+  document.getElementById('treatList').innerHTML=risks.map((r,i)=>{const o=TREATS.find(t=>t.id===r.treatOption);return`<div class="ri click" onclick="document.getElementById('selRT').value=${i};loadTreatment()"><div class="ri-body"><div class="ri-title">${r.id} — ${r.title}</div><div class="ri-meta">${o?`<span>${o.label}</span>`:''}${r.treatDate?`<span>Target: ${r.treatDate}</span>`:''}${r.treatOwner?`<span>Owner: ${r.treatOwner}</span>`:''}</div></div><div class="ri-right">${o?'<span class="rb rb-lo">Planned</span>':'<span style="font-size:12px;color:var(--txm)">Not planned</span>'}</div></div>`;}).join('');
 }
 
 // ─── STEP 7 ───
@@ -961,7 +1104,7 @@ function renderReg(){
   const c={cr:0,hi:0,me:0,lo:0,vl:0};risks.forEach(r=>{if(!r.score)return;if(r.score>=15)c.cr++;else if(r.score>=8)c.hi++;else if(r.score>=4)c.me++;else if(r.score>=2)c.lo++;else c.vl++;});
   document.getElementById('regStats').innerHTML=`<div class="stat"><div class="stat-n" style="color:#ff8585">${c.cr}</div><div class="stat-l">Critical</div></div><div class="stat"><div class="stat-n" style="color:#ffb87a">${c.hi}</div><div class="stat-l">High</div></div><div class="stat"><div class="stat-n" style="color:#ffe066">${c.me}</div><div class="stat-l">Medium</div></div><div class="stat"><div class="stat-n" style="color:#6de0ae">${c.lo}</div><div class="stat-l">Low</div></div><div class="stat"><div class="stat-n" style="color:var(--txd)">${risks.length}</div><div class="stat-l">Total</div></div>`;
   const fb=document.getElementById('regFilter');
-  fb.innerHTML=`<span style="font-size:10px;color:var(--txm);font-family:var(--mono)">Filter:</span>${['all','Critical','High','Medium','Low'].map(f=>`<span class="ftag ${filterRating===f.toLowerCase()?'on':''}" onclick="setF('${f.toLowerCase()}',this)">${f==='all'?'All':f}</span>`).join('')}<span class="ftag ${filterRating==='ai'?'on':''}" onclick="setF('ai',this)"><i class="ti ti-robot" style="font-size:10px;vertical-align:-1px"></i> AI only</span>`;
+  fb.innerHTML=`<span style="font-size:12px;color:var(--txm);font-family:var(--mono)">Filter:</span>${['all','Critical','High','Medium','Low'].map(f=>`<span class="ftag ${filterRating===f.toLowerCase()?'on':''}" onclick="setF('${f.toLowerCase()}',this)">${f==='all'?'All':f}</span>`).join('')}<span class="ftag ${filterRating==='ai'?'on':''}" onclick="setF('ai',this)"><i class="ti ti-robot" style="font-size:12px;vertical-align:-1px"></i> AI only</span>`;
   document.getElementById('monReview').textContent=`${document.getElementById('fwReview')?.value||'Quarterly'} review cycle · Risks monitored against KRIs · Integrated into governance reporting`;
   renderRegTable();
 }
@@ -973,7 +1116,7 @@ function renderRegTable(){
   if(!sorted.length){document.getElementById('regBody').innerHTML=`<tr><td colspan="20" style="text-align:center;padding:28px;color:var(--txm)">No risks match this filter.</td></tr>`;return;}
   document.getElementById('regBody').innerHTML=sorted.map(r=>{
     const rv=r.score?rat(r.score):null,rS=(r.resL&&r.resC)?r.resL*r.resC:null,rRv=rS?rat(rS):null,o=TREATS.find(t=>t.id===r.treatOption);
-    return`<tr><td class="rid">${r.id}</td><td>${r.isAI?'<span class="t-ai"><i class="ti ti-robot" style="font-size:9px"></i>AI</span>':'<span class="t-man">Manual</span>'}</td><td><span class="t-dept">${r.deptName}</span></td><td><span class="t-fn">${r.fn}</span></td><td style="font-weight:600;color:var(--tx)">${r.title}</td><td style="color:var(--txm)">${r.cat}</td><td style="color:var(--txm)">${r.source||'—'}</td><td style="color:var(--txm)">${r.controls||'—'}</td><td style="text-align:center;font-family:var(--mono);font-weight:700">${r.L||'—'}</td><td style="text-align:center;font-family:var(--mono);font-weight:700">${r.C||'—'}</td><td style="text-align:center">${rv?`<div class="sb ${rv.sc}" style="margin:auto">${r.score}</div>`:'—'}</td><td>${rv?`<span class="rb ${rv.b}">${rv.l}</span>`:'—'}</td><td style="color:var(--txm)">${r.ctrlEffect||'—'}</td><td style="color:var(--txm)">${r.evalDecision||'—'}</td><td>${o?`<strong>${o.label}</strong>`:'—'}</td><td style="text-align:center">${rRv?`<div class="sb ${rRv.sc}" style="margin:auto">${rS}</div>`:'—'}</td><td style="color:var(--txm)">${r.residualAccept||'—'}</td><td style="color:var(--txm)">${r.owner||'—'}</td><td style="color:var(--txm)">${r.treatKRI||'—'}</td><td style="color:var(--txm);white-space:nowrap">${r.treatDate||'—'}</td></tr>`;
+    return`<tr><td class="rid">${r.id}</td><td>${r.isAI?'<span class="t-ai"><i class="ti ti-robot" style="font-size:13px"></i>AI</span>':'<span class="t-man">Manual</span>'}</td><td><span class="t-dept">${r.deptName}</span></td><td><span class="t-fn">${r.fn}</span></td><td style="font-weight:600;color:var(--tx)">${r.title}</td><td style="color:var(--txm)">${r.cat}</td><td style="color:var(--txm)">${r.source||'—'}</td><td style="color:var(--txm)">${r.controls||'—'}</td><td style="text-align:center;font-family:var(--mono);font-weight:700">${r.L||'—'}</td><td style="text-align:center;font-family:var(--mono);font-weight:700">${r.C||'—'}</td><td style="text-align:center">${rv?`<div class="sb ${rv.sc}" style="margin:auto">${r.score}</div>`:'—'}</td><td>${rv?`<span class="rb ${rv.b}">${rv.l}</span>`:'—'}</td><td style="color:var(--txm)">${r.ctrlEffect||'—'}</td><td style="color:var(--txm)">${r.evalDecision||'—'}</td><td>${o?`<strong>${o.label}</strong>`:'—'}</td><td style="text-align:center">${rRv?`<div class="sb ${rRv.sc}" style="margin:auto">${rS}</div>`:'—'}</td><td style="color:var(--txm)">${r.residualAccept||'—'}</td><td style="color:var(--txm)">${r.owner||'—'}</td><td style="color:var(--txm)">${r.treatKRI||'—'}</td><td style="color:var(--txm);white-space:nowrap">${r.treatDate||'—'}</td></tr>`;
   }).join('');
 }
 
@@ -1005,6 +1148,17 @@ function goStep(n){
 // ─── INIT ───
 renderCrit();renderDepts();
 setTimeout(()=>{if(!apiKey)openApiModal();},600);
+
+// ── Framework wheel interaction ──
+document.querySelectorAll('.fwk-seg').forEach(seg => {
+  seg.addEventListener('mouseenter', () => {
+    const id = seg.dataset.seg;
+    document.querySelectorAll('.fwk-detail-card').forEach(c => c.classList.remove('active'));
+    const card = document.getElementById('fdk-' + id);
+    if (card) { card.classList.add('active'); card.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+  });
+});
+
 </script>
 </body>
 </html>
