@@ -3,654 +3,899 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Request Access — risk2safe PSM Audit Studio</title>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<title>Enterprise Risk Register</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --primary: #0f4c81;
-    --primary-light: #1a6bb5;
-    --accent: #e8622a;
-    --accent-light: #f07c47;
-    --bg: #f4f6fa;
-    --card: #ffffff;
-    --text: #1a2233;
-    --muted: #5a6a82;
-    --border: #dde3ee;
-    --success: #1a7c4f;
-    --success-bg: #e6f5ee;
-    --error: #c0392b;
-    --error-bg: #fdf0ee;
-    --radius: 10px;
-    --shadow: 0 2px 16px rgba(15,76,129,0.10);
+    --bg: #0d0f14;
+    --surface: #161920;
+    --surface2: #1e2229;
+    --border: #2a2f3a;
+    --border2: #353c4a;
+    --text: #e2e6ee;
+    --text-dim: #8892a4;
+    --text-muted: #4f5a6e;
+    --accent: #f0a500;
+    --accent2: #e05c2a;
+    --critical: #e03535;
+    --high: #e07a2a;
+    --medium: #c5b100;
+    --low: #2e9e5e;
+    --very-low: #3b7abf;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
   }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: var(--bg);
     color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.5;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
   }
 
-  /* ── HEADER ── */
-  header {
-    background: var(--primary);
-    padding: 0 2rem;
+  /* HEADER */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    height: 60px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    gap: 24px;
   }
-  .logo {
+
+  .header-left { flex: 1; }
+
+  .org-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .doc-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .doc-subtitle {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    font-weight: 300;
+  }
+
+  .header-meta {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    font-family: var(--mono);
+    font-size: 10px;
+  }
+
+  .meta-cell {
+    background: var(--surface2);
+    padding: 8px 14px;
+  }
+
+  .meta-label { color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2px; }
+  .meta-value { color: var(--text); font-weight: 600; }
+
+  /* MATRIX SECTION */
+  .section {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header {
     display: flex;
     align-items: center;
     gap: 10px;
-    text-decoration: none;
-  }
-  .logo-icon {
-    width: 32px; height: 32px;
-    background: var(--accent);
-    border-radius: 7px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: -1px;
-  }
-  .logo-text { color: #fff; font-size: 17px; font-weight: 600; }
-  .logo-sub { color: rgba(255,255,255,0.6); font-size: 12px; margin-left: 2px; }
-  .header-badge {
-    background: rgba(255,255,255,0.12);
-    color: rgba(255,255,255,0.85);
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.2);
+    margin-bottom: 16px;
   }
 
-  /* ── HERO ── */
-  .hero {
-    background: linear-gradient(135deg, var(--primary) 0%, #1a5a9a 60%, #1e3f6b 100%);
-    color: #fff;
-    padding: 52px 2rem 44px;
-    text-align: center;
+  .section-tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(240,165,0,0.08);
+    border: 1px solid rgba(240,165,0,0.2);
+    padding: 3px 8px;
+    border-radius: 2px;
   }
-  .hero-badge {
-    display: inline-block;
-    background: rgba(232,98,42,0.22);
-    border: 1px solid rgba(232,98,42,0.45);
-    color: #ffc49e;
-    font-size: 12px;
+
+  .section-title {
+    font-size: 11px;
     font-weight: 600;
-    padding: 5px 14px;
-    border-radius: 20px;
-    margin-bottom: 18px;
-    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
-  .hero h1 {
-    font-size: clamp(24px, 4vw, 36px);
-    font-weight: 700;
-    line-height: 1.25;
-    margin-bottom: 14px;
-  }
-  .hero h1 span { color: #ffbb85; }
-  .hero p {
-    font-size: 16px;
-    color: rgba(255,255,255,0.78);
-    max-width: 560px;
-    margin: 0 auto 28px;
-    line-height: 1.65;
+
+  /* RISK MATRIX */
+  .matrix-wrap {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
   }
 
-  /* ── FEATURE PILLS ── */
-  .feature-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 4px;
+  .matrix-container { flex-shrink: 0; }
+
+  .matrix-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
-  .pill {
-    background: rgba(255,255,255,0.10);
-    border: 1px solid rgba(255,255,255,0.18);
-    color: rgba(255,255,255,0.90);
-    font-size: 13px;
-    padding: 6px 14px;
-    border-radius: 20px;
+
+  .matrix-grid {
+    display: grid;
+    grid-template-columns: 28px repeat(5, 52px);
+    grid-template-rows: repeat(5, 40px) 28px;
+    gap: 2px;
+  }
+
+  .matrix-cell {
     display: flex;
     align-items: center;
-    gap: 6px;
-  }
-  .pill .dot {
-    width: 7px; height: 7px;
-    background: #4cd4a0;
-    border-radius: 50%;
-    flex-shrink: 0;
+    justify-content: center;
+    border-radius: 2px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: default;
+    transition: transform 0.15s, filter 0.15s;
+    position: relative;
   }
 
-  /* ── MAIN LAYOUT ── */
-  main {
-    flex: 1;
+  .matrix-cell:hover { transform: scale(1.08); filter: brightness(1.3); z-index: 2; }
+
+  .cell-empty { background: transparent; }
+  .cell-axis-label {
+    background: transparent;
+    font-size: 9px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+  }
+
+  .c-critical { background: rgba(224,53,53,0.85); color: #fff; }
+  .c-high { background: rgba(224,122,42,0.80); color: #fff; }
+  .c-medium { background: rgba(197,177,0,0.75); color: #000; }
+  .c-low { background: rgba(46,158,94,0.70); color: #fff; }
+  .c-very-low { background: rgba(59,122,191,0.65); color: #fff; }
+
+  .risk-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1.5px solid rgba(0,0,0,0.4);
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .y-axis-wrap {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 40px 16px 60px;
-  }
-  .form-wrapper {
-    width: 100%;
-    max-width: 560px;
+    justify-content: center;
+    margin-right: 4px;
+    position: relative;
   }
 
-  /* ── CARD ── */
-  .card {
-    background: var(--card);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
+  .y-axis-label {
+    font-size: 9px;
+    font-family: var(--mono);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    text-align: center;
+  }
+
+  .x-axis-label {
+    font-size: 9px;
+    font-family: var(--mono);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    text-align: center;
+    margin-top: 6px;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 14px;
+    background: var(--surface2);
     border: 1px solid var(--border);
-    padding: 32px 36px;
-  }
-  @media (max-width: 480px) {
-    .card { padding: 24px 20px; }
-  }
-  .card-title {
-    font-size: 19px;
-    font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 6px;
-  }
-  .card-sub {
-    font-size: 14px;
-    color: var(--muted);
-    margin-bottom: 26px;
-    line-height: 1.5;
+    border-radius: 4px;
   }
 
-  /* ── FORM ── */
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+  .legend-title {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
 
-  .field { margin-bottom: 16px; }
-  label {
-    display: block;
-    font-size: 13px;
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* FILTERS */
+  .filters {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .filter-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .filter-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text-dim);
+    padding: 4px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    transition: all 0.15s;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    background: rgba(240,165,0,0.12);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* TABLE */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1100px;
+  }
+
+  thead tr {
+    background: var(--surface2);
+    border-bottom: 2px solid var(--border2);
+  }
+
+  th {
+    padding: 9px 12px;
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.12s;
+  }
+
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+  tbody tr.hidden { display: none; }
+
+  td {
+    padding: 10px 12px;
+    vertical-align: top;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  td:first-child {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .risk-title {
     font-weight: 600;
     color: var(--text);
-    margin-bottom: 6px;
-  }
-  label .req { color: var(--accent); margin-left: 2px; }
-
-  input[type="text"],
-  input[type="email"],
-  select {
-    width: 100%;
-    height: 42px;
-    padding: 0 13px;
-    border: 1.5px solid var(--border);
-    border-radius: 7px;
-    font-size: 14px;
-    color: var(--text);
-    background: #fff;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    outline: none;
-    appearance: none;
-    -webkit-appearance: none;
-  }
-  select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6a82' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 34px;
-  }
-  input:focus, select:focus {
-    border-color: var(--primary-light);
-    box-shadow: 0 0 0 3px rgba(26,107,181,0.12);
-  }
-  input.error, select.error {
-    border-color: var(--error);
-    box-shadow: 0 0 0 3px rgba(192,57,43,0.10);
+    font-size: 12px;
+    margin-bottom: 2px;
   }
 
-  /* ── CONSENT ── */
-  .consent-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin: 18px 0 22px;
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.5;
-  }
-  .consent-row input[type="checkbox"] {
-    width: 16px; height: 16px;
-    margin-top: 2px;
-    flex-shrink: 0;
-    accent-color: var(--primary);
-    cursor: pointer;
+  .risk-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.4;
   }
 
-  /* ── SUBMIT BUTTON ── */
-  .btn-submit {
-    width: 100%;
-    height: 48px;
-    background: var(--accent);
-    color: #fff;
-    font-size: 15px;
-    font-weight: 700;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-    display: flex;
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 2px;
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .badge-critical { background: rgba(224,53,53,0.2); color: #ff7a7a; border: 1px solid rgba(224,53,53,0.35); }
+  .badge-high { background: rgba(224,122,42,0.2); color: #ffad6e; border: 1px solid rgba(224,122,42,0.35); }
+  .badge-medium { background: rgba(197,177,0,0.15); color: #e6d040; border: 1px solid rgba(197,177,0,0.3); }
+  .badge-low { background: rgba(46,158,94,0.15); color: #5de096; border: 1px solid rgba(46,158,94,0.3); }
+  .badge-very-low { background: rgba(59,122,191,0.15); color: #7ab5f0; border: 1px solid rgba(59,122,191,0.3); }
+
+  .score-box {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    letter-spacing: 0.01em;
-  }
-  .btn-submit:hover:not(:disabled) { background: var(--accent-light); }
-  .btn-submit:active:not(:disabled) { transform: scale(0.98); }
-  .btn-submit:disabled { opacity: 0.65; cursor: not-allowed; }
-
-  .spinner {
-    width: 18px; height: 18px;
-    border: 2.5px solid rgba(255,255,255,0.35);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    display: none;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── ALERTS ── */
-  .alert {
-    display: none;
-    padding: 14px 16px;
-    border-radius: 8px;
-    font-size: 14px;
-    line-height: 1.55;
-    margin-top: 18px;
-  }
-  .alert.success {
-    background: var(--success-bg);
-    border: 1px solid #a3d9be;
-    color: var(--success);
-  }
-  .alert.error-alert {
-    background: var(--error-bg);
-    border: 1px solid #f0b8b0;
-    color: var(--error);
-  }
-  .alert-icon { font-size: 18px; margin-right: 4px; vertical-align: -3px; }
-  .redirect-link {
-    display: inline-block;
-    margin-top: 12px;
-    color: var(--primary);
-    font-weight: 600;
-    text-decoration: none;
-    font-size: 14px;
-  }
-  .redirect-link:hover { text-decoration: underline; }
-
-  /* ── INFO BOX ── */
-  .info-box {
-    background: #eef4fb;
-    border: 1px solid #c2d9f0;
-    border-radius: 8px;
-    padding: 14px 16px;
-    font-size: 13px;
-    color: #2c5282;
-    line-height: 1.55;
-    margin-top: 20px;
-  }
-  .info-box strong { font-weight: 600; }
-
-  /* ── DIVIDER ── */
-  .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 26px 0;
-  }
-
-  /* ── WHAT YOU GET ── */
-  .features-section {
-    margin-top: 30px;
-  }
-  .features-section h3 {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    margin-bottom: 14px;
-  }
-  .feature-list { list-style: none; }
-  .feature-list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 14px;
-    color: var(--text);
-    margin-bottom: 10px;
-    line-height: 1.45;
-  }
-  .check {
-    width: 20px; height: 20px;
-    background: var(--success-bg);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-  .check svg { width: 11px; height: 11px; }
-
-  /* ── FOOTER ── */
-  footer {
-    background: #fff;
-    border-top: 1px solid var(--border);
-    padding: 18px 2rem;
-    text-align: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 3px;
+    font-family: var(--mono);
     font-size: 12px;
-    color: var(--muted);
+    font-weight: 700;
   }
-  footer a { color: var(--primary); text-decoration: none; }
-  footer a:hover { text-decoration: underline; }
+
+  .score-critical { background: rgba(224,53,53,0.25); color: #ff7a7a; }
+  .score-high { background: rgba(224,122,42,0.25); color: #ffad6e; }
+  .score-medium { background: rgba(197,177,0,0.2); color: #e6d040; }
+  .score-low { background: rgba(46,158,94,0.2); color: #5de096; }
+  .score-very-low { background: rgba(59,122,191,0.2); color: #7ab5f0; }
+
+  .status-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .status-open { background: rgba(224,53,53,0.15); color: #ff8585; }
+  .status-progress { background: rgba(240,165,0,0.12); color: #ffcc55; }
+  .status-review { background: rgba(59,122,191,0.15); color: #7ab5f0; }
+  .status-closed { background: rgba(46,158,94,0.15); color: #5de096; }
+
+  .owner-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    background: var(--surface2);
+    padding: 2px 6px;
+    border-radius: 2px;
+    border: 1px solid var(--border2);
+    white-space: nowrap;
+  }
+
+  .date-cell {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .control-item {
+    font-size: 10px;
+    color: var(--text-muted);
+    padding-left: 10px;
+    position: relative;
+  }
+
+  .control-item::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  /* SUMMARY STATS */
+  .stats-bar {
+    display: flex;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .stat-cell {
+    flex: 1;
+    background: var(--surface2);
+    padding: 12px 16px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+
+  .stat-lbl {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: var(--mono);
+  }
+
+  /* FOOTER */
+  .footer {
+    padding: 14px 32px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-note {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+  }
+
+  .version-tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--accent);
+    background: rgba(240,165,0,0.08);
+    border: 1px solid rgba(240,165,0,0.2);
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .header { flex-direction: column; }
+    .header-meta { grid-template-columns: 1fr 1fr; }
+    .matrix-wrap { flex-direction: column; }
+    .section { padding: 16px; }
+    .header { padding: 16px; }
+  }
 </style>
 </head>
 <body>
 
-<header>
-  <a href="#" class="logo">
-    <div class="logo-icon">r2</div>
-    <div>
-      <div class="logo-text">risk2safe</div>
-      <div class="logo-sub">PSM Audit Studio</div>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="org-label">Enterprise Risk Management</div>
+    <div class="doc-title">RISK REGISTER</div>
+    <div class="doc-subtitle">Consolidated Risk Inventory · Likelihood × Consequence Assessment · Treatment Tracking</div>
+  </div>
+  <div class="header-meta">
+    <div class="meta-cell">
+      <div class="meta-label">Doc ID</div>
+      <div class="meta-value">ERM-RR-001</div>
     </div>
-  </a>
-  <span class="header-badge">Light Version · Free Access</span>
-</header>
-
-<div class="hero">
-  <div class="hero-badge">🔒 Gated Access — Free Tool</div>
-  <h1>Request Access to<br><span>PSM Audit Studio</span> — Light Version</h1>
-  <p>A browser-based Process Safety Management audit platform covering all 20 EI PSM Framework elements. No installation. No cost. Runs entirely in your browser.</p>
-  <div class="feature-pills">
-    <div class="pill"><span class="dot"></span>89 Audit Questions</div>
-    <div class="pill"><span class="dot"></span>All 20 PSM Elements</div>
-    <div class="pill"><span class="dot"></span>CCPS-Aligned</div>
-    <div class="pill"><span class="dot"></span>AI-Assisted Scoring</div>
-    <div class="pill"><span class="dot"></span>Professional Report</div>
+    <div class="meta-cell">
+      <div class="meta-label">Version</div>
+      <div class="meta-value">Rev 3.1</div>
+    </div>
+    <div class="meta-cell">
+      <div class="meta-label">Review Date</div>
+      <div class="meta-value">Q2 2026</div>
+    </div>
+    <div class="meta-cell">
+      <div class="meta-label">Owner</div>
+      <div class="meta-value">Risk &amp; Assurance</div>
+    </div>
   </div>
 </div>
 
-<main>
-  <div class="form-wrapper">
-    <div class="card">
-      <div class="card-title">Request Free Access</div>
-      <div class="card-sub">Complete the form below. You will be redirected to the tool immediately after submission.</div>
-
-      <form id="accessForm" novalidate>
-
-        <div class="form-row">
-          <div class="field">
-            <label for="fname">Full Name <span class="req">*</span></label>
-            <input type="text" id="fname" name="user_name" placeholder="Your full name" required>
-          </div>
-          <div class="field">
-            <label for="email">Work Email <span class="req">*</span></label>
-            <input type="email" id="email" name="user_email" placeholder="you@company.com" required>
-          </div>
+<!-- RISK MATRIX SECTION -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-tag">5×5 Matrix</div>
+    <div class="section-title">Risk Likelihood × Consequence</div>
+  </div>
+  <div class="matrix-wrap">
+    <div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="y-axis-wrap" style="height:230px;">
+          <div class="y-axis-label">Likelihood →</div>
         </div>
-
-        <div class="form-row">
-          <div class="field">
-            <label for="company">Company / Organisation <span class="req">*</span></label>
-            <input type="text" id="company" name="user_company" placeholder="Company name" required>
-          </div>
-          <div class="field">
-            <label for="jobtitle">Job Title / Role <span class="req">*</span></label>
-            <input type="text" id="jobtitle" name="user_jobtitle" placeholder="e.g. HSE Manager" required>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="field">
-            <label for="country">Country <span class="req">*</span></label>
-            <select id="country" name="user_country" required>
-              <option value="">Select country…</option>
-              <option>Australia</option>
-              <option>Bahrain</option>
-              <option>Canada</option>
-              <option>Egypt</option>
-              <option>India</option>
-              <option>Indonesia</option>
-              <option>Iraq</option>
-              <option>Kuwait</option>
-              <option>Malaysia</option>
-              <option>Netherlands</option>
-              <option>Nigeria</option>
-              <option>Norway</option>
-              <option>Oman</option>
-              <option>Qatar</option>
-              <option>Saudi Arabia</option>
-              <option>Singapore</option>
-              <option>South Africa</option>
-              <option>UAE</option>
-              <option>United Kingdom</option>
-              <option>United States</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="industry">Industry <span class="req">*</span></label>
-            <select id="industry" name="user_industry" required>
-              <option value="">Select industry…</option>
-              <option>Oil & Gas — Upstream</option>
-              <option>Oil & Gas — Midstream</option>
-              <option>Oil & Gas — Downstream / Refining</option>
-              <option>Petrochemicals</option>
-              <option>Chemicals</option>
-              <option>Power Generation</option>
-              <option>Mining & Metals</option>
-              <option>Pharmaceuticals</option>
-              <option>Consulting / Advisory</option>
-              <option>Regulatory / Government</option>
-              <option>Academia / Research</option>
-              <option>Other</option>
-            </select>
+        <div>
+          <div class="matrix-title">CONSEQUENCE →</div>
+          <div class="matrix-grid" id="matrixGrid">
+            <!-- Row 5: Certain -->
+            <div class="matrix-cell cell-axis-label" style="font-size:8px; writing-mode:vertical-rl; transform:rotate(180deg); text-align:center;">Certain</div>
+            <div class="matrix-cell c-high" title="5×1=5">5</div>
+            <div class="matrix-cell c-high" title="5×2=10">10</div>
+            <div class="matrix-cell c-critical" title="5×3=15">15</div>
+            <div class="matrix-cell c-critical" title="5×4=20">20</div>
+            <div class="matrix-cell c-critical" title="5×5=25">25</div>
+            <!-- Row 4: Likely -->
+            <div class="matrix-cell cell-axis-label" style="font-size:8px; writing-mode:vertical-rl; transform:rotate(180deg); text-align:center;">Likely</div>
+            <div class="matrix-cell c-medium" title="4×1=4">4</div>
+            <div class="matrix-cell c-high" title="4×2=8">8</div>
+            <div class="matrix-cell c-high" title="4×3=12">12</div>
+            <div class="matrix-cell c-critical" title="4×4=16">16</div>
+            <div class="matrix-cell c-critical" title="4×5=20">20</div>
+            <!-- Row 3: Possible -->
+            <div class="matrix-cell cell-axis-label" style="font-size:8px; writing-mode:vertical-rl; transform:rotate(180deg); text-align:center;">Possible</div>
+            <div class="matrix-cell c-low" title="3×1=3">3</div>
+            <div class="matrix-cell c-medium" title="3×2=6">6</div>
+            <div class="matrix-cell c-high" title="3×3=9">9</div>
+            <div class="matrix-cell c-high" title="3×4=12">12</div>
+            <div class="matrix-cell c-critical" title="3×5=15">15</div>
+            <!-- Row 2: Unlikely -->
+            <div class="matrix-cell cell-axis-label" style="font-size:8px; writing-mode:vertical-rl; transform:rotate(180deg); text-align:center;">Unlikely</div>
+            <div class="matrix-cell c-very-low" title="2×1=2">2</div>
+            <div class="matrix-cell c-low" title="2×2=4">4</div>
+            <div class="matrix-cell c-medium" title="2×3=6">6</div>
+            <div class="matrix-cell c-high" title="2×4=8">8</div>
+            <div class="matrix-cell c-high" title="2×5=10">10</div>
+            <!-- Row 1: Rare -->
+            <div class="matrix-cell cell-axis-label" style="font-size:8px; writing-mode:vertical-rl; transform:rotate(180deg); text-align:center;">Rare</div>
+            <div class="matrix-cell c-very-low" title="1×1=1">1</div>
+            <div class="matrix-cell c-very-low" title="1×2=2">2</div>
+            <div class="matrix-cell c-low" title="1×3=3">3</div>
+            <div class="matrix-cell c-medium" title="1×4=4">4</div>
+            <div class="matrix-cell c-medium" title="1×5=5">5</div>
+            <!-- X-axis labels -->
+            <div class="matrix-cell cell-empty"></div>
+            <div class="matrix-cell cell-axis-label" style="font-size:8px;">Minor</div>
+            <div class="matrix-cell cell-axis-label" style="font-size:8px;">Moderate</div>
+            <div class="matrix-cell cell-axis-label" style="font-size:8px;">Major</div>
+            <div class="matrix-cell cell-axis-label" style="font-size:8px;">Severe</div>
+            <div class="matrix-cell cell-axis-label" style="font-size:8px;">Catastrophic</div>
           </div>
         </div>
-
-        <div class="field">
-          <label for="purpose">Purpose of Use <span class="req">*</span></label>
-          <select id="purpose" name="user_purpose" required>
-            <option value="">Select purpose…</option>
-            <option>Compliance Audit (OSHA PSM / EPA RMP / local regulation)</option>
-            <option>Internal Gap Assessment</option>
-            <option>Due Diligence / Acquisition Audit</option>
-            <option>Training & Learning</option>
-            <option>Process Safety Research</option>
-            <option>Benchmarking / Best Practice Review</option>
-            <option>Other</option>
-          </select>
-        </div>
-
-        <div class="consent-row">
-          <input type="checkbox" id="consent" required>
-          <label for="consent" style="font-weight:400; margin:0; cursor:pointer;">
-            I agree that my contact details may be used to share updates about risk2safe PSM Audit Studio. No data is sold or shared with third parties.
-          </label>
-        </div>
-
-        <button type="submit" class="btn-submit" id="submitBtn">
-          <span id="btnText">Request Access & Open Tool</span>
-          <svg id="btnArrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-          <div class="spinner" id="spinner"></div>
-        </button>
-
-        <div class="alert success" id="successMsg">
-          <span class="alert-icon">✅</span>
-          <strong>Access granted!</strong> Your request has been received. You are being redirected to the PSM Audit Studio now…<br>
-          <a href="https://kannanpnp.github.io/risk2safe-PSM-Audit-Studio/" class="redirect-link" id="redirectLink">
-            Click here if you are not redirected automatically →
-          </a>
-        </div>
-
-        <div class="alert error-alert" id="errorMsg">
-          <span class="alert-icon">⚠️</span>
-          <strong>Submission failed.</strong> Please check your connection and try again. If the problem persists, contact <a href="mailto:kannanpnp@gmail.com" style="color:var(--error)">kannanpnp@gmail.com</a>.
-        </div>
-
-      </form>
-
-      <hr class="divider">
-
-      <div class="info-box">
-        <strong>🔐 Privacy:</strong> Your data is used only to understand who is using this tool. It is never shared with third parties or used for advertising. The audit data you enter in the tool stays entirely in your browser — it is never uploaded anywhere.
       </div>
     </div>
 
-    <div class="features-section">
-      <div class="card" style="margin-top:20px;">
-        <h3 style="font-size:14px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:14px;">What you get — Light Version</h3>
-        <ul class="feature-list">
-          <li>
-            <div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#1a7c4f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <span><strong>89 structured audit questions</strong> across all 20 EI PSM Framework elements</span>
-          </li>
-          <li>
-            <div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#1a7c4f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <span><strong>CCPS-aligned dual-layer scoring</strong> — Compliance (Met / Partial / Not Met) + Maturity (1–4)</span>
-          </li>
-          <li>
-            <div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#1a7c4f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <span><strong>AI-assisted scoring</strong> — connect your OpenAI or Anthropic key to get score suggestions and note rewrites</span>
-          </li>
-          <li>
-            <div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#1a7c4f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <span><strong>Professional audit report</strong> — AI-generated Executive Summary, Findings, Recommendations</span>
-          </li>
-          <li>
-            <div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#1a7c4f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <span><strong>100% offline & private</strong> — runs in your browser, no server, no sign-in required inside the tool</span>
-          </li>
-          <li>
-            <div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#1a7c4f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <span><strong>Pre-audit setup wizard</strong> — scope, team composition, sampling plan (CCPS §2.1)</span>
-          </li>
-        </ul>
+    <!-- LEGEND -->
+    <div class="legend">
+      <div class="legend-title">Risk Rating</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:rgba(224,53,53,0.8);"></div><div><strong style="color:#ff7a7a;">CRITICAL</strong> — Score 15–25<br><span style="font-size:10px;">Immediate escalation, Board visibility</span></div></div>
+      <div class="legend-item"><div class="legend-swatch" style="background:rgba(224,122,42,0.75);"></div><div><strong style="color:#ffad6e;">HIGH</strong> — Score 8–14<br><span style="font-size:10px;">Senior management action within 30 days</span></div></div>
+      <div class="legend-item"><div class="legend-swatch" style="background:rgba(197,177,0,0.7);"></div><div><strong style="color:#e6d040;">MEDIUM</strong> — Score 4–7<br><span style="font-size:10px;">Management action within 90 days</span></div></div>
+      <div class="legend-item"><div class="legend-swatch" style="background:rgba(46,158,94,0.65);"></div><div><strong style="color:#5de096;">LOW</strong> — Score 2–3<br><span style="font-size:10px;">Monitor; routine controls</span></div></div>
+      <div class="legend-item"><div class="legend-swatch" style="background:rgba(59,122,191,0.6);"></div><div><strong style="color:#7ab5f0;">VERY LOW</strong> — Score 1<br><span style="font-size:10px;">Accept; periodic review</span></div></div>
+
+      <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border);">
+        <div class="legend-title" style="margin-bottom:6px;">Treatment Strategy</div>
+        <div style="font-size:10px; color:var(--text-muted); line-height:1.8;">
+          <span style="color:var(--accent);">T</span> — Tolerate &nbsp;
+          <span style="color:var(--accent);">R</span> — Treat<br>
+          <span style="color:var(--accent);">X</span> — Transfer &nbsp;
+          <span style="color:var(--accent);">E</span> — Terminate
+        </div>
       </div>
     </div>
   </div>
-</main>
+</div>
 
-<footer>
-  <p>Built by <strong>Kannan</strong> · <a href="https://kannanpnp.github.io/risk2safe-PSM-Audit-Studio/">risk2safe PSM Audit Studio</a> · Based on EI High Level Framework &amp; CCPS Guidelines</p>
-  <p style="margin-top:6px;">© 2026 risk2safe · <a href="mailto:kannanpnp@gmail.com">kannanpnp@gmail.com</a></p>
-</footer>
+<!-- RISK REGISTER TABLE -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-tag">Risk Inventory</div>
+    <div class="section-title">Risk Register — Active &amp; Monitored Risks</div>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="stats-bar">
+    <div class="stat-cell"><div class="stat-num" style="color:#ff7a7a;" id="cntCritical">3</div><div class="stat-lbl">Critical</div></div>
+    <div class="stat-cell"><div class="stat-num" style="color:#ffad6e;" id="cntHigh">4</div><div class="stat-lbl">High</div></div>
+    <div class="stat-cell"><div class="stat-num" style="color:#e6d040;" id="cntMedium">3</div><div class="stat-lbl">Medium</div></div>
+    <div class="stat-cell"><div class="stat-num" style="color:#5de096;" id="cntLow">2</div><div class="stat-lbl">Low</div></div>
+    <div class="stat-cell"><div class="stat-num" style="color:var(--text-dim);" id="cntTotal">12</div><div class="stat-lbl">Total</div></div>
+    <div class="stat-cell"><div class="stat-num" style="color:#7ab5f0;" id="cntOpen">7</div><div class="stat-lbl">Open</div></div>
+    <div class="stat-cell"><div class="stat-num" style="color:#ffcc55;" id="cntProgress">4</div><div class="stat-lbl">In Progress</div></div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters" style="margin-bottom:16px;">
+    <span class="filter-label">Filter:</span>
+    <button class="filter-btn active" onclick="filterTable('all', this)">All</button>
+    <button class="filter-btn" onclick="filterTable('critical', this)">Critical</button>
+    <button class="filter-btn" onclick="filterTable('high', this)">High</button>
+    <button class="filter-btn" onclick="filterTable('medium', this)">Medium</button>
+    <button class="filter-btn" onclick="filterTable('low', this)">Low</button>
+    <button class="filter-btn" onclick="filterTable('open', this)">Open</button>
+    <button class="filter-btn" onclick="filterTable('progress', this)">In Progress</button>
+    <button class="filter-btn" onclick="filterTable('closed', this)">Closed</button>
+  </div>
+
+  <div class="table-wrap">
+    <table id="riskTable">
+      <thead>
+        <tr>
+          <th>Risk ID</th>
+          <th style="min-width:200px;">Risk Title / Description</th>
+          <th>Category</th>
+          <th>Likelihood</th>
+          <th>Consequence</th>
+          <th>Inherent Score</th>
+          <th>Rating</th>
+          <th>Current Controls</th>
+          <th>Residual Score</th>
+          <th>Treatment</th>
+          <th>Risk Owner</th>
+          <th>Status</th>
+          <th>Review Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- CRITICAL RISKS -->
+        <tr data-rating="critical" data-status="open">
+          <td>ERM-001</td>
+          <td><div class="risk-title">Major Process Safety Incident</div><div class="risk-desc">Uncontrolled hydrocarbon release leading to fire, explosion, or toxic event at critical facility</div></td>
+          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">HSE / Process</span></td>
+          <td style="text-align:center;">3</td>
+          <td style="text-align:center;">5</td>
+          <td><div class="score-box score-critical">15</div></td>
+          <td><span class="badge badge-critical">Critical</span></td>
+          <td><div class="controls"><div class="control-item">BPCS &amp; SIS layer protection</div><div class="control-item">PTW system enforced</div><div class="control-item">HAZOP completed 2024</div></div></td>
+          <td><div class="score-box score-high">9</div></td>
+          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R</td>
+          <td><span class="owner-tag">VP Operations</span></td>
+          <td><span class="status-pill status-progress">In Progress</span></td>
+          <td class="date-cell">Jun 2026</td>
+        </tr>
+        <tr data-rating="critical" data-status="open">
+          <td>ERM-002</td>
+          <td><div class="risk-title">Cybersecurity Breach — OT/IT Systems</div><div class="risk-desc">Ransomware or APT attack compromising operational technology and causing production shutdown</div></td>
+          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Technology</span></td>
+          <td style="text-align:center;">4</td>
+          <td style="text-align:center;">4</td>
+          <td><div class="score-box score-critical">16</div></td>
+          <td><span class="badge badge-critical">Critical</span></td>
+          <td><div class="controls"><div class="control-item">OT/IT network segmentation</div><div class="control-item">24/7 SOC monitoring</div><div class="control-item">Incident response plan (IRP)</div></div></td>
+          <td><div class="score-box score-high">8</div></td>
+          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R/X</td>
+          <td><span class="owner-tag">CISO</span></td>
+          <td><span class="status-pill status-open">Open</span></td>
+          <td class="date-cell">May 2026</td>
+        </tr>
+        <tr data-rating="critical" data-status="open">
+          <td>ERM-003</td>
+          <td><div class="risk-title">Regulatory Non-Compliance — Environmental</div><div class="risk-desc">Failure to meet updated GHG emissions regulations resulting in permit revocation or significant penalty</div></td>
+          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Compliance</span></td>
+          <td style="text-align:center;">3</td>
+          <td style="text-align:center;">5</td>
+          <td><div class="score-box score-critical">15</div></td>
+          <td><span class="badge badge-critical">Critical</span></td>
+          <td><div class="controls"><div class="control-item">Environmental mgmt system (ISO 14001)</div><div class="control-item">Monthly LDAR monitoring</div></div></td>
+          <td><div class="score-box score-medium">6</div></td>
+          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R</td>
+          <td><span class="owner-tag">Chief HSE Officer</span></td>
+          <td><span class="status-pill status-progress">In Progress</span></td>
+          <td class="date-cell">Apr 2026</td>
+        </tr>
+        <!-- HIGH RISKS -->
+        <tr data-rating="high" data-status="open">
+          <td>ERM-004</td>
+          <td><div class="risk-title">Supply Chain Disruption</div><div class="risk-desc">Critical spare parts or chemical supply failure causing extended unplanned production outage</div></td>
+          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Operational</span></td>
+          <td style="text-align:center;">4</td>
+          <td style="text-align:center;">3</td>
+          <td><div class="score-box score-high">12</div></td>
+          <td><span class="badge badge-high">High</span></td>
+          <td><div class="controls"><div class="control-item">Critical spares inventory buffer</div><div class="control-item">Dual-source supplier qualification</div></div></td>
+          <td><div class="score-box score-medium">6</div></td>
+          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R</td>
+          <td><span class="owner-tag">Supply Chain Dir.</span></td>
+          <td><span class="status-pill status-open">Open</span></td>
+          <td class="date-cell">Jul 2026</td>
+        </tr>
+        <tr data-rating="high" data-status="progress">
+          <td>ERM-005</td>
+          <td><div class="risk-title">Key Talent Attrition — Technical Workforce</div><div class="risk-desc">Loss of critical engineering and operations expertise reducing capability and increasing risk exposure</div></td>
+          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Human Capital</span></td>
+          <td style="text-align:center;">4</td>
+          <td style="text-align:center;">3</td>
+          <td><div class="score-box score-high">12</div></td>
+          <td><span class="badge badge-high">High</span></td>
+          <td><div class="controls"><div class="control-item">Succession planning programme</div><div class="control-item">Competency framework (CMS)</div></div></td>
+          <td><div class="score-box score-medium">6</div></td>
+          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R</td>
+          <td><span class="owner-tag">CHRO</span></td>
+          <td><span class="status-pill status-progress">In Progress</span></td>
+          <td class="date-cell">Q3 2026</td>
+        </tr>
+        <tr data-rating="high" data-status="open">
+          <td>ERM-006</td>
+          <td><div class="risk-title">Third-Party / Contractor HSE Incident</div><div class="risk-desc">Serious injury or fatality involving contracted workforce due to inadequate oversight or competency</div></td>
+          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">HSE / Contractor</span></td>
+          <td style="text-align:center;">3</td>
+          <td style="text-align:center;">4</td>
+          <td><div class="score-box score-high">12</div></td>
+          <td><span class="badge badge-high">High</span></td>
+          <td><div class="controls"><div class="control-item">Contractor HSE pre-qualification</div><div class="control-item">Site supervision &amp; walkthrough audits</div><div class="control-item">Consequence management procedure</div></div></td>
+          <td><div class="score-box score-medium">6</div></td>
+          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R</td>
+          <td><span class="owner-tag">VP HSE</span></td>
+          <td><span class="status-pill status-open">Open</span></td>
+          <td class="date-cell">Jun 2026</td>
+        </tr>
+        <tr data-rating="high" data-status="progress">
+          <td>ERM-007</td>
+          <td><div class="risk-title">Asset Integrity Failure — Aging Infrastructure</div><div class="risk-desc">Structural degradation or corrosion of critical assets beyond design life leading to failure</div></td>
+          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Asset Integrity</span></td>
+          <td style="text-align:center;">2</td>
+          <td style="text-align:center;">5</td>
+          <td><div class="score-box score-high">10</div></td>
+          <td><span class="badge badge-high">High</span></td>
+          <td><div class="controls"><div class="control-item">Risk-based inspection (RBI) programme</div><div class="control-item">Corrosion monitoring system</div></div></td>
+          <td><div class="score-box score-medium">5</div></td>
+          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R</td>
+          <td><span class="owner-tag">Chief Engineer</span></td>
+          <td><span class="status-pill status-progress">In Progress</span></td>
+          <td class="date-cell">Sep 2026</td>
+        </tr>
+        <!-- MEDIUM RISKS -->
+        <tr data-rating="medium" data-status="progress">
+          <td>ERM-008</td>
+          <td><div class="risk-title">Currency &amp; Commodity Price Volatility</div><div class="risk-desc">Adverse movement in oil/gas prices or FX rates materially impacting revenue and project economics</div></td>
+          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Financial</span></td>
+          <td style="text-align:center;">3</td>
+          <td style="text-align:center;">2</td>
+          <td><div class="score-box score-medium">6</div></td>
+          <td><span class="badge badge-medium">Medium</span></td>
+          <td><div class="controls"><div class="control-item">Hedging programme in place</div><div class="control-item">Scenario-based budget model</div></div></td>
+          <td><div class="score-box score-low">3</div></td>
+          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">X</td>
+          <td><span class="owner-tag">CFO</span></td>
+          <td><span class="status-pill status-progress">In Progress</span></td>
+          <td class="date-cell">Q3 2026</td>
+        </tr>
+        <tr data-rating="medium" data-status="open">
+          <td>ERM-009</td>
+          <td><div class="risk-title">Emergency Response Capability Gap</div><div class="risk-desc">Inadequately resourced IMT/ERT leading to delayed or ineffective response to a Tier 2/3 emergency</div></td>
+          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Emergency Mgmt</span></td>
+          <td style="text-align:center;">2</td>
+          <td style="text-align:center;">3</td>
+          <td><div class="score-box score-medium">6</div></td>
+          <td><span class="badge badge-medium">Medium</span></td>
+          <td><div class="controls"><div class="control-item">MERP &amp; LERP maintained</div><div class="control-item">Annual full-scale exercise</div></div></td>
+          <td><div class="score-box score-low">3</div></td>
+          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R</td>
+          <td><span class="owner-tag">Emergency Resp. Lead</span></td>
+          <td><span class="status-pill status-open">Open</span></td>
+          <td class="date-cell">Aug 2026</td>
+        </tr>
+        <tr data-rating="medium" data-status="review">
+          <td>ERM-010</td>
+          <td><div class="risk-title">Project Cost &amp; Schedule Overrun</div><div class="risk-desc">Major capital project delay or budget overrun impacting organizational financial targets</div></td>
+          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Project</span></td>
+          <td style="text-align:center;">3</td>
+          <td style="text-align:center;">2</td>
+          <td><div class="score-box score-medium">6</div></td>
+          <td><span class="badge badge-medium">Medium</span></td>
+          <td><div class="controls"><div class="control-item">Stage-gate project governance</div><div class="control-item">Earned Value Mgmt (EVM)</div></div></td>
+          <td><div class="score-box score-low">3</div></td>
+          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R</td>
+          <td><span class="owner-tag">PMO Director</span></td>
+          <td><span class="status-pill status-review">Under Review</span></td>
+          <td class="date-cell">Jul 2026</td>
+        </tr>
+        <!-- LOW RISKS -->
+        <tr data-rating="low" data-status="closed">
+          <td>ERM-011</td>
+          <td><div class="risk-title">Road Transport Incident — Fleet</div><div class="risk-desc">Vehicle collision or road traffic incident involving company fleet causing injury or reputational harm</div></td>
+          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Road Safety</span></td>
+          <td style="text-align:center;">2</td>
+          <td style="text-align:center;">2</td>
+          <td><div class="score-box score-low">4</div></td>
+          <td><span class="badge badge-low">Low</span></td>
+          <td><div class="controls"><div class="control-item">IVMS / telematics installed</div><div class="control-item">Defensive driving training</div><div class="control-item">Journey management plan</div></div></td>
+          <td><div class="score-box score-very-low">2</div></td>
+          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">T</td>
+          <td><span class="owner-tag">Road Safety Mgr.</span></td>
+          <td><span class="status-pill status-closed">Closed</span></td>
+          <td class="date-cell">Dec 2026</td>
+        </tr>
+        <tr data-rating="low" data-status="closed">
+          <td>ERM-012</td>
+          <td><div class="risk-title">Reputational Risk — Social Media</div><div class="risk-desc">Negative viral social media coverage following operational incident or leadership conduct</div></td>
+          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Reputational</span></td>
+          <td style="text-align:center;">2</td>
+          <td style="text-align:center;">2</td>
+          <td><div class="score-box score-low">4</div></td>
+          <td><span class="badge badge-low">Low</span></td>
+          <td><div class="controls"><div class="control-item">Media policy &amp; spokesperson training</div><div class="control-item">Crisis comms plan activated</div></div></td>
+          <td><div class="score-box score-very-low">2</div></td>
+          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">T</td>
+          <td><span class="owner-tag">Comms Director</span></td>
+          <td><span class="status-pill status-closed">Closed</span></td>
+          <td class="date-cell">Dec 2026</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-note">CONFIDENTIAL — FOR INTERNAL USE ONLY · Enterprise Risk Management · Review Cycle: Quarterly · Next Full Review: Q3 2026</div>
+  <div class="version-tag">ERM-RR-001 · Rev 3.1 · Apr 2026</div>
+</div>
 
 <script>
-  // ── EmailJS Configuration ──────────────────────────────────────────────────
-  // STEP 1: Replace these three values with your EmailJS credentials.
-  // See the setup guide included with this file.
-  const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // e.g. 'abc123XYZ'
-  const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // e.g. 'service_xxxxxxx'
-  const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // e.g. 'template_xxxxxxx'
-  // ──────────────────────────────────────────────────────────────────────────
-
-  const APP_URL = 'https://kannanpnp.github.io/risk2safe-PSM-Audit-Studio/';
-  const REDIRECT_DELAY_MS = 4000;
-
-  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-
-  const form      = document.getElementById('accessForm');
-  const submitBtn = document.getElementById('submitBtn');
-  const btnText   = document.getElementById('btnText');
-  const btnArrow  = document.getElementById('btnArrow');
-  const spinner   = document.getElementById('spinner');
-  const successMsg = document.getElementById('successMsg');
-  const errorMsg   = document.getElementById('errorMsg');
-
-  function setLoading(on) {
-    submitBtn.disabled = on;
-    btnText.textContent = on ? 'Submitting…' : 'Request Access & Open Tool';
-    btnArrow.style.display = on ? 'none' : 'inline';
-    spinner.style.display  = on ? 'inline-block' : 'none';
-  }
-
-  function clearErrors() {
-    form.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-  }
-
-  function validate() {
-    let valid = true;
-    clearErrors();
-
-    ['fname','email','company','jobtitle','country','industry','purpose'].forEach(id => {
-      const el = document.getElementById(id);
-      if (!el.value.trim()) { el.classList.add('error'); valid = false; }
+  function filterTable(type, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const rows = document.querySelectorAll('#riskTable tbody tr');
+    rows.forEach(row => {
+      if (type === 'all') {
+        row.classList.remove('hidden');
+      } else if (['critical','high','medium','low'].includes(type)) {
+        row.classList.toggle('hidden', row.dataset.rating !== type);
+      } else if (type === 'open') {
+        row.classList.toggle('hidden', row.dataset.status !== 'open');
+      } else if (type === 'progress') {
+        row.classList.toggle('hidden', row.dataset.status !== 'progress');
+      } else if (type === 'closed') {
+        row.classList.toggle('hidden', row.dataset.status !== 'closed' && row.dataset.status !== 'review');
+      }
     });
-
-    const emailEl = document.getElementById('email');
-    if (emailEl.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)) {
-      emailEl.classList.add('error'); valid = false;
-    }
-
-    const consent = document.getElementById('consent');
-    if (!consent.checked) {
-      consent.style.outline = '2px solid var(--error)';
-      valid = false;
-    } else {
-      consent.style.outline = '';
-    }
-
-    return valid;
   }
-
-  form.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    errorMsg.style.display = 'none';
-    successMsg.style.display = 'none';
-
-    if (!validate()) return;
-
-    setLoading(true);
-
-    const params = {
-      user_name:     document.getElementById('fname').value.trim(),
-      user_email:    document.getElementById('email').value.trim(),
-      user_company:  document.getElementById('company').value.trim(),
-      user_jobtitle: document.getElementById('jobtitle').value.trim(),
-      user_country:  document.getElementById('country').value,
-      user_industry: document.getElementById('industry').value,
-      user_purpose:  document.getElementById('purpose').value,
-      submission_date: new Date().toLocaleString('en-GB', {
-        day:'2-digit', month:'short', year:'numeric',
-        hour:'2-digit', minute:'2-digit', timeZoneName:'short'
-      })
-    };
-
-    try {
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
-      setLoading(false);
-      form.querySelectorAll('input,select,button').forEach(el => el.disabled = true);
-      successMsg.style.display = 'block';
-      setTimeout(() => { window.location.href = APP_URL; }, REDIRECT_DELAY_MS);
-    } catch (err) {
-      setLoading(false);
-      console.error('EmailJS error:', err);
-      errorMsg.style.display = 'block';
-    }
-  });
-
-  // Remove error highlight on input
-  form.querySelectorAll('input, select').forEach(el => {
-    el.addEventListener('input', () => el.classList.remove('error'));
-    el.addEventListener('change', () => el.classList.remove('error'));
-  });
 </script>
 </body>
 </html>
