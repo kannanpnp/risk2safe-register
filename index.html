@@ -3,966 +3,424 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ISO 31000:2018 — Enterprise Risk Register Builder</title>
-<meta name="description" content="Enterprise Risk Register Builder aligned to BS ISO 31000:2018 Risk Management Guidelines. Department-based risk identification, analysis, evaluation and treatment planning.">
+<title>ISO 31000:2018 — AI-Powered Enterprise Risk Register Builder</title>
+<meta name="description" content="AI-powered Enterprise Risk Register Builder aligned to BS ISO 31000:2018 Risk Management Guidelines. Uses OpenAI GPT-4o for intelligent risk identification and categorisation.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
-/* ═══════════════════════════════════════════════════
-   DESIGN TOKENS
-═══════════════════════════════════════════════════ */
-:root {
-  --bg:          #0e1117;
-  --surface-1:   #161b25;
-  --surface-2:   #1c2130;
-  --surface-3:   #222840;
-  --border:      #2a3148;
-  --border2:     #343d5c;
-  --text:        #e2e8f5;
-  --text-dim:    #8b96b2;
-  --text-muted:  #505878;
-  --accent:      #4f83f5;
-  --accent-bg:   rgba(79,131,245,0.10);
-  --accent-bdr:  rgba(79,131,245,0.30);
-  --success:     #2db87a;
-  --success-bg:  rgba(45,184,122,0.10);
-  --success-bdr: rgba(45,184,122,0.30);
-  --warning:     #f0a500;
-  --warning-bg:  rgba(240,165,0,0.10);
-  --warning-bdr: rgba(240,165,0,0.25);
-  --critical:    #e03535;
-  --high:        #e07a2a;
-  --medium:      #c9aa00;
-  --low:         #2db87a;
-  --vlow:        #4f83f5;
-  --mono: 'IBM Plex Mono', monospace;
-  --sans: 'Inter', sans-serif;
-  --radius: 6px;
-  --shadow: 0 2px 12px rgba(0,0,0,0.35);
+:root{
+  --bg:#0e1117;--s1:#161b25;--s2:#1c2130;--s3:#222840;
+  --bd:#2a3148;--bd2:#343d5c;--tx:#e2e8f5;--txd:#8b96b2;--txm:#505878;
+  --ac:#4f83f5;--ac-bg:rgba(79,131,245,.10);--ac-bd:rgba(79,131,245,.30);
+  --ok:#2db87a;--ok-bg:rgba(45,184,122,.10);--ok-bd:rgba(45,184,122,.30);
+  --wn:#f0a500;--wn-bg:rgba(240,165,0,.10);--wn-bd:rgba(240,165,0,.25);
+  --ai:#a855f7;--ai-bg:rgba(168,85,247,.10);--ai-bd:rgba(168,85,247,.28);
+  --r:6px;--mono:'IBM Plex Mono',monospace;--sans:'Inter',sans-serif;
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:13px;line-height:1.6;min-height:100vh}
+input,textarea,select,button{font-family:var(--sans);font-size:13px}
+input,textarea,select{background:var(--s1);color:var(--tx);border:1px solid var(--bd);border-radius:var(--r);padding:7px 10px;width:100%;outline:none;transition:border-color .15s}
+input:focus,textarea:focus,select:focus{border-color:var(--ac)}
+textarea{resize:vertical;min-height:60px}
+select option{background:var(--s2)}
 
-/* ═══════════════════════════════════════════════════
-   RESET & BASE
-═══════════════════════════════════════════════════ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:300;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal-box{background:var(--s2);border:1px solid var(--bd2);border-radius:12px;padding:28px;max-width:500px;width:92%;box-shadow:0 24px 64px rgba(0,0,0,.65)}
+.modal-title{font-size:15px;font-weight:600;color:var(--tx);margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.modal-sub{font-size:12px;color:var(--txm);margin-bottom:18px;line-height:1.6}
+.modal-note{font-size:11px;color:var(--txm);margin-top:12px;padding:10px 12px;background:var(--s3);border-radius:6px;line-height:1.5;display:flex;gap:6px;align-items:flex-start}
+.modal-actions{display:flex;gap:8px;margin-top:18px;justify-content:flex-end}
 
-html { scroll-behavior: smooth; }
+/* ── HEADER ── */
+.hdr{background:var(--s1);border-bottom:1px solid var(--bd);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:100;gap:12px}
+.hdr-brand{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.hdr-brand i{font-size:20px;color:var(--ac)}
+.hdr-brand span{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.badge{border-radius:4px;font-size:10px;font-weight:600;padding:2px 7px;font-family:var(--mono);letter-spacing:.05em}
+.badge-iso{background:var(--ac-bg);color:var(--ac);border:1px solid var(--ac-bd)}
+.badge-ai{background:var(--ai-bg);color:var(--ai);border:1px solid var(--ai-bd);display:inline-flex;align-items:center;gap:4px;cursor:pointer;transition:all .15s}
+.badge-ai:hover{background:rgba(168,85,247,.18)}
+.badge-ai.connected{background:var(--ok-bg);color:var(--ok);border-color:var(--ok-bd)}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.prog-lbl{font-family:var(--mono);font-size:10px;color:var(--txm);white-space:nowrap}
+.prog-track{width:110px;height:3px;background:var(--bd);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--ac);border-radius:2px;transition:width .4s}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  font-size: 13px;
-  line-height: 1.6;
-  min-height: 100vh;
+/* ── STEP NAV ── */
+.step-nav{background:var(--s1);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;scrollbar-width:none}
+.step-nav::-webkit-scrollbar{display:none}
+.snav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 12px;cursor:pointer;font-size:11px;font-weight:500;color:var(--txm);border-right:1px solid var(--bd);border-bottom:2px solid transparent;min-width:85px;text-align:center;transition:color .15s,background .15s;white-space:nowrap;user-select:none}
+.snav:hover{color:var(--txd);background:rgba(255,255,255,.02)}
+.snav.active{color:var(--ac);background:var(--ac-bg);border-bottom-color:var(--ac)}
+.snav.done{color:var(--ok)}
+.snav i{font-size:15px}
+.snav .cl{font-family:var(--mono);font-size:9px;color:var(--txm);letter-spacing:.06em}
+.snav.active .cl{color:var(--ac);opacity:.7}
+.snav.done .cl{color:var(--ok);opacity:.7}
+
+/* ── MAIN ── */
+.main{max-width:1100px;margin:0 auto;padding:22px 18px 60px}
+.panel{display:none;flex-direction:column;gap:15px}
+.panel.active{display:flex}
+.sec-lbl{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.12em;margin-bottom:5px}
+.cl-ref{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--ac);background:var(--ac-bg);border:1px solid var(--ac-bd);padding:4px 10px;border-radius:4px}
+
+/* ── CARDS ── */
+.card{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:15px}
+.card-t{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:11px;display:flex;align-items:center;gap:8px}
+
+/* ── INFO BOXES ── */
+.info-b{background:var(--ac-bg);border:1px solid var(--ac-bd);color:var(--ac);border-radius:8px;padding:9px 13px;font-size:12px;display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+.info-b i,.ai-b i{flex-shrink:0;margin-top:1px}
+.ai-b{background:var(--ai-bg);border:1px solid var(--ai-bd);color:var(--ai);border-radius:8px;padding:9px 13px;font-size:12px;display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+
+/* ── FORMS ── */
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:11px;color:var(--txd);font-weight:500}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.f3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+
+/* ── DEPT GRID ── */
+.dept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:7px}
+.dept-card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:11px;cursor:pointer;transition:border-color .14s,background .14s}
+.dept-card:hover{border-color:var(--bd2)}
+.dept-card.sel{border-color:var(--ac);background:var(--ac-bg)}
+.dept-card i{font-size:17px;color:var(--txm);display:block;margin-bottom:5px}
+.dept-card.sel i{color:var(--ac)}
+.dept-card .dn{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:2px}
+.dept-card.sel .dn{color:var(--ac)}
+.dept-card .ds{font-size:10px;color:var(--txm)}
+
+/* ── PRINCIPLE CHIPS ── */
+.princ-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.p-chip{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:9px 11px;cursor:pointer;display:flex;align-items:flex-start;gap:9px;transition:all .14s}
+.p-chip:hover{border-color:var(--bd2)}
+.p-chip.sel{border-color:var(--ac);background:var(--ac-bg)}
+.p-chip i{font-size:15px;color:var(--txm);margin-top:1px;flex-shrink:0}
+.p-chip.sel i{color:var(--ac)}
+.p-chip-l{font-size:11px;font-weight:600;color:var(--tx)}
+.p-chip.sel .p-chip-l{color:var(--ac)}
+.p-chip-s{font-size:10px;color:var(--txm);margin-top:1px}
+
+/* ── CRIT TABLE ── */
+.crit-w{overflow-x:auto;border:1px solid var(--bd);border-radius:8px}
+.crit-t{width:100%;border-collapse:collapse;min-width:560px}
+.crit-t th{background:var(--s3);padding:7px 11px;text-align:left;font-family:var(--mono);font-size:9px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid var(--bd);white-space:nowrap}
+.crit-t td{padding:7px 11px;border-bottom:1px solid var(--bd);font-size:12px;color:var(--txd)}
+.crit-t tr:last-child td{border-bottom:none}
+
+/* ── CTX ── */
+.ctx-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.ctx-b{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:13px}
+.ctx-t{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.ctx-t i{color:var(--ac)}
+
+/* ── RISK LIST ── */
+.risk-list{display:flex;flex-direction:column;gap:5px;max-height:300px;overflow-y:auto;padding-right:2px}
+.risk-list::-webkit-scrollbar{width:4px}
+.risk-list::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+.ri{background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:9px 11px;display:flex;align-items:flex-start;gap:9px;transition:border-color .12s}
+.ri:hover{border-color:var(--bd2)}
+.ri.click{cursor:pointer}
+.ri-body{flex:1;min-width:0}
+.ri-title{font-size:12px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ri-meta{font-size:10px;color:var(--txm);margin-top:2px;display:flex;gap:7px;flex-wrap:wrap}
+.ri-right{display:flex;gap:5px;align-items:center;flex-shrink:0}
+
+/* ── FN CHIPS ── */
+.fn-wrap{display:flex;flex-wrap:wrap;gap:5px}
+.fn-chip{padding:3px 9px;border:1px solid var(--bd);border-radius:18px;font-size:11px;cursor:pointer;color:var(--txd);background:var(--s2);transition:all .12s}
+.fn-chip:hover{border-color:var(--bd2)}
+.fn-chip.sel{background:var(--ac-bg);border-color:var(--ac);color:var(--ac)}
+
+/* ── AI PANEL ── */
+.ai-panel{background:linear-gradient(135deg,rgba(168,85,247,.07),rgba(79,131,245,.07));border:1px solid var(--ai-bd);border-radius:10px;padding:15px;display:flex;flex-direction:column;gap:11px}
+.ai-panel-title{font-size:13px;font-weight:600;color:var(--ai);display:flex;align-items:center;gap:7px}
+.ai-grid{display:flex;flex-direction:column;gap:7px;max-height:440px;overflow-y:auto;padding-right:2px}
+.ai-grid::-webkit-scrollbar{width:4px}
+.ai-grid::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+.ai-card{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:11px;transition:border-color .14s}
+.ai-card:hover{border-color:var(--ai-bd)}
+.ai-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:3px}
+.ai-card-title{font-size:12px;font-weight:600;color:var(--tx);flex:1}
+.ai-card-meta{font-size:10px;color:var(--txm);margin-bottom:5px;display:flex;gap:7px;flex-wrap:wrap}
+.ai-card-desc{font-size:11px;color:var(--txd);line-height:1.5}
+.ai-card-rationale{font-size:10px;color:var(--txm);margin-top:4px;font-style:italic}
+.ai-card-footer{margin-top:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.ai-loading{display:flex;align-items:center;gap:10px;padding:18px 12px;color:var(--ai);font-size:12px}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--ai-bd);border-top-color:var(--ai);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.risk-form{background:var(--s1);border:1px solid var(--ac-bd);border-radius:8px;padding:15px;display:flex;flex-direction:column;gap:9px}
+
+/* ── MATRIX ── */
+.matrix-wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.mg{display:grid;grid-template-columns:46px repeat(5,40px);grid-template-rows:repeat(5,40px) 46px;gap:3px}
+.mc{display:flex;align-items:center;justify-content:center;border-radius:4px;font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer;transition:transform .12s,opacity .12s;opacity:.55;border:2px solid transparent;user-select:none}
+.mc:not(.ax):hover{transform:scale(1.1);opacity:1;z-index:2}
+.mc.sel{opacity:1;transform:scale(1.1);border-color:var(--tx);z-index:2}
+.ax{background:transparent;font-family:var(--sans);font-size:9px;font-weight:500;color:var(--txm);opacity:1;cursor:default;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.06em;text-align:center}
+.ax.h{writing-mode:horizontal-tb;transform:none}
+.vl{background:rgba(79,131,245,.25);color:#90b8ff}
+.lo{background:rgba(45,184,122,.25);color:#6de0ae}
+.me{background:rgba(201,170,0,.25);color:#ffe066}
+.hi{background:rgba(224,122,42,.25);color:#ffb87a}
+.cr{background:rgba(224,53,53,.30);color:#ff8585}
+.mc-ctrl{flex:1;min-width:190px;display:flex;flex-direction:column;gap:11px}
+.pick-row{display:flex;gap:4px}
+.pc{width:36px;height:36px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:700;cursor:pointer;opacity:.55;border:2px solid transparent;transition:all .12s}
+.pc:hover{opacity:1;transform:scale(1.05)}
+.pc.sel{opacity:1;border-color:var(--tx);transform:scale(1.08)}
+.s-preview{background:var(--s3);border:1px solid var(--bd);border-radius:6px;padding:9px 13px;font-size:12px;color:var(--txd)}
+
+/* ── BADGES ── */
+.rb{display:inline-block;padding:2px 7px;border-radius:11px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+.rb-cr{background:rgba(224,53,53,.2);color:#ff8585;border:1px solid rgba(224,53,53,.35)}
+.rb-hi{background:rgba(224,122,42,.2);color:#ffb87a;border:1px solid rgba(224,122,42,.35)}
+.rb-me{background:rgba(201,170,0,.15);color:#ffe066;border:1px solid rgba(201,170,0,.3)}
+.rb-lo{background:rgba(45,184,122,.15);color:#6de0ae;border:1px solid rgba(45,184,122,.3)}
+.rb-vl{background:rgba(79,131,245,.15);color:#90b8ff;border:1px solid rgba(79,131,245,.3)}
+.sb{width:28px;height:28px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700}
+.sb-cr{background:rgba(224,53,53,.25);color:#ff8585}
+.sb-hi{background:rgba(224,122,42,.25);color:#ffb87a}
+.sb-me{background:rgba(201,170,0,.2);color:#ffe066}
+.sb-lo{background:rgba(45,184,122,.2);color:#6de0ae}
+.sb-vl{background:rgba(79,131,245,.2);color:#90b8ff}
+
+/* ── TAGS ── */
+.t-dept{padding:2px 6px;border-radius:9px;font-size:9px;font-weight:600;background:rgba(130,100,255,.15);color:#b09fff;border:1px solid rgba(130,100,255,.25)}
+.t-fn{padding:2px 6px;border-radius:9px;font-size:9px;background:var(--s3);color:var(--txm);border:1px solid var(--bd)}
+.t-ai{padding:2px 6px;border-radius:9px;font-size:9px;font-weight:600;background:var(--ai-bg);color:var(--ai);border:1px solid var(--ai-bd);display:inline-flex;align-items:center;gap:3px}
+.t-man{padding:2px 6px;border-radius:9px;font-size:9px;background:var(--s3);color:var(--txm);border:1px solid var(--bd)}
+.rid{font-family:var(--mono);font-size:9px;color:var(--txm)}
+
+/* ── TREAT ── */
+.treat-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.tc{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:11px;cursor:pointer;transition:all .12s}
+.tc:hover{border-color:var(--bd2)}
+.tc.sel{border-color:var(--ac);background:var(--ac-bg)}
+.tc-t{font-size:12px;font-weight:600;color:var(--tx);display:flex;align-items:center;gap:7px;margin-bottom:3px}
+.tc.sel .tc-t{color:var(--ac)}
+.tc-s{font-size:10px;color:var(--txm);line-height:1.4}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.stat{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:11px;text-align:center}
+.stat-n{font-family:var(--mono);font-size:22px;font-weight:700;line-height:1;margin-bottom:3px}
+.stat-l{font-size:9px;color:var(--txm);text-transform:uppercase;letter-spacing:.1em;font-family:var(--mono)}
+
+/* ── BUTTONS ── */
+.btn-row{display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap;padding-top:4px}
+.btn{padding:7px 14px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--bd2);background:var(--s2);color:var(--tx);transition:all .12s;white-space:nowrap}
+.btn:hover{background:var(--s3);border-color:var(--ac)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-ac{background:var(--ac-bg);border-color:var(--ac);color:var(--ac)}
+.btn-ac:hover{background:rgba(79,131,245,.2)}
+.btn-ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.btn-ok:hover{background:rgba(45,184,122,.2)}
+.btn-ai{background:var(--ai-bg);border-color:var(--ai);color:var(--ai)}
+.btn-ai:hover{background:rgba(168,85,247,.2)}
+.btn-del{background:none;border:none;cursor:pointer;color:var(--txm);padding:3px;border-radius:4px;display:inline-flex;align-items:center;transition:all .12s}
+.btn-del:hover{color:#ff8585;background:rgba(224,53,53,.1)}
+.add-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;border:1px dashed var(--bd2);border-radius:7px;background:none;color:var(--txd);font-size:12px;cursor:pointer;transition:all .12s}
+.add-btn:hover{background:var(--s2);border-color:var(--ac);color:var(--ac)}
+
+/* ── FILTER ── */
+.filter-bar{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.ftag{padding:3px 9px;border:1px solid var(--bd);border-radius:18px;font-size:11px;cursor:pointer;color:var(--txd);background:var(--s2);transition:all .12s;font-family:var(--mono);letter-spacing:.04em}
+.ftag:hover,.ftag.on{border-color:var(--ac);background:var(--ac-bg);color:var(--ac)}
+
+/* ── REGISTER TABLE ── */
+.reg-wrap{overflow-x:auto;border:1px solid var(--bd);border-radius:8px}
+.reg-wrap::-webkit-scrollbar{height:5px}
+.reg-wrap::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
+.reg-t{width:100%;border-collapse:collapse;min-width:1200px}
+.reg-t th{padding:8px 10px;text-align:left;font-family:var(--mono);font-size:9px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid var(--bd);background:var(--s3);white-space:nowrap}
+.reg-t td{padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:top;font-size:11px;color:var(--txd)}
+.reg-t tr:last-child td{border-bottom:none}
+.reg-t tbody tr:hover td{background:rgba(255,255,255,.018)}
+
+/* ── MON GRID ── */
+.mon-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.mon-card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:11px}
+.mon-t{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.mon-t i{color:var(--ac);font-size:13px}
+
+/* ── MISC ── */
+.sep{height:1px;background:var(--bd)}
+.empty{text-align:center;padding:26px 14px;color:var(--txm);font-size:12px}
+.empty i{font-size:26px;display:block;margin-bottom:7px;color:var(--bd2)}
+.footer{background:var(--s1);border-top:1px solid var(--bd);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-family:var(--mono);font-size:10px;color:var(--txm)}
+.err-box{color:#ff8585;padding:12px;font-size:12px;background:rgba(224,53,53,.1);border:1px solid rgba(224,53,53,.3);border-radius:8px;line-height:1.6}
+
+@media(max-width:680px){
+  .f2,.f3,.ctx-grid,.princ-grid,.treat-grid,.mon-grid{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(3,1fr)}
+  .main{padding:14px 10px 44px}
+  .matrix-wrap{flex-direction:column}
+  .hdr-brand span{display:none}
 }
-
-input, textarea, select, button {
-  font-family: var(--sans);
-  font-size: 13px;
-}
-
-input, textarea, select {
-  background: var(--surface-1);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 7px 10px;
-  width: 100%;
-  outline: none;
-  transition: border-color 0.15s;
-}
-input:focus, textarea:focus, select:focus { border-color: var(--accent); }
-textarea { resize: vertical; min-height: 60px; }
-select option { background: var(--surface-2); }
-
-/* ═══════════════════════════════════════════════════
-   TOP HEADER
-═══════════════════════════════════════════════════ */
-.app-header {
-  background: var(--surface-1);
-  border-bottom: 1px solid var(--border);
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 56px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  gap: 16px;
-}
-
-.header-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-
-.header-brand i { font-size: 20px; color: var(--accent); }
-
-.header-brand-text {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-  letter-spacing: -0.01em;
-}
-
-.iso-badge {
-  background: var(--accent-bg);
-  color: var(--accent);
-  border: 1px solid var(--accent-bdr);
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 7px;
-  font-family: var(--mono);
-  letter-spacing: 0.05em;
-}
-
-.header-progress {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  max-width: 320px;
-}
-
-.progress-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
-.progress-track {
-  flex: 1;
-  height: 3px;
-  background: var(--border);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 2px;
-  transition: width 0.4s ease;
-}
-
-/* ═══════════════════════════════════════════════════
-   STEP NAV
-═══════════════════════════════════════════════════ */
-.step-nav {
-  background: var(--surface-1);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.step-nav::-webkit-scrollbar { display: none; }
-
-.snav {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  padding: 10px 14px;
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text-muted);
-  border-right: 1px solid var(--border);
-  border-bottom: 2px solid transparent;
-  min-width: 90px;
-  text-align: center;
-  transition: color 0.15s, background 0.15s, border-color 0.15s;
-  white-space: nowrap;
-  user-select: none;
-}
-.snav:hover { color: var(--text-dim); background: rgba(255,255,255,0.03); }
-.snav.active { color: var(--accent); background: var(--accent-bg); border-bottom-color: var(--accent); }
-.snav.done { color: var(--success); }
-.snav i { font-size: 16px; }
-.snav .clause {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--text-muted);
-  letter-spacing: 0.06em;
-}
-.snav.active .clause { color: var(--accent); opacity: 0.7; }
-.snav.done .clause { color: var(--success); opacity: 0.7; }
-
-/* ═══════════════════════════════════════════════════
-   MAIN CONTENT
-═══════════════════════════════════════════════════ */
-.main-content {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 24px 20px 60px;
-}
-
-/* ═══════════════════════════════════════════════════
-   PANELS
-═══════════════════════════════════════════════════ */
-.panel { display: none; flex-direction: column; gap: 16px; }
-.panel.active { display: flex; }
-
-/* ═══════════════════════════════════════════════════
-   SECTION LABELS & CLAUSE REFS
-═══════════════════════════════════════════════════ */
-.sec-lbl {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  margin-bottom: 6px;
-}
-
-.clause-ref {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 1px solid var(--accent-bdr);
-  padding: 4px 10px;
-  border-radius: 4px;
-  margin-bottom: 4px;
-}
-
-/* ═══════════════════════════════════════════════════
-   CARDS
-═══════════════════════════════════════════════════ */
-.card {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
-}
-
-.card-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* ═══════════════════════════════════════════════════
-   ALERT BOXES
-═══════════════════════════════════════════════════ */
-.info-box {
-  background: var(--accent-bg);
-  border: 1px solid var(--accent-bdr);
-  color: var(--accent);
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 12px;
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  line-height: 1.5;
-}
-.info-box i { flex-shrink: 0; margin-top: 1px; }
-
-.warn-box {
-  background: var(--warning-bg);
-  border: 1px solid var(--warning-bdr);
-  color: var(--warning);
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 12px;
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-}
-
-/* ═══════════════════════════════════════════════════
-   FORM
-═══════════════════════════════════════════════════ */
-.fgrp { display: flex; flex-direction: column; gap: 4px; }
-.fgrp label { font-size: 11px; color: var(--text-dim); font-weight: 500; }
-
-.form-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.form-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-
-/* ═══════════════════════════════════════════════════
-   DEPT GRID
-═══════════════════════════════════════════════════ */
-.dept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 8px; }
-
-.dept-card {
-  background: var(--surface-1);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px;
-  cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
-}
-.dept-card:hover { border-color: var(--border2); }
-.dept-card.sel { border-color: var(--accent); background: var(--accent-bg); }
-.dept-card i { font-size: 18px; color: var(--text-muted); display: block; margin-bottom: 6px; transition: color 0.15s; }
-.dept-card.sel i { color: var(--accent); }
-.dept-card .dn { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
-.dept-card.sel .dn { color: var(--accent); }
-.dept-card .ds { font-size: 10px; color: var(--text-muted); }
-
-/* ═══════════════════════════════════════════════════
-   PRINCIPLE CHIPS
-═══════════════════════════════════════════════════ */
-.principle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-
-.p-chip {
-  background: var(--surface-1);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  transition: all 0.15s;
-}
-.p-chip:hover { border-color: var(--border2); }
-.p-chip.sel { border-color: var(--accent); background: var(--accent-bg); }
-.p-chip i { font-size: 16px; color: var(--text-muted); margin-top: 1px; flex-shrink: 0; }
-.p-chip.sel i { color: var(--accent); }
-.p-chip-lbl { font-size: 12px; font-weight: 600; color: var(--text); }
-.p-chip.sel .p-chip-lbl { color: var(--accent); }
-.p-chip-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
-
-/* ═══════════════════════════════════════════════════
-   CRITERIA TABLE
-═══════════════════════════════════════════════════ */
-.crit-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
-
-.crit-table { width: 100%; border-collapse: collapse; min-width: 600px; }
-.crit-table th {
-  background: var(--surface-3);
-  padding: 8px 12px;
-  text-align: left;
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-.crit-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text-dim); }
-.crit-table tr:last-child td { border-bottom: none; }
-.crit-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
-
-/* ═══════════════════════════════════════════════════
-   CONTEXT GRID
-═══════════════════════════════════════════════════ */
-.ctx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-.ctx-box {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 14px;
-}
-.ctx-title {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.ctx-title i { color: var(--accent); }
-
-/* ═══════════════════════════════════════════════════
-   RISK FORM
-═══════════════════════════════════════════════════ */
-.risk-form {
-  background: var(--surface-1);
-  border: 1px solid var(--accent-bdr);
-  border-radius: 8px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* ═══════════════════════════════════════════════════
-   RISK LIST
-═══════════════════════════════════════════════════ */
-.risk-list { display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; padding-right: 2px; }
-.risk-list::-webkit-scrollbar { width: 4px; }
-.risk-list::-webkit-scrollbar-track { background: var(--surface-1); }
-.risk-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-
-.risk-item {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 12px;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  transition: border-color 0.12s;
-}
-.risk-item:hover { border-color: var(--border2); }
-.risk-item.clickable { cursor: pointer; }
-.ri-body { flex: 1; min-width: 0; }
-.ri-title { font-size: 12px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ri-meta { font-size: 10px; color: var(--text-muted); margin-top: 3px; display: flex; gap: 8px; flex-wrap: wrap; }
-.ri-right { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
-
-/* ═══════════════════════════════════════════════════
-   FUNCTION CHIPS
-═══════════════════════════════════════════════════ */
-.fn-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
-.fn-chip {
-  padding: 4px 10px;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  font-size: 11px;
-  cursor: pointer;
-  color: var(--text-dim);
-  background: var(--surface-2);
-  transition: all 0.12s;
-}
-.fn-chip:hover { border-color: var(--border2); }
-.fn-chip.sel { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
-
-/* ═══════════════════════════════════════════════════
-   RISK MATRIX
-═══════════════════════════════════════════════════ */
-.matrix-wrap { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
-.matrix-area { flex-shrink: 0; }
-
-.matrix-grid {
-  display: grid;
-  grid-template-columns: 48px repeat(5, 42px);
-  grid-template-rows: repeat(5, 42px) 48px;
-  gap: 3px;
-}
-
-.mcell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.12s, opacity 0.12s;
-  opacity: 0.55;
-  border: 2px solid transparent;
-  user-select: none;
-}
-.mcell:not(.mc-ax):hover { transform: scale(1.1); opacity: 1; z-index: 2; }
-.mcell.sel { opacity: 1; transform: scale(1.1); border-color: var(--text); z-index: 2; }
-
-.mc-ax {
-  background: transparent;
-  font-family: var(--sans);
-  font-size: 9px;
-  font-weight: 500;
-  color: var(--text-muted);
-  opacity: 1;
-  cursor: default;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  letter-spacing: 0.07em;
-  text-align: center;
-}
-.mc-ax.h { writing-mode: horizontal-tb; transform: none; font-size: 9px; }
-
-.mc-vl { background: rgba(79,131,245,0.25); color: #90b8ff; }
-.mc-lo { background: rgba(45,184,122,0.25); color: #6de0ae; }
-.mc-me { background: rgba(201,170,0,0.25); color: #ffe066; }
-.mc-hi { background: rgba(224,122,42,0.25); color: #ffb87a; }
-.mc-cr { background: rgba(224,53,53,0.30); color: #ff8585; }
-
-.matrix-controls { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 12px; }
-
-.pick-row { display: flex; gap: 4px; }
-.pick-cell {
-  width: 38px; height: 38px;
-  border-radius: 4px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--mono); font-size: 12px; font-weight: 700;
-  cursor: pointer;
-  opacity: 0.55;
-  border: 2px solid transparent;
-  transition: all 0.12s;
-}
-.pick-cell:hover { opacity: 1; transform: scale(1.05); }
-.pick-cell.sel { opacity: 1; border-color: var(--text); transform: scale(1.08); }
-
-.score-preview {
-  background: var(--surface-3);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 10px 14px;
-  font-size: 12px;
-  color: var(--text-dim);
-}
-
-/* ═══════════════════════════════════════════════════
-   BADGES & SCORE BOXES
-═══════════════════════════════════════════════════ */
-.rbadge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.rb-cr { background: rgba(224,53,53,0.2); color: #ff8585; border: 1px solid rgba(224,53,53,0.35); }
-.rb-hi { background: rgba(224,122,42,0.2); color: #ffb87a; border: 1px solid rgba(224,122,42,0.35); }
-.rb-me { background: rgba(201,170,0,0.15); color: #ffe066; border: 1px solid rgba(201,170,0,0.30); }
-.rb-lo { background: rgba(45,184,122,0.15); color: #6de0ae; border: 1px solid rgba(45,184,122,0.30); }
-.rb-vl { background: rgba(79,131,245,0.15); color: #90b8ff; border: 1px solid rgba(79,131,245,0.30); }
-
-.score-box {
-  width: 30px; height: 30px;
-  border-radius: 4px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 700;
-}
-.sc-cr { background: rgba(224,53,53,0.25); color: #ff8585; }
-.sc-hi { background: rgba(224,122,42,0.25); color: #ffb87a; }
-.sc-me { background: rgba(201,170,0,0.20); color: #ffe066; }
-.sc-lo { background: rgba(45,184,122,0.20); color: #6de0ae; }
-.sc-vl { background: rgba(79,131,245,0.20); color: #90b8ff; }
-
-/* ═══════════════════════════════════════════════════
-   TAGS
-═══════════════════════════════════════════════════ */
-.tag-dept {
-  padding: 2px 7px;
-  border-radius: 10px;
-  font-size: 9px;
-  font-weight: 600;
-  background: rgba(130,100,255,0.15);
-  color: #b09fff;
-  border: 1px solid rgba(130,100,255,0.25);
-}
-.tag-fn {
-  padding: 2px 7px;
-  border-radius: 10px;
-  font-size: 9px;
-  background: var(--surface-3);
-  color: var(--text-muted);
-  border: 1px solid var(--border);
-}
-.rid { font-family: var(--mono); font-size: 9px; color: var(--text-muted); }
-
-/* ═══════════════════════════════════════════════════
-   TREATMENT CARDS
-═══════════════════════════════════════════════════ */
-.treat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.treat-card {
-  background: var(--surface-1);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px;
-  cursor: pointer;
-  transition: all 0.12s;
-}
-.treat-card:hover { border-color: var(--border2); }
-.treat-card.sel { border-color: var(--accent); background: var(--accent-bg); }
-.treat-title {
-  font-size: 12px; font-weight: 600; color: var(--text);
-  display: flex; align-items: center; gap: 8px; margin-bottom: 3px;
-}
-.treat-card.sel .treat-title { color: var(--accent); }
-.treat-sub { font-size: 10px; color: var(--text-muted); line-height: 1.4; }
-
-/* ═══════════════════════════════════════════════════
-   STATS ROW
-═══════════════════════════════════════════════════ */
-.stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-.stat-c {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px;
-  text-align: center;
-}
-.stat-n { font-family: var(--mono); font-size: 24px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
-.stat-l { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; font-family: var(--mono); }
-
-/* ═══════════════════════════════════════════════════
-   BUTTONS
-═══════════════════════════════════════════════════ */
-.btn-row { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; padding-top: 4px; }
-
-.btn {
-  padding: 8px 16px;
-  border-radius: var(--radius);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid var(--border2);
-  background: var(--surface-2);
-  color: var(--text);
-  transition: all 0.12s;
-  white-space: nowrap;
-  letter-spacing: 0.01em;
-}
-.btn:hover { background: var(--surface-3); border-color: var(--accent); }
-
-.btn-accent { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
-.btn-accent:hover { background: rgba(79,131,245,0.2); }
-
-.btn-success { background: var(--success-bg); border-color: var(--success); color: var(--success); }
-.btn-success:hover { background: rgba(45,184,122,0.2); }
-
-.btn-del {
-  background: none; border: none; cursor: pointer;
-  color: var(--text-muted); padding: 4px; border-radius: 4px;
-  display: inline-flex; align-items: center;
-  transition: all 0.12s;
-}
-.btn-del:hover { color: #ff8585; background: rgba(224,53,53,0.1); }
-
-.add-btn {
-  width: 100%;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-  padding: 8px;
-  border: 1px dashed var(--border2);
-  border-radius: 8px;
-  background: none;
-  color: var(--text-dim);
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.12s;
-}
-.add-btn:hover { background: var(--surface-2); border-color: var(--accent); color: var(--accent); }
-
-/* ═══════════════════════════════════════════════════
-   FILTER BAR
-═══════════════════════════════════════════════════ */
-.filter-bar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-.ftag {
-  padding: 4px 10px;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  font-size: 11px;
-  cursor: pointer;
-  color: var(--text-dim);
-  background: var(--surface-2);
-  transition: all 0.12s;
-  font-family: var(--mono);
-  letter-spacing: 0.04em;
-}
-.ftag:hover, .ftag.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
-
-/* ═══════════════════════════════════════════════════
-   REGISTER TABLE
-═══════════════════════════════════════════════════ */
-.reg-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
-.reg-wrap::-webkit-scrollbar { height: 6px; }
-.reg-wrap::-webkit-scrollbar-track { background: var(--surface-1); }
-.reg-wrap::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
-
-.reg-table { width: 100%; border-collapse: collapse; min-width: 1100px; }
-.reg-table th {
-  padding: 9px 11px;
-  text-align: left;
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface-3);
-  white-space: nowrap;
-}
-.reg-table td { padding: 9px 11px; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 11px; color: var(--text-dim); }
-.reg-table tr:last-child td { border-bottom: none; }
-.reg-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
-
-/* ═══════════════════════════════════════════════════
-   MONITORING GRID
-═══════════════════════════════════════════════════ */
-.mon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.mon-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
-.mon-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-.mon-title i { color: var(--accent); font-size: 14px; }
-
-/* ═══════════════════════════════════════════════════
-   DEPT GROUP HEADER
-═══════════════════════════════════════════════════ */
-.dept-grp-hdr {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 8px 0 5px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 6px;
-  display: flex; align-items: center; gap: 6px;
-}
-
-/* ═══════════════════════════════════════════════════
-   EMPTY STATE
-═══════════════════════════════════════════════════ */
-.empty { text-align: center; padding: 28px 16px; color: var(--text-muted); font-size: 12px; }
-.empty i { font-size: 28px; display: block; margin-bottom: 8px; color: var(--border2); }
-
-/* ═══════════════════════════════════════════════════
-   SEPARATOR
-═══════════════════════════════════════════════════ */
-.sep { height: 1px; background: var(--border); }
-
-/* ═══════════════════════════════════════════════════
-   FOOTER
-═══════════════════════════════════════════════════ */
-.app-footer {
-  background: var(--surface-1);
-  border-top: 1px solid var(--border);
-  padding: 14px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text-muted);
-}
-
-/* ═══════════════════════════════════════════════════
-   RESPONSIVE
-═══════════════════════════════════════════════════ */
-@media (max-width: 700px) {
-  .form-2, .form-3, .ctx-grid, .principle-grid, .treat-grid, .mon-grid { grid-template-columns: 1fr; }
-  .stats-row { grid-template-columns: repeat(3, 1fr); }
-  .main-content { padding: 16px 12px 48px; }
-  .matrix-wrap { flex-direction: column; }
-}
-
-@media print {
-  .app-header, .step-nav, .btn-row, .add-btn, .app-footer { display: none !important; }
-  .panel { display: flex !important; }
-  .reg-wrap { overflow: visible; }
-  .reg-table { min-width: unset; }
+@media print{
+  .hdr,.step-nav,.btn-row,.add-btn,.footer,.ai-panel,.modal-bg{display:none!important}
+  .panel{display:flex!important}
+  .reg-wrap{overflow:visible}
+  .reg-t{min-width:unset}
 }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════
-     HEADER
-═══════════════════════════════════════════════ -->
-<header class="app-header">
-  <div class="header-brand">
-    <i class="ti ti-shield-half-filled"></i>
-    <span class="header-brand-text">Enterprise Risk Register Builder</span>
-    <span class="iso-badge">ISO 31000:2018</span>
+<!-- ─── API KEY MODAL ─── -->
+<div class="modal-bg" id="apiModal">
+  <div class="modal-box">
+    <div class="modal-title"><i class="ti ti-robot" style="color:var(--ai);font-size:20px"></i>Connect OpenAI — AI Risk Analysis</div>
+    <div class="modal-sub">Enter your OpenAI API key to enable GPT-4o powered risk identification and categorisation across departments and functions. The AI analyses each activity and returns structured, ISO 31000-aligned risk entries with pre-scored likelihood and consequence values that you can review, edit and import.</div>
+    <div class="fg"><label>OpenAI API Key</label><input type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off" onkeydown="if(event.key==='Enter')saveApiKey()"></div>
+    <div class="modal-note"><i class="ti ti-lock" style="font-size:12px;flex-shrink:0;margin-top:1px"></i><span>Your key is stored in memory only for this browser session. It is sent directly to api.openai.com and is never stored on any server or shared. Refresh the page to clear it.</span></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeApiModal()">Skip for now</button>
+      <button class="btn btn-ai" onclick="saveApiKey()"><i class="ti ti-check"></i>Connect OpenAI</button>
+    </div>
   </div>
-  <div class="header-progress">
-    <span class="progress-label" id="progressLabel">Step 1 / 7</span>
-    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:14%"></div></div>
+</div>
+
+<!-- ─── HEADER ─── -->
+<header class="hdr">
+  <div class="hdr-brand">
+    <i class="ti ti-shield-half-filled"></i>
+    <span>Enterprise Risk Register Builder</span>
+    <span class="badge badge-iso">ISO 31000:2018</span>
+  </div>
+  <div class="hdr-right">
+    <span class="badge badge-ai" id="aiBadge" onclick="openApiModal()" title="Configure OpenAI API key">
+      <i class="ti ti-robot"></i><span id="aiBadgeTxt">AI: Not connected</span>
+    </span>
+    <span class="prog-lbl" id="progLbl">Step 1 / 7</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:14%"></div></div>
   </div>
 </header>
 
-<!-- ═══════════════════════════════════════════════
-     STEP NAV
-═══════════════════════════════════════════════ -->
-<nav class="step-nav" aria-label="Risk management process steps">
-  <div class="snav active" id="sn1" onclick="goStep(1)" title="Clause 6.3">
-    <i class="ti ti-building"></i><span>Scope & Context</span><span class="clause">Cl. 6.3</span>
-  </div>
-  <div class="snav" id="sn2" onclick="goStep(2)" title="Clause 4 & 5">
-    <i class="ti ti-check-circle"></i><span>Principles</span><span class="clause">Cl. 4–5</span>
-  </div>
-  <div class="snav" id="sn3" onclick="goStep(3)" title="Clause 6.4.2">
-    <i class="ti ti-search"></i><span>Identification</span><span class="clause">Cl. 6.4.2</span>
-  </div>
-  <div class="snav" id="sn4" onclick="goStep(4)" title="Clause 6.4.3">
-    <i class="ti ti-chart-bar"></i><span>Analysis</span><span class="clause">Cl. 6.4.3</span>
-  </div>
-  <div class="snav" id="sn5" onclick="goStep(5)" title="Clause 6.4.4">
-    <i class="ti ti-scale"></i><span>Evaluation</span><span class="clause">Cl. 6.4.4</span>
-  </div>
-  <div class="snav" id="sn6" onclick="goStep(6)" title="Clause 6.5">
-    <i class="ti ti-tool"></i><span>Treatment</span><span class="clause">Cl. 6.5</span>
-  </div>
-  <div class="snav" id="sn7" onclick="goStep(7)" title="Clause 6.6–6.7">
-    <i class="ti ti-report-analytics"></i><span>Register</span><span class="clause">Cl. 6.6–6.7</span>
-  </div>
+<!-- ─── STEP NAV ─── -->
+<nav class="step-nav">
+  <div class="snav active" id="sn1" onclick="goStep(1)"><i class="ti ti-building"></i><span>Scope & Context</span><span class="cl">Cl. 6.3</span></div>
+  <div class="snav" id="sn2" onclick="goStep(2)"><i class="ti ti-check-circle"></i><span>Principles</span><span class="cl">Cl. 4–5</span></div>
+  <div class="snav" id="sn3" onclick="goStep(3)"><i class="ti ti-search"></i><span>Identification</span><span class="cl">Cl. 6.4.2</span></div>
+  <div class="snav" id="sn4" onclick="goStep(4)"><i class="ti ti-chart-bar"></i><span>Analysis</span><span class="cl">Cl. 6.4.3</span></div>
+  <div class="snav" id="sn5" onclick="goStep(5)"><i class="ti ti-scale"></i><span>Evaluation</span><span class="cl">Cl. 6.4.4</span></div>
+  <div class="snav" id="sn6" onclick="goStep(6)"><i class="ti ti-tool"></i><span>Treatment</span><span class="cl">Cl. 6.5</span></div>
+  <div class="snav" id="sn7" onclick="goStep(7)"><i class="ti ti-report-analytics"></i><span>Register</span><span class="cl">Cl. 6.6–6.7</span></div>
 </nav>
 
-<!-- ═══════════════════════════════════════════════
-     MAIN CONTENT
-═══════════════════════════════════════════════ -->
-<main class="main-content">
+<main class="main">
 
-<!-- ══════════ STEP 1: SCOPE, CONTEXT & CRITERIA ══════════ -->
-<section class="panel active" id="p1" aria-label="Scope context and criteria">
-  <div class="clause-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 6.3 — Scope, context and criteria</div>
-  <div class="info-box">
-    <i class="ti ti-info-circle"></i>
-    <span>Define the scope of risk management activities (Cl. 6.3.2), the external and internal context in which the organisation seeks to achieve its objectives (Cl. 6.3.3), and the criteria used to evaluate the significance of risk (Cl. 6.3.4).</span>
-  </div>
+<!-- ════ STEP 1 ════ -->
+<section class="panel active" id="p1">
+  <div class="cl-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 6.3 Scope, context and criteria</div>
+  <div class="info-b"><i class="ti ti-info-circle"></i><span>Define the scope of risk management activities (Cl. 6.3.2), external and internal context (Cl. 6.3.3), and criteria used to evaluate risk significance (Cl. 6.3.4).</span></div>
 
   <div class="card">
-    <div class="card-title"><i class="ti ti-building-factory-2"></i>Organisation & scope (Cl. 6.3.2)</div>
-    <div class="form-2">
-      <div class="fgrp"><label>Organisation name</label><input type="text" id="orgName" placeholder="e.g. Dragon Oil Ltd"></div>
-      <div class="fgrp"><label>Assessment scope</label><input type="text" id="orgScope" placeholder="e.g. Turkmenistan upstream operations"></div>
+    <div class="card-t"><i class="ti ti-building-factory-2"></i>Organisation & scope (Cl. 6.3.2)</div>
+    <div class="f2">
+      <div class="fg"><label>Organisation name</label><input type="text" id="orgName" placeholder="Your organisation name"></div>
+      <div class="fg"><label>Assessment scope</label><input type="text" id="orgScope" placeholder="Business unit, site or operational scope"></div>
     </div>
-    <div class="form-2" style="margin-top:10px">
-      <div class="fgrp"><label>Review period</label><input type="text" id="orgPeriod" placeholder="e.g. Q2–Q3 2026"></div>
-      <div class="fgrp"><label>Risk appetite statement</label><input type="text" id="orgAppetite" placeholder="e.g. Zero tolerance for process safety fatalities"></div>
+    <div class="f2" style="margin-top:9px">
+      <div class="fg"><label>Review period</label><input type="text" id="orgPeriod" placeholder="e.g. Q1–Q4 2026 or specific date range"></div>
+      <div class="fg"><label>Risk appetite statement</label><input type="text" id="orgAppetite" placeholder="Describe the organisation's risk appetite"></div>
     </div>
   </div>
 
   <div class="ctx-grid">
-    <div class="ctx-box">
-      <div class="ctx-title"><i class="ti ti-world"></i>External context (Cl. 6.3.3)</div>
-      <textarea id="extCtx" placeholder="Regulatory environment, host country legal framework, geopolitical factors, market/commodity prices, social/cultural factors, technology landscape, external stakeholder expectations, contractual relationships, competitive environment..."></textarea>
+    <div class="ctx-b">
+      <div class="ctx-t"><i class="ti ti-world"></i>External context (Cl. 6.3.3)</div>
+      <textarea id="extCtx" placeholder="Regulatory environment, legal framework, geopolitical factors, market conditions, social and cultural factors, technology landscape, external stakeholder expectations, contractual relationships and commitments..."></textarea>
     </div>
-    <div class="ctx-box">
-      <div class="ctx-title"><i class="ti ti-building"></i>Internal context (Cl. 6.3.3)</div>
-      <textarea id="intCtx" placeholder="Vision, mission and values, governance structure and policies, organisational roles and accountabilities, strategy and objectives, capabilities and resources, culture and human factors, standards and guidelines adopted, internal stakeholder relationships, data and information systems..."></textarea>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title"><i class="ti ti-list-details"></i>Risk criteria — likelihood & consequence scale (Cl. 6.3.4)</div>
-    <div class="crit-wrap">
-      <table class="crit-table">
-        <thead>
-          <tr>
-            <th>Level</th>
-            <th>Likelihood descriptor</th>
-            <th>Consequence descriptor</th>
-            <th>Rating</th>
-            <th>Required management action</th>
-          </tr>
-        </thead>
-        <tbody id="critBody"></tbody>
-      </table>
+    <div class="ctx-b">
+      <div class="ctx-t"><i class="ti ti-building"></i>Internal context (Cl. 6.3.3)</div>
+      <textarea id="intCtx" placeholder="Vision, mission and values, governance structure, organisational roles and accountabilities, strategy and objectives, capabilities and resources, culture and human factors, standards and guidelines adopted, data and information systems..."></textarea>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-title"><i class="ti ti-layout-grid"></i>Select departments for this risk assessment</div>
+    <div class="card-t"><i class="ti ti-list-details"></i>Risk criteria — likelihood & consequence scale (Cl. 6.3.4)</div>
+    <div class="crit-w"><table class="crit-t"><thead><tr><th>Level</th><th>Likelihood descriptor</th><th>Consequence descriptor</th><th>Rating</th><th>Required management action</th></tr></thead><tbody id="critBody"></tbody></table></div>
+  </div>
+
+  <div class="card">
+    <div class="card-t"><i class="ti ti-layout-grid"></i>Select departments for this risk assessment</div>
     <div class="dept-grid" id="deptGrid"></div>
   </div>
-
-  <div class="btn-row">
-    <button class="btn btn-accent" onclick="goStep(2)"><i class="ti ti-arrow-right"></i>Next: principles</button>
-  </div>
+  <div class="btn-row"><button class="btn btn-ac" onclick="goStep(2)"><i class="ti ti-arrow-right"></i>Next: principles</button></div>
 </section>
 
-<!-- ══════════ STEP 2: PRINCIPLES & FRAMEWORK ══════════ -->
-<section class="panel" id="p2" aria-label="Principles and framework">
-  <div class="clause-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 4 Principles · Clause 5 Framework</div>
-  <div class="info-box">
-    <i class="ti ti-info-circle"></i>
-    <span>The purpose of risk management is the creation and protection of value (Cl. 4). Confirm which principles your framework upholds. These guide how risk management is integrated into governance and operations (Cl. 5).</span>
-  </div>
-
+<!-- ════ STEP 2 ════ -->
+<section class="panel" id="p2">
+  <div class="cl-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 4 Principles · Clause 5 Framework</div>
+  <div class="info-b"><i class="ti ti-info-circle"></i><span>Risk management's purpose is the creation and protection of value (Cl. 4). Confirm which principles your framework upholds and record the governance arrangements (Cl. 5).</span></div>
   <div class="card">
-    <div class="card-title"><i class="ti ti-check-circle"></i>Risk management principles (Cl. 4) — select all that apply</div>
-    <div class="principle-grid" id="principleGrid"></div>
+    <div class="card-t"><i class="ti ti-check-circle"></i>Risk management principles (Cl. 4) — select all that apply</div>
+    <div class="princ-grid" id="principleGrid"></div>
   </div>
-
   <div class="card">
-    <div class="card-title"><i class="ti ti-hierarchy-2"></i>Framework elements (Cl. 5)</div>
-    <div class="form-2">
-      <div class="fgrp">
-        <label>Leadership & commitment (Cl. 5.2)</label>
-        <select id="fwLeadership">
-          <option>Top management accountable; Board oversight in place</option>
-          <option>Risk policy issued; roles and authorities assigned</option>
-          <option>Resources allocated; framework implemented</option>
-          <option>Under development</option>
-        </select>
+    <div class="card-t"><i class="ti ti-hierarchy-2"></i>Framework elements (Cl. 5)</div>
+    <div class="f2">
+      <div class="fg"><label>Leadership & commitment (Cl. 5.2)</label>
+        <select id="fwLeadership"><option>Top management accountable; Board oversight in place</option><option>Risk policy issued; roles and authorities assigned</option><option>Resources allocated; framework implemented</option><option>Under development</option></select>
       </div>
-      <div class="fgrp">
-        <label>Integration approach (Cl. 5.3)</label>
-        <select id="fwIntegration">
-          <option>Fully integrated into governance and operations</option>
-          <option>Integrated at operational level</option>
-          <option>Partially integrated</option>
-          <option>Standalone risk management function</option>
-        </select>
+      <div class="fg"><label>Integration approach (Cl. 5.3)</label>
+        <select id="fwIntegration"><option>Fully integrated into governance and operations</option><option>Integrated at operational level</option><option>Partially integrated</option><option>Standalone risk management function</option></select>
       </div>
     </div>
-    <div class="form-2" style="margin-top:10px">
-      <div class="fgrp"><label>Communication & consultation plan (Cl. 5.4.5)</label><input type="text" id="fwComms" placeholder="e.g. Quarterly Risk Committee, department workshops, management briefings"></div>
-      <div class="fgrp">
-        <label>Framework review cycle (Cl. 5.6)</label>
+    <div class="f2" style="margin-top:9px">
+      <div class="fg"><label>Communication & consultation (Cl. 5.4.5)</label><input type="text" id="fwComms" placeholder="e.g. Quarterly Risk Committee, department workshops"></div>
+      <div class="fg"><label>Framework review cycle (Cl. 5.6)</label>
         <select id="fwReview"><option>Monthly</option><option>Quarterly</option><option>Bi-annually</option><option>Annually</option></select>
       </div>
     </div>
   </div>
-
   <div class="btn-row">
     <button class="btn" onclick="goStep(1)"><i class="ti ti-arrow-left"></i>Back</button>
-    <button class="btn btn-accent" onclick="goStep(3)"><i class="ti ti-arrow-right"></i>Next: risk identification</button>
+    <button class="btn btn-ac" onclick="goStep(3)"><i class="ti ti-arrow-right"></i>Next: risk identification</button>
   </div>
 </section>
 
-<!-- ══════════ STEP 3: RISK IDENTIFICATION ══════════ -->
-<section class="panel" id="p3" aria-label="Risk identification">
-  <div class="clause-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 6.4.2 Risk identification</div>
-  <div class="info-box">
-    <i class="ti ti-info-circle"></i>
-    <span>Find, recognise and describe risks that might help or prevent the organisation achieving its objectives (Cl. 6.4.2). Consider: risk sources (Cl. 3.4), causes and events, threats and opportunities, vulnerabilities, changes in context, consequences (Cl. 3.6), and biases or assumptions of those involved.</span>
-  </div>
+<!-- ════ STEP 3 ════ -->
+<section class="panel" id="p3">
+  <div class="cl-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 6.4.2 Risk identification</div>
+  <div class="info-b"><i class="ti ti-info-circle"></i><span>Find, recognise and describe risks that might prevent the organisation achieving its objectives (Cl. 6.4.2). Consider risk sources (Cl. 3.4), causes, threats, opportunities, vulnerabilities, consequences (Cl. 3.6) and biases of those involved.</span></div>
+  <div class="ai-b"><i class="ti ti-robot"></i><span>Select a department and key function, then click <strong>AI Analyse Risks</strong> — GPT-4o will identify, categorise and pre-score 5–8 realistic risks for that activity based on ISO 31000 principles and your context. Review the results and import any that apply.</span></div>
 
   <div class="card">
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
-      <div class="fgrp" style="flex:1;min-width:150px"><label>Department</label><select id="selDept" onchange="onDeptChange()"></select></div>
-      <div class="fgrp" style="flex:1;min-width:150px"><label>Key function</label><select id="selFn"></select></div>
-      <button class="btn btn-accent" onclick="openAddForm()" style="margin-bottom:0;flex-shrink:0"><i class="ti ti-plus"></i>Identify risk</button>
+    <div style="display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end">
+      <div class="fg" style="flex:1;min-width:140px"><label>Department</label><select id="selDept" onchange="onDeptChange()"></select></div>
+      <div class="fg" style="flex:1;min-width:140px"><label>Key function</label><select id="selFn"></select></div>
+      <button class="btn btn-ai" onclick="runAI()" id="btnAI" style="flex-shrink:0"><i class="ti ti-robot"></i>AI Analyse Risks</button>
+      <button class="btn btn-ac" onclick="openAddForm()" style="flex-shrink:0"><i class="ti ti-plus"></i>Add manually</button>
     </div>
-
-    <div id="fnArea" style="display:none;margin-top:12px">
-      <div class="sec-lbl">Key functions for <span id="fnDeptName"></span> — toggle to include / exclude</div>
+    <div id="fnArea" style="display:none;margin-top:11px">
+      <div class="sec-lbl">Key functions — <span id="fnDeptName"></span> — toggle to include / exclude</div>
       <div class="fn-wrap" id="fnChips"></div>
     </div>
   </div>
 
-  <!-- Add risk form -->
+  <!-- AI Panel -->
+  <div id="aiPanel" style="display:none" class="ai-panel">
+    <div class="ai-panel-title"><i class="ti ti-robot"></i>AI Risk Analysis — <span id="aiPanelTitle"></span></div>
+    <div id="aiResultsArea"></div>
+  </div>
+
+  <!-- Manual form -->
   <div id="addForm" style="display:none" class="risk-form">
-    <div class="sec-lbl">New risk identification entry (Cl. 6.4.2)</div>
-    <div class="fgrp"><label>Risk title / event description</label><input type="text" id="rTitle" placeholder="e.g. Uncontrolled hydrocarbon release at separator train"></div>
-    <div class="form-2">
-      <div class="fgrp"><label>Risk source (Cl. 3.4) — element giving rise to risk</label><input type="text" id="rSource" placeholder="e.g. Aging process equipment, degraded SIS, human error"></div>
-      <div class="fgrp">
-        <label>Risk category</label>
+    <div class="sec-lbl">Manual risk identification (Cl. 6.4.2)</div>
+    <div class="fg"><label>Risk title / event</label><input type="text" id="rTitle" placeholder="Brief descriptive title of the risk event"></div>
+    <div class="f2">
+      <div class="fg"><label>Risk source (Cl. 3.4)</label><input type="text" id="rSource" placeholder="Element giving rise to this risk"></div>
+      <div class="fg"><label>Risk category</label>
         <select id="rCat">
           <option>Process Safety</option><option>HSE / Occupational Health</option><option>Asset Integrity</option>
           <option>Operational Reliability</option><option>Financial</option><option>Compliance / Legal / Regulatory</option>
@@ -972,74 +430,55 @@ select option { background: var(--surface-2); }
         </select>
       </div>
     </div>
-    <div class="fgrp"><label>Risk description — scenario, causes, triggers, vulnerabilities (Cl. 6.4.2)</label><textarea id="rDesc" placeholder="Describe the risk scenario: what could happen, under what conditions, what causes or triggers are involved, what vulnerabilities exist..."></textarea></div>
-    <div class="form-2">
-      <div class="fgrp"><label>Potential consequences — tangible & intangible (Cl. 3.6)</label><input type="text" id="rConseq" placeholder="e.g. Fatality, facility damage, regulatory shutdown, reputational harm, financial penalty"></div>
-      <div class="fgrp"><label>Threats & opportunities (Cl. 6.4.2)</label><input type="text" id="rOpp" placeholder="e.g. Threat: LOPC leading to explosion. Opportunity: improved inspection protocol if addressed"></div>
+    <div class="fg"><label>Risk description — scenario, causes, triggers, vulnerabilities</label><textarea id="rDesc" placeholder="Describe the risk scenario in detail..."></textarea></div>
+    <div class="f2">
+      <div class="fg"><label>Potential consequences (Cl. 3.6)</label><input type="text" id="rConseq" placeholder="Tangible and intangible consequences"></div>
+      <div class="fg"><label>Existing controls (Cl. 3.8)</label><input type="text" id="rControls" placeholder="Controls currently in place"></div>
     </div>
-    <div class="form-2">
-      <div class="fgrp"><label>Existing controls (Cl. 3.8)</label><input type="text" id="rControls" placeholder="e.g. BPCS, SIS, PTW system, HAZOP completed 2024, RBI programme"></div>
-      <div class="fgrp"><label>Risk owner (Cl. 5.4.3)</label><input type="text" id="rOwner" placeholder="e.g. VP Operations"></div>
-    </div>
+    <div class="fg"><label>Risk owner (Cl. 5.4.3)</label><input type="text" id="rOwner" placeholder="Person accountable for this risk" style="max-width:360px"></div>
     <div class="btn-row" style="padding-top:0">
-      <button class="btn" onclick="cancelAddForm()">Cancel</button>
-      <button class="btn btn-accent" onclick="saveRisk()"><i class="ti ti-check"></i>Save risk</button>
+      <button class="btn" onclick="cancelAdd()">Cancel</button>
+      <button class="btn btn-ac" onclick="saveManualRisk()"><i class="ti ti-check"></i>Save risk</button>
     </div>
   </div>
 
   <div>
-    <div class="sec-lbl" style="margin-bottom:8px">Identified risks — <span id="riskCountLbl">0 total</span></div>
+    <div class="sec-lbl" style="margin-bottom:7px">Identified risks — <span id="riskCountLbl">0 total</span></div>
     <div class="risk-list" id="riskList3"></div>
   </div>
-
   <div class="btn-row">
     <button class="btn" onclick="goStep(2)"><i class="ti ti-arrow-left"></i>Back</button>
-    <button class="btn btn-accent" onclick="goStep(4)"><i class="ti ti-arrow-right"></i>Next: risk analysis</button>
+    <button class="btn btn-ac" onclick="goStep(4)"><i class="ti ti-arrow-right"></i>Next: risk analysis</button>
   </div>
 </section>
 
-<!-- ══════════ STEP 4: RISK ANALYSIS ══════════ -->
-<section class="panel" id="p4" aria-label="Risk analysis">
-  <div class="clause-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 6.4.3 Risk analysis</div>
-  <div class="info-box">
-    <i class="ti ti-info-circle"></i>
-    <span>Comprehend the nature of risk and its characteristics including level of risk (Cl. 6.4.3). Analysis considers: likelihood of events and consequences, nature and magnitude of consequences, control effectiveness, complexity and connectivity, time-related factors, sensitivity and confidence levels. Analysis may be qualitative, quantitative or a combination.</span>
-  </div>
-
+<!-- ════ STEP 4 ════ -->
+<section class="panel" id="p4">
+  <div class="cl-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 6.4.3 Risk analysis</div>
+  <div class="info-b"><i class="ti ti-info-circle"></i><span>Comprehend the nature of risk and its level (Cl. 6.4.3). AI-generated risks include pre-scored L×C values — review and accept or override them. Analysis should consider likelihood, consequences, control effectiveness, complexity and confidence levels.</span></div>
   <div class="card">
-    <div class="form-2" style="margin-bottom:12px">
-      <div class="fgrp">
-        <label>Select risk to analyse</label>
-        <select id="selRiskAnalysis" onchange="loadAnalysis()"></select>
-      </div>
-      <div style="display:flex;align-items:flex-end;gap:8px" id="analysisBadge"></div>
+    <div class="f2" style="margin-bottom:11px">
+      <div class="fg"><label>Select risk to analyse</label><select id="selRA" onchange="loadAnalysis()"></select></div>
+      <div style="display:flex;align-items:flex-end;gap:7px" id="analysisBadge"></div>
     </div>
-
     <div id="analysisArea" style="display:none">
-      <div class="sec-lbl" style="margin-bottom:4px">Risk: <span id="analysisRiskTitle" style="color:var(--text);text-transform:none;letter-spacing:0"></span></div>
+      <div class="sec-lbl" style="margin-bottom:4px">Analysing: <span id="aRiskTitle" style="color:var(--tx);text-transform:none;letter-spacing:0"></span></div>
       <div class="matrix-wrap">
-        <div class="matrix-area">
-          <div style="font-family:var(--mono);font-size:9px;color:var(--text-muted);text-align:center;margin-bottom:6px;letter-spacing:.08em;text-transform:uppercase">5 × 5 Likelihood × Consequence matrix</div>
-          <div style="display:flex;align-items:flex-end;gap:6px">
-            <div style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase">Likelihood →</div>
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--txm);text-align:center;margin-bottom:5px;letter-spacing:.08em;text-transform:uppercase">5×5 Likelihood × Consequence</div>
+          <div style="display:flex;align-items:flex-end;gap:5px">
+            <div style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px;color:var(--txm);letter-spacing:.07em;text-transform:uppercase">Likelihood →</div>
             <div>
-              <div class="matrix-grid" id="matrixGrid"></div>
-              <div style="font-size:9px;color:var(--text-muted);text-align:center;margin-top:6px;letter-spacing:.08em;text-transform:uppercase">Consequence →</div>
+              <div class="mg" id="matrixGrid"></div>
+              <div style="font-size:9px;color:var(--txm);text-align:center;margin-top:5px;letter-spacing:.07em;text-transform:uppercase">Consequence →</div>
             </div>
           </div>
         </div>
-        <div class="matrix-controls">
-          <div>
-            <div class="sec-lbl">Likelihood (1 = Rare → 5 = Certain)</div>
-            <div class="pick-row" id="likeCells"></div>
-          </div>
-          <div>
-            <div class="sec-lbl">Consequence (1 = Minor → 5 = Catastrophic)</div>
-            <div class="pick-row" id="consCells"></div>
-          </div>
-          <div class="score-preview" id="scorePreview">Select likelihood and consequence above to compute inherent risk score.</div>
-          <div class="fgrp">
-            <label>Control effectiveness (Cl. 6.4.3)</label>
+        <div class="mc-ctrl">
+          <div><div class="sec-lbl">Likelihood (1=Rare → 5=Certain)</div><div class="pick-row" id="likeCells"></div></div>
+          <div><div class="sec-lbl">Consequence (1=Minor → 5=Catastrophic)</div><div class="pick-row" id="consCells"></div></div>
+          <div class="s-preview" id="scorePreview">Select likelihood and consequence to compute inherent risk score.</div>
+          <div class="fg"><label>Control effectiveness (Cl. 6.4.3)</label>
             <select id="ctrlEffect">
               <option value="">— assess control effectiveness —</option>
               <option>Effective — controls performing as designed</option>
@@ -1048,813 +487,524 @@ select option { background: var(--surface-2); }
               <option>Not yet assessed</option>
             </select>
           </div>
-          <div class="fgrp">
-            <label>Analysis basis — assumptions, biases, data limitations (Cl. 6.4.3)</label>
-            <textarea id="analysisNotes" style="min-height:50px" placeholder="Document the basis of judgement: data sources, expert opinion used, assumptions made, uncertainties acknowledged, biases considered..."></textarea>
-          </div>
-          <button class="btn btn-accent" onclick="saveAnalysis()"><i class="ti ti-check"></i>Save analysis</button>
+          <div class="fg"><label>Analysis basis — assumptions, biases, data limitations (Cl. 6.4.3)</label><textarea id="analysisNotes" style="min-height:48px" placeholder="Document basis of judgement, data sources, uncertainties..."></textarea></div>
+          <button class="btn btn-ac" onclick="saveAnalysis()"><i class="ti ti-check"></i>Save analysis</button>
         </div>
       </div>
     </div>
   </div>
-
   <div>
-    <div class="sec-lbl" style="margin-bottom:8px">Analysis progress — <span id="analysisProgress">0 of 0 risks analysed</span></div>
+    <div class="sec-lbl" style="margin-bottom:7px">Analysis progress — <span id="analysisProgress">0 of 0 analysed</span></div>
     <div class="risk-list" id="riskList4"></div>
   </div>
-
   <div class="btn-row">
     <button class="btn" onclick="goStep(3)"><i class="ti ti-arrow-left"></i>Back</button>
-    <button class="btn btn-accent" onclick="goStep(5)"><i class="ti ti-arrow-right"></i>Next: risk evaluation</button>
+    <button class="btn btn-ac" onclick="goStep(5)"><i class="ti ti-arrow-right"></i>Next: risk evaluation</button>
   </div>
 </section>
 
-<!-- ══════════ STEP 5: RISK EVALUATION ══════════ -->
-<section class="panel" id="p5" aria-label="Risk evaluation">
-  <div class="clause-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 6.4.4 Risk evaluation</div>
-  <div class="info-box">
-    <i class="ti ti-info-circle"></i>
-    <span>Compare risk analysis results with risk criteria to determine where action is required (Cl. 6.4.4). Evaluation outcomes: do nothing further · consider treatment options · undertake further analysis · maintain existing controls · reconsider objectives. Decisions should account for wider context and actual/perceived consequences to stakeholders.</span>
-  </div>
-
-  <div class="stats-row" id="evalStats"></div>
-
+<!-- ════ STEP 5 ════ -->
+<section class="panel" id="p5">
+  <div class="cl-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 6.4.4 Risk evaluation</div>
+  <div class="info-b"><i class="ti ti-info-circle"></i><span>Compare analysis results with risk criteria to determine where action is required (Cl. 6.4.4). ISO 31000 evaluation outcomes: do nothing further · consider treatment · undertake further analysis · maintain controls · reconsider objectives.</span></div>
+  <div class="stats" id="evalStats"></div>
   <div class="card">
-    <div class="card-title"><i class="ti ti-scale"></i>Evaluation decisions — align each risk to an ISO 31000 Cl. 6.4.4 outcome</div>
+    <div class="card-t"><i class="ti ti-scale"></i>Evaluation decisions — assign a Cl. 6.4.4 outcome to each risk</div>
     <div id="evalList"></div>
   </div>
-
   <div class="btn-row">
     <button class="btn" onclick="goStep(4)"><i class="ti ti-arrow-left"></i>Back</button>
-    <button class="btn btn-accent" onclick="goStep(6)"><i class="ti ti-arrow-right"></i>Next: risk treatment</button>
+    <button class="btn btn-ac" onclick="goStep(6)"><i class="ti ti-arrow-right"></i>Next: risk treatment</button>
   </div>
 </section>
 
-<!-- ══════════ STEP 6: RISK TREATMENT ══════════ -->
-<section class="panel" id="p6" aria-label="Risk treatment">
-  <div class="clause-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 6.5 Risk treatment</div>
-  <div class="info-box">
-    <i class="ti ti-info-circle"></i>
-    <span>Select and implement options for addressing risk (Cl. 6.5.1–6.5.3). Treatment is an iterative process: formulate options → select → plan → implement → assess effectiveness → decide if residual risk is acceptable → if not, take further treatment. Treatment can introduce new risks that must themselves be managed.</span>
-  </div>
-
+<!-- ════ STEP 6 ════ -->
+<section class="panel" id="p6">
+  <div class="cl-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 6.5 Risk treatment</div>
+  <div class="info-b"><i class="ti ti-info-circle"></i><span>Select and implement options for addressing risk (Cl. 6.5.1–6.5.3). Treatment is iterative: formulate → select → plan → implement → assess effectiveness → decide if residual risk is acceptable. Treatment can introduce new risks that must also be managed.</span></div>
   <div class="card">
-    <div class="fgrp" style="margin-bottom:12px">
-      <label>Select risk to plan treatment</label>
-      <select id="selRiskTreat" onchange="loadTreatment()" style="max-width:520px"></select>
-    </div>
-
+    <div class="fg" style="margin-bottom:11px"><label>Select risk for treatment planning</label><select id="selRT" onchange="loadTreatment()" style="max-width:520px"></select></div>
     <div id="treatArea" style="display:none">
-      <div class="sec-lbl" style="margin-bottom:4px">Risk: <span id="treatRiskTitle" style="color:var(--text);text-transform:none;letter-spacing:0"></span></div>
-      <div class="sep" style="margin:8px 0"></div>
+      <div class="sec-lbl" style="margin-bottom:4px">Risk: <span id="tRiskTitle" style="color:var(--tx);text-transform:none;letter-spacing:0"></span></div>
+      <div class="sep" style="margin:7px 0"></div>
       <div class="sec-lbl">Treatment option (Cl. 6.5.2)</div>
       <div class="treat-grid" id="treatGrid"></div>
-      <div class="sep" style="margin:12px 0"></div>
-      <div class="form-2">
-        <div class="fgrp"><label>Proposed treatment actions (Cl. 6.5.3)</label><textarea id="treatActions" placeholder="Describe specific actions to implement the chosen treatment option, the expected benefits to be gained, and resources required..."></textarea></div>
+      <div class="sep" style="margin:11px 0"></div>
+      <div class="f2">
+        <div class="fg"><label>Proposed treatment actions (Cl. 6.5.3)</label><textarea id="treatActions" placeholder="Specific actions, expected benefits, resources required..."></textarea></div>
         <div>
-          <div class="fgrp"><label>Target residual likelihood (1–5)</label>
-            <select id="resL"><option value="">— select —</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
-          </div>
-          <div class="fgrp" style="margin-top:8px"><label>Target residual consequence (1–5)</label>
-            <select id="resC"><option value="">— select —</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
-          </div>
+          <div class="fg"><label>Target residual likelihood (1–5)</label><select id="resL"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+          <div class="fg" style="margin-top:8px"><label>Target residual consequence (1–5)</label><select id="resC"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
         </div>
       </div>
-      <div class="form-3" style="margin-top:10px">
-        <div class="fgrp"><label>Accountable person (Cl. 6.5.3)</label><input type="text" id="treatOwner" placeholder="Accountable for implementing the plan"></div>
-        <div class="fgrp"><label>Target completion date</label><input type="text" id="treatDate" placeholder="e.g. Q3 2026"></div>
-        <div class="fgrp"><label>Performance measure / KRI</label><input type="text" id="treatKRI" placeholder="e.g. Zero LOPC events, PSV test rate ≥95%"></div>
+      <div class="f3" style="margin-top:9px">
+        <div class="fg"><label>Accountable person (Cl. 6.5.3)</label><input type="text" id="treatOwner" placeholder="Accountable for implementation"></div>
+        <div class="fg"><label>Target completion</label><input type="text" id="treatDate" placeholder="e.g. Q3 2026"></div>
+        <div class="fg"><label>Performance measure / KRI</label><input type="text" id="treatKRI" placeholder="e.g. Zero LOPC events"></div>
       </div>
-      <div class="fgrp" style="margin-top:10px">
-        <label>Remaining (residual) risk — is it acceptable? If not, further treatment required (Cl. 6.5.2)</label>
+      <div class="fg" style="margin-top:9px">
+        <label>Residual risk acceptability (Cl. 6.5.2)</label>
         <select id="residualAccept">
           <option value="">— assess residual risk acceptability —</option>
-          <option>Acceptable — residual risk within risk criteria</option>
+          <option>Acceptable — within risk criteria</option>
           <option>Acceptable with conditions — ongoing monitoring required</option>
           <option>Not acceptable — further treatment required</option>
           <option>Pending — treatment not yet implemented</option>
         </select>
       </div>
-      <button class="btn btn-accent" onclick="saveTreatment()" style="margin-top:12px"><i class="ti ti-check"></i>Save treatment plan</button>
+      <button class="btn btn-ac" onclick="saveTreatment()" style="margin-top:11px"><i class="ti ti-check"></i>Save treatment plan</button>
     </div>
   </div>
-
   <div>
-    <div class="sec-lbl" style="margin-bottom:8px">Treatment plans — <span id="treatProgress">0 of 0 complete</span></div>
+    <div class="sec-lbl" style="margin-bottom:7px">Treatment plans — <span id="treatProgress">0 of 0 complete</span></div>
     <div class="risk-list" id="treatList"></div>
   </div>
-
   <div class="btn-row">
     <button class="btn" onclick="goStep(5)"><i class="ti ti-arrow-left"></i>Back</button>
-    <button class="btn btn-success" onclick="goStep(7)"><i class="ti ti-report-analytics"></i>Generate register</button>
+    <button class="btn btn-ok" onclick="goStep(7)"><i class="ti ti-report-analytics"></i>Generate register</button>
   </div>
 </section>
 
-<!-- ══════════ STEP 7: REGISTER & REPORT ══════════ -->
-<section class="panel" id="p7" aria-label="Risk register and reporting">
-  <div class="clause-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Cl. 6.6 Monitoring & review · Cl. 6.7 Recording & reporting</div>
-
-  <div class="stats-row" id="regStats"></div>
-
+<!-- ════ STEP 7 ════ -->
+<section class="panel" id="p7">
+  <div class="cl-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Cl. 6.6 Monitoring & review · Cl. 6.7 Recording & reporting</div>
+  <div class="stats" id="regStats"></div>
   <div class="filter-bar" id="regFilter"></div>
-
   <div class="reg-wrap">
-    <table class="reg-table" id="regTable">
-      <thead>
-        <tr>
-          <th>Risk ID</th>
-          <th>Department</th>
-          <th>Function</th>
-          <th style="min-width:150px">Risk title</th>
-          <th>Category</th>
-          <th>Risk source (Cl. 3.4)</th>
-          <th>Existing controls</th>
-          <th>L</th><th>C</th>
-          <th>Score</th>
-          <th>Rating</th>
-          <th>Control eff.</th>
-          <th>Evaluation decision (Cl. 6.4.4)</th>
-          <th>Treatment option (Cl. 6.5.2)</th>
-          <th>Residual score</th>
-          <th>Residual acceptable</th>
-          <th>Risk owner</th>
-          <th>KRI / measure</th>
-          <th>Target date</th>
-        </tr>
-      </thead>
-      <tbody id="regBody"></tbody>
-    </table>
+    <table class="reg-t"><thead><tr>
+      <th>Risk ID</th><th>Source</th><th>Dept</th><th>Function</th>
+      <th style="min-width:145px">Risk title</th><th>Category</th>
+      <th>Risk source</th><th>Controls</th>
+      <th>L</th><th>C</th><th>Score</th><th>Rating</th>
+      <th>Ctrl eff.</th><th>Eval. decision</th>
+      <th>Treatment</th><th>Residual</th><th>Acceptable</th>
+      <th>Owner</th><th>KRI</th><th>Target</th>
+    </tr></thead><tbody id="regBody"></tbody></table>
   </div>
-
-  <div class="card">
-    <div class="card-title"><i class="ti ti-eye"></i>Monitoring & review plan (Cl. 6.6)</div>
+  <div class="card" style="margin-top:4px">
+    <div class="card-t"><i class="ti ti-eye"></i>Monitoring & review plan (Cl. 6.6)</div>
     <div class="mon-grid">
-      <div class="mon-card">
-        <div class="mon-title"><i class="ti ti-calendar"></i>Review frequency</div>
-        <div style="font-size:11px;color:var(--text-dim)" id="monReview">—</div>
-      </div>
-      <div class="mon-card">
-        <div class="mon-title"><i class="ti ti-users"></i>Stakeholder reporting (Cl. 6.7)</div>
-        <div style="font-size:11px;color:var(--text-dim)">Board: Quarterly · Senior management: Monthly · Department heads: Weekly (Critical only)</div>
-      </div>
-      <div class="mon-card">
-        <div class="mon-title"><i class="ti ti-refresh"></i>Re-assessment triggers</div>
-        <div style="font-size:11px;color:var(--text-dim)">Change in external/internal context · New critical or high risk · Control failure or near-miss · Post-incident review · Regulatory change</div>
-      </div>
-      <div class="mon-card">
-        <div class="mon-title"><i class="ti ti-file-text"></i>Recording & reporting (Cl. 6.7)</div>
-        <div style="font-size:11px;color:var(--text-dim)">Register maintained in document management system · Outcomes reported through governance cycle · Audit trail of changes maintained · Communication to relevant stakeholders as appropriate</div>
-      </div>
+      <div class="mon-card"><div class="mon-t"><i class="ti ti-calendar"></i>Review frequency</div><div style="font-size:11px;color:var(--txd)" id="monReview">—</div></div>
+      <div class="mon-card"><div class="mon-t"><i class="ti ti-users"></i>Stakeholder reporting (Cl. 6.7)</div><div style="font-size:11px;color:var(--txd)">Board: Quarterly · Senior management: Monthly · Department heads: Weekly (Critical only)</div></div>
+      <div class="mon-card"><div class="mon-t"><i class="ti ti-refresh"></i>Re-assessment triggers</div><div style="font-size:11px;color:var(--txd)">Context change · New critical/high risk · Control failure · Post-incident review · Regulatory change</div></div>
+      <div class="mon-card"><div class="mon-t"><i class="ti ti-file-text"></i>Recording (Cl. 6.7)</div><div style="font-size:11px;color:var(--txd)">Register maintained in document management system · Outcomes reported through governance cycle · Full audit trail maintained</div></div>
     </div>
   </div>
-
   <div class="btn-row">
     <button class="btn" onclick="goStep(6)"><i class="ti ti-arrow-left"></i>Back</button>
-    <button class="btn" onclick="window.print()"><i class="ti ti-printer"></i>Print register</button>
-    <button class="btn btn-accent" onclick="exportCSV()"><i class="ti ti-download"></i>Export CSV</button>
+    <button class="btn" onclick="window.print()"><i class="ti ti-printer"></i>Print</button>
+    <button class="btn btn-ac" onclick="exportCSV()"><i class="ti ti-download"></i>Export CSV</button>
   </div>
 </section>
 
 </main>
 
-<!-- FOOTER -->
-<footer class="app-footer">
+<footer class="footer">
   <span>Enterprise Risk Register Builder · Aligned to BS ISO 31000:2018 Risk Management — Guidelines</span>
-  <span>Risk2Safe · H²S Consultants · Built for GitHub Pages</span>
+  <span>AI-powered (OpenAI GPT-4o) · Risk2Safe · H²S Consultants · GitHub Pages</span>
 </footer>
 
-<!-- ═══════════════════════════════════════════════
-     JAVASCRIPT
-═══════════════════════════════════════════════ -->
 <script>
-// ═══════════ REFERENCE DATA ═══════════
-
-const DEPTS = [
-  {id:'ops',  name:'Operations',       icon:'ti-settings-2',      sub:'Production & maintenance'},
-  {id:'hse',  name:'HSE',              icon:'ti-shield-check',    sub:'Safety, health & environment'},
-  {id:'ps',   name:'Process Safety',   icon:'ti-flame',           sub:'Hazard & barrier management'},
-  {id:'fin',  name:'Finance',          icon:'ti-coin',            sub:'Treasury, reporting & audit'},
-  {id:'hr',   name:'Human Resources',  icon:'ti-users',           sub:'Talent, payroll & L&D'},
-  {id:'it',   name:'IT / Cybersecurity',icon:'ti-lock',           sub:'Infrastructure & data security'},
-  {id:'sc',   name:'Supply Chain',     icon:'ti-truck',           sub:'Procurement & logistics'},
-  {id:'legal',name:'Legal & Compliance',icon:'ti-scale',          sub:'Regulatory & contracts'},
-  {id:'pm',   name:'Projects',         icon:'ti-chart-gantt',     sub:'Capex & project delivery'},
-  {id:'em',   name:'Emergency Mgmt',   icon:'ti-urgent',          sub:'Crisis & business continuity'},
-  {id:'env',  name:'Environment',      icon:'ti-leaf',            sub:'Emissions & sustainability'},
-  {id:'comms',name:'Communications',   icon:'ti-speakerphone',    sub:'Corporate affairs & media'},
+// ─── DATA ───
+const DEPTS=[
+  {id:'ops',  name:'Operations',        icon:'ti-settings-2',   sub:'Production & maintenance'},
+  {id:'hse',  name:'HSE',               icon:'ti-shield-check', sub:'Safety, health & environment'},
+  {id:'ps',   name:'Process Safety',    icon:'ti-flame',        sub:'Hazard & barrier management'},
+  {id:'fin',  name:'Finance',           icon:'ti-coin',         sub:'Treasury, reporting & audit'},
+  {id:'hr',   name:'Human Resources',   icon:'ti-users',        sub:'Talent, payroll & L&D'},
+  {id:'it',   name:'IT / Cybersecurity',icon:'ti-lock',         sub:'Infrastructure & data security'},
+  {id:'sc',   name:'Supply Chain',      icon:'ti-truck',        sub:'Procurement & logistics'},
+  {id:'legal',name:'Legal & Compliance',icon:'ti-scale',        sub:'Regulatory & contracts'},
+  {id:'pm',   name:'Projects',          icon:'ti-chart-gantt',  sub:'Capex & project delivery'},
+  {id:'em',   name:'Emergency Mgmt',    icon:'ti-urgent',       sub:'Crisis & business continuity'},
+  {id:'env',  name:'Environment',       icon:'ti-leaf',         sub:'Emissions & sustainability'},
+  {id:'comms',name:'Communications',    icon:'ti-speakerphone', sub:'Corporate affairs & media'},
 ];
-
-const FNS = {
-  ops:  ['Production operations','Maintenance planning & execution','Turnaround management','Utilities management','Equipment reliability','Shift operations control'],
-  hse:  ['HSE governance & policy','Occupational health management','Incident investigation','Permit-to-work (PTW)','Audit & inspection','Safety training & competency'],
-  ps:   ['HAZOP & risk studies','Barrier & SCE management','LOPC prevention & control','Management of change (MOC)','Process alarm management','PSV & safety device integrity'],
-  fin:  ['Financial reporting & disclosure','Treasury & cash flow management','Tax compliance','Capital allocation & budgeting','Internal audit','Cost control & forecasting'],
-  hr:   ['Talent acquisition & retention','Performance management','Payroll & benefits','Learning & development','Workforce planning','Employee relations & conduct'],
-  it:   ['IT infrastructure management','Cybersecurity operations (SOC)','OT/IT integration & segmentation','Data governance & privacy','IT disaster recovery','User access management'],
-  sc:   ['Procurement strategy','Vendor qualification & management','Critical spares inventory','Logistics & import/export','Contract management','Quality assurance'],
-  legal:['Regulatory compliance monitoring','Contract review & negotiation','Litigation management','Permits, licences & authorisations','Ethics, conduct & anti-bribery','Data privacy (GDPR/local law)'],
-  pm:   ['Project governance & assurance','Cost & schedule control (EVM)','Engineering & design management','Contractor HSE & performance','Commissioning & start-up','Project change management'],
-  em:   ['Emergency response planning (MERP/LERP)','Crisis management (CMT)','Business continuity planning (BCP)','Training & full-scale exercises','Tier 1/2/3 escalation management','Mutual aid coordination'],
-  env:  ['GHG emissions monitoring & reporting','Waste management','Water management & discharge','Environmental permits & compliance','Biodiversity impact management','Environmental audit & assurance'],
+const FNS={
+  ops:['Production operations','Maintenance planning & execution','Turnaround management','Utilities management','Equipment reliability','Shift operations control'],
+  hse:['HSE governance & policy','Occupational health management','Incident investigation','Permit-to-work (PTW)','Audit & inspection','Safety training & competency'],
+  ps: ['HAZOP & risk studies','Barrier & SCE management','LOPC prevention & control','Management of change (MOC)','Process alarm management','PSV & safety device integrity'],
+  fin:['Financial reporting & disclosure','Treasury & cash flow management','Tax compliance','Capital allocation & budgeting','Internal audit','Cost control & forecasting'],
+  hr: ['Talent acquisition & retention','Performance management','Payroll & benefits','Learning & development','Workforce planning','Employee relations & conduct'],
+  it: ['IT infrastructure management','Cybersecurity operations (SOC)','OT/IT integration & segmentation','Data governance & privacy','IT disaster recovery','User access management'],
+  sc: ['Procurement strategy','Vendor qualification & management','Critical spares inventory','Logistics & import/export','Contract management','Quality assurance'],
+  legal:['Regulatory compliance monitoring','Contract review & negotiation','Litigation management','Permits, licences & authorisations','Ethics & anti-bribery','Data privacy (GDPR)'],
+  pm: ['Project governance & assurance','Cost & schedule control (EVM)','Engineering & design management','Contractor HSE & performance','Commissioning & start-up','Project change management'],
+  em: ['Emergency response planning','Crisis management (CMT)','Business continuity (BCP)','Training & full-scale exercises','Tier 1/2/3 escalation management','Mutual aid coordination'],
+  env:['GHG emissions monitoring & reporting','Waste management','Water management & discharge','Environmental permits & compliance','Biodiversity impact management','Environmental audit'],
   comms:['Media relations & PR','Internal communications','CSR & ESG reporting','Crisis communications','Stakeholder engagement','Brand & reputation management'],
 };
-
-const PRINCIPLES = [
-  {id:'integrated', icon:'ti-link',        label:'Integrated',                   sub:'Integral part of all organisational activities (Cl. 4a)'},
-  {id:'structured', icon:'ti-layout-grid', label:'Structured & comprehensive',   sub:'Consistent and comparable results (Cl. 4b)'},
-  {id:'customized', icon:'ti-adjustments', label:'Customized',                   sub:'Proportionate to context and objectives (Cl. 4c)'},
-  {id:'inclusive',  icon:'ti-users',       label:'Inclusive',                    sub:'Timely stakeholder involvement enables informed decisions (Cl. 4d)'},
-  {id:'dynamic',    icon:'ti-refresh',     label:'Dynamic',                      sub:'Anticipates, detects, acknowledges and responds to change (Cl. 4e)'},
-  {id:'bestinfo',   icon:'ti-database',    label:'Best available information',   sub:'Based on historical, current and future expectations (Cl. 4f)'},
-  {id:'human',      icon:'ti-heart',       label:'Human & cultural factors',     sub:'Behaviour and culture considered at every level and stage (Cl. 4g)'},
-  {id:'continual',  icon:'ti-trending-up', label:'Continual improvement',        sub:'Continually improved through learning and experience (Cl. 4h)'},
+const PRINCIPLES=[
+  {id:'integrated', icon:'ti-link',        label:'Integrated',                 sub:'Integral part of all organisational activities (Cl. 4a)'},
+  {id:'structured', icon:'ti-layout-grid', label:'Structured & comprehensive', sub:'Consistent and comparable results (Cl. 4b)'},
+  {id:'customized', icon:'ti-adjustments', label:'Customized',                 sub:'Proportionate to context and objectives (Cl. 4c)'},
+  {id:'inclusive',  icon:'ti-users',       label:'Inclusive',                  sub:'Timely stakeholder involvement (Cl. 4d)'},
+  {id:'dynamic',    icon:'ti-refresh',     label:'Dynamic',                    sub:'Anticipates, detects and responds to change (Cl. 4e)'},
+  {id:'bestinfo',   icon:'ti-database',    label:'Best available information', sub:'Historical, current and future expectations (Cl. 4f)'},
+  {id:'human',      icon:'ti-heart',       label:'Human & cultural factors',   sub:'Behaviour and culture at every level (Cl. 4g)'},
+  {id:'continual',  icon:'ti-trending-up', label:'Continual improvement',      sub:'Improved through learning and experience (Cl. 4h)'},
 ];
-
-const CRITERIA_DATA = [
-  {level:'5', like:'Certain (>90% probability in the period)',   cons:'Catastrophic — multiple fatalities / irreversible total loss', rating:'Critical', action:'Immediate Board escalation; mandatory activity cessation until risk reduced'},
-  {level:'4', like:'Likely (50–90% probability)',                cons:'Severe — single fatality / major permit breach / very significant financial loss', rating:'High', action:'Senior management action plan within 30 days; monthly reporting'},
-  {level:'3', like:'Possible (10–50% probability)',              cons:'Major — serious injury / significant process deviation / major financial loss', rating:'Medium', action:'Management action within 90 days; quarterly monitoring'},
-  {level:'2', like:'Unlikely (1–10% probability)',               cons:'Moderate — minor injury / minor regulatory non-conformance / moderate loss', rating:'Low', action:'Routine monitoring; review at next scheduled cycle; controls maintained'},
-  {level:'1', like:'Rare (<1% probability)',                     cons:'Minor — negligible impact on objectives; first aid only; minimal financial loss', rating:'Very Low', action:'Accept and monitor periodically; document and review annually'},
+const CRITERIA=[
+  {level:'5',like:'Certain (>90%)',         cons:'Catastrophic — multiple fatalities / total loss',         rating:'Critical',  action:'Immediate Board escalation; cessation until controlled'},
+  {level:'4',like:'Likely (50–90%)',        cons:'Severe — single fatality / major permit breach',          rating:'High',      action:'Senior management action within 30 days'},
+  {level:'3',like:'Possible (10–50%)',      cons:'Major — serious injury / significant financial loss',      rating:'Medium',    action:'Management action within 90 days'},
+  {level:'2',like:'Unlikely (1–10%)',       cons:'Moderate — minor injury / minor non-conformance',         rating:'Low',       action:'Routine monitoring; controls maintained'},
+  {level:'1',like:'Rare (<1%)',             cons:'Minor — negligible impact on objectives',                  rating:'Very Low',  action:'Accept; periodic review only'},
 ];
-
-const TREAT_OPTIONS = [
-  {id:'avoid',  icon:'ti-ban',        label:'Avoid (Terminate)',  sub:'Decide not to start or continue the activity giving rise to the risk (Cl. 6.5.2)'},
-  {id:'reduce', icon:'ti-arrow-down', label:'Reduce (Treat)',     sub:'Change likelihood and/or consequences; implement or strengthen controls (Cl. 6.5.2)'},
-  {id:'share',  icon:'ti-share',      label:'Share (Transfer)',   sub:'Share risk via contracts, insurance, joint ventures, or outsourcing (Cl. 6.5.2)'},
-  {id:'retain', icon:'ti-check',      label:'Retain (Tolerate)',  sub:'Retain risk by informed decision where treatment cost exceeds benefit (Cl. 6.5.2)'},
+const TREATS=[
+  {id:'avoid', icon:'ti-ban',        label:'Avoid (Terminate)',sub:'Decide not to start/continue the activity giving rise to risk (Cl. 6.5.2)'},
+  {id:'reduce',icon:'ti-arrow-down', label:'Reduce (Treat)',  sub:'Change likelihood and/or consequences; strengthen controls (Cl. 6.5.2)'},
+  {id:'share', icon:'ti-share',      label:'Share (Transfer)',sub:'Share via contracts, insurance, joint ventures (Cl. 6.5.2)'},
+  {id:'retain',icon:'ti-check',      label:'Retain (Tolerate)',sub:'Retain by informed decision; monitor and review (Cl. 6.5.2)'},
 ];
+const EVAL_OPTS=['Do nothing further','Consider risk treatment options','Undertake further analysis to better understand the risk','Maintain existing controls','Reconsider objectives'];
 
-const EVAL_DECISIONS = [
-  'Do nothing further',
-  'Consider risk treatment options',
-  'Undertake further analysis to better understand the risk',
-  'Maintain existing controls',
-  'Reconsider objectives',
-];
+// ─── STATE ───
+let apiKey='', selDepts=new Set(['ops','hse','ps']), selFns={}, selPrinc=new Set(PRINCIPLES.map(p=>p.id));
+let risks=[], curL=0, curC=0, aIdx=-1, tIdx=-1, tOpt='', filterRating='all';
+['ops','hse','ps'].forEach(id=>{ selFns[id]=new Set(FNS[id].slice(0,3)); });
 
-// ═══════════ STATE ═══════════
-let selDepts    = new Set(['ops','hse','ps']);
-let selFns      = {};
-let selPrinciples = new Set(PRINCIPLES.map(p => p.id));
-let risks       = [];
-let curL = 0, curC = 0;
-let analysisRiskIdx = -1;
-let treatRiskIdx    = -1;
-let treatSelOpt     = '';
-let filterRating    = 'all';
-let currentStep     = 1;
+// ─── RATING HELPERS ───
+function rat(s){ if(s>=15)return{l:'Critical',b:'rb-cr',sc:'sb-cr'}; if(s>=8)return{l:'High',b:'rb-hi',sc:'sb-hi'}; if(s>=4)return{l:'Medium',b:'rb-me',sc:'sb-me'}; if(s>=2)return{l:'Low',b:'rb-lo',sc:'sb-lo'}; return{l:'Very Low',b:'rb-vl',sc:'sb-vl'}; }
+function cls(l,c){ const s=l*c; if(s>=15)return'cr'; if(s>=8)return'hi'; if(s>=4)return'me'; if(s>=2)return'lo'; return'vl'; }
 
-// Init default functions
-['ops','hse','ps'].forEach(id => { selFns[id] = new Set(FNS[id].slice(0,3)); });
-
-// ═══════════ HELPERS ═══════════
-function getRating(score) {
-  if (score >= 15) return {label:'Critical', badge:'rb-cr', sc:'sc-cr'};
-  if (score >= 8)  return {label:'High',     badge:'rb-hi', sc:'sc-hi'};
-  if (score >= 4)  return {label:'Medium',   badge:'rb-me', sc:'sc-me'};
-  if (score >= 2)  return {label:'Low',      badge:'rb-lo', sc:'sc-lo'};
-  return                   {label:'Very Low', badge:'rb-vl', sc:'sc-vl'};
+// ─── API KEY ───
+function openApiModal(){ document.getElementById('apiModal').classList.add('open'); }
+function closeApiModal(){ document.getElementById('apiModal').classList.remove('open'); }
+function saveApiKey(){
+  const k=document.getElementById('apiKeyInput').value.trim();
+  if(!k.startsWith('sk-')){alert('Please enter a valid OpenAI API key (starts with sk-).');return;}
+  apiKey=k;
+  const b=document.getElementById('aiBadge');
+  b.classList.add('connected');
+  document.getElementById('aiBadgeTxt').textContent='AI: GPT-4o Ready';
+  closeApiModal();
 }
 
-function getCellClass(l, c) {
-  const s = l * c;
-  if (s >= 15) return 'mc-cr';
-  if (s >= 8)  return 'mc-hi';
-  if (s >= 4)  return 'mc-me';
-  if (s >= 2)  return 'mc-lo';
-  return 'mc-vl';
+// ─── AI ANALYSIS ───
+async function runAI(){
+  if(!apiKey){openApiModal();return;}
+  const did=document.getElementById('selDept').value;
+  const fn=document.getElementById('selFn').value;
+  const dName=DEPTS.find(d=>d.id===did)?.name||did;
+  const scope=document.getElementById('orgScope').value||'industrial operations';
+  const ext=document.getElementById('extCtx').value||'';
+  const int_=document.getElementById('intCtx').value||'';
+
+  const panel=document.getElementById('aiPanel');
+  const area=document.getElementById('aiResultsArea');
+  document.getElementById('aiPanelTitle').textContent=`${dName} — ${fn}`;
+  panel.style.display='block';
+  area.innerHTML=`<div class="ai-loading"><div class="spinner"></div>GPT-4o is analysing risks for ${dName} / ${fn}...</div>`;
+
+  const prompt=`You are a senior ISO 31000:2018 enterprise risk management practitioner with deep expertise in ${dName}.
+
+Identify 5–8 substantive, realistic risks for the following organisational function. Return a JSON array only — no markdown, no preamble, no explanation. Start with [ and end with ].
+
+Department: ${dName}
+Function: ${fn}
+Operational scope: ${scope}
+External context: ${ext||'Standard industrial operating environment'}
+Internal context: ${int_||'Established management systems and governance structures in place'}
+
+For each risk provide these exact fields:
+- title (string, max 12 words, descriptive)
+- category (one of: Process Safety | HSE/Occupational Health | Asset Integrity | Operational Reliability | Financial | Compliance/Legal/Regulatory | Cybersecurity/OT-IT | Human Capital | Supply Chain | Reputational | Environmental | Emergency Management/BCM | Project/Capital | Strategic)
+- source (string — primary risk source element per ISO 31000 Cl. 3.4)
+- description (string — 2–3 sentences: scenario, causes, triggers, vulnerabilities)
+- consequences (string — comma-separated tangible and intangible consequences)
+- existing_controls (string — typical controls that may be in place)
+- likelihood (integer 1–5: 1=Rare <1%, 2=Unlikely 1–10%, 3=Possible 10–50%, 4=Likely 50–90%, 5=Certain >90%)
+- consequence (integer 1–5: 1=Minor, 2=Moderate, 3=Major, 4=Severe, 5=Catastrophic)
+- rationale (string — one sentence justifying the L and C scores)
+
+Return ONLY the JSON array.`;
+
+  try{
+    const r=await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+      body:JSON.stringify({model:'gpt-4o',max_tokens:3200,temperature:0.35,messages:[{role:'user',content:prompt}]})
+    });
+    if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'HTTP '+r.status);}
+    const data=await r.json();
+    let raw=(data.choices?.[0]?.message?.content||'[]').trim().replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/\s*```$/,'').trim();
+    const arr=JSON.parse(raw);
+    if(!Array.isArray(arr)||!arr.length)throw new Error('No risks returned.');
+    renderAiCards(arr,did,dName,fn);
+  }catch(e){
+    area.innerHTML=`<div class="err-box"><i class="ti ti-alert-circle" style="margin-right:6px"></i><strong>Error:</strong> ${e.message}<br><span style="font-size:11px;color:var(--txm);display:block;margin-top:3px">Verify your API key has GPT-4o access and your network allows outbound requests to api.openai.com.</span></div>`;
+  }
 }
 
-// ═══════════ STEP 1 ═══════════
-function renderCriteria() {
-  const RBCLS = ['rb-cr','rb-hi','rb-me','rb-lo','rb-vl'];
-  document.getElementById('critBody').innerHTML = CRITERIA_DATA.map((c, i) => `
-    <tr>
-      <td style="font-weight:700;color:var(--text);font-family:var(--mono)">${c.level}</td>
-      <td>${c.like}</td>
-      <td>${c.cons}</td>
-      <td><span class="rbadge ${RBCLS[i]}">${c.rating}</span></td>
-      <td>${c.action}</td>
-    </tr>`).join('');
+function renderAiCards(arr,did,dName,fn){
+  const area=document.getElementById('aiResultsArea');
+  area.innerHTML=`
+    <div style="font-size:11px;color:var(--txm);margin-bottom:9px;display:flex;align-items:center;gap:6px">
+      <i class="ti ti-robot" style="color:var(--ai)"></i>
+      GPT-4o identified <strong style="color:var(--ai)">${arr.length} risks</strong> for <strong style="color:var(--tx)">${dName} / ${fn}</strong>. Review and import relevant risks.
+    </div>
+    <div class="ai-grid">
+      ${arr.map((r,i)=>{
+        const s=(r.likelihood||0)*(r.consequence||0);
+        const rv=s?rat(s):null;
+        return `<div class="ai-card">
+          <div class="ai-card-top"><div class="ai-card-title">${r.title||'Untitled'}</div><span class="t-ai"><i class="ti ti-robot" style="font-size:9px"></i>AI</span></div>
+          <div class="ai-card-meta">
+            <span style="color:var(--ac)">${r.category||'—'}</span>
+            ${r.source?`<span>Source: ${r.source}</span>`:''}
+            ${s?`<span style="font-family:var(--mono)">L${r.likelihood}×C${r.consequence}=${s}</span>`:''}
+            ${rv?`<span class="rb ${rv.b}">${rv.l}</span>`:''}
+          </div>
+          <div class="ai-card-desc">${r.description||''}</div>
+          ${r.rationale?`<div class="ai-card-rationale">${r.rationale}</div>`:''}
+          <div class="ai-card-footer">
+            <span style="font-size:10px;color:var(--txm)">${r.consequences?`Consequences: ${r.consequences}`:''}</span>
+            <button class="btn btn-ai" style="padding:4px 10px;font-size:11px" id="aib_${i}" onclick='doImport(${i},${JSON.stringify(arr).replace(/</g,"&lt;")
+              .replace(/>/g,"&gt;")},${JSON.stringify(did)},${JSON.stringify(dName)},${JSON.stringify(fn)})'>
+              <i class="ti ti-download"></i>Import
+            </button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:9px;display:flex;gap:7px;justify-content:flex-end">
+      <button class="btn btn-ai" onclick='importAll(${JSON.stringify(arr).replace(/</g,"&lt;").replace(/>/g,"&gt;")},${JSON.stringify(did)},${JSON.stringify(dName)},${JSON.stringify(fn)})'>
+        <i class="ti ti-download"></i>Import all ${arr.length} risks
+      </button>
+    </div>`;
 }
 
-function renderDepts() {
-  document.getElementById('deptGrid').innerHTML = DEPTS.map(d => `
-    <div class="dept-card ${selDepts.has(d.id) ? 'sel' : ''}" onclick="toggleDept('${d.id}')">
-      <i class="ti ${d.icon}" aria-hidden="true"></i>
-      <div class="dn">${d.name}</div>
-      <div class="ds">${d.sub}</div>
-    </div>`).join('');
+function doImport(i,arr,did,dName,fn){
+  pushRisk(arr[i],did,dName,fn,true);
+  const btn=document.getElementById('aib_'+i);
+  if(btn){btn.innerHTML='<i class="ti ti-check"></i>Imported';btn.disabled=true;btn.style.opacity='.55';}
+  renderList3();
 }
 
-function toggleDept(id) {
-  if (selDepts.has(id)) { selDepts.delete(id); delete selFns[id]; }
-  else { selDepts.add(id); selFns[id] = selFns[id] || new Set(FNS[id].slice(0,3)); }
+function importAll(arr,did,dName,fn){
+  arr.forEach(r=>pushRisk(r,did,dName,fn,true));
+  renderList3();
+  document.querySelectorAll('[id^="aib_"]').forEach(b=>{b.innerHTML='<i class="ti ti-check"></i>Imported';b.disabled=true;b.style.opacity='.55';});
+}
+
+function pushRisk(r,did,dName,fn,isAI){
+  const n=risks.filter(x=>x.deptId===did).length+1;
+  risks.push({
+    id:did.toUpperCase()+'-'+String(n).padStart(3,'0'),
+    deptId:did,deptName:dName,fn,isAI:!!isAI,
+    title:r.title||'',source:r.source||'',cat:r.category||r.cat||'',
+    desc:r.description||r.desc||'',conseq:r.consequences||r.conseq||'',
+    controls:r.existing_controls||r.controls||'',owner:r.owner||'',
+    L:parseInt(r.likelihood)||0,C:parseInt(r.consequence)||parseInt(r.C)||0,
+    score:(parseInt(r.likelihood)||0)*(parseInt(r.consequence)||parseInt(r.C)||0),
+    ctrlEffect:'',analysisNotes:r.rationale||'',evalDecision:'',
+    treatOption:'',treatActions:'',resL:0,resC:0,treatOwner:'',treatDate:'',treatKRI:'',residualAccept:'',
+  });
+}
+
+// ─── STEP 1 ───
+function renderCrit(){
+  const CL=['rb-cr','rb-hi','rb-me','rb-lo','rb-vl'];
+  document.getElementById('critBody').innerHTML=CRITERIA.map((c,i)=>`<tr><td style="font-weight:700;color:var(--tx);font-family:var(--mono)">${c.level}</td><td>${c.like}</td><td>${c.cons}</td><td><span class="rb ${CL[i]}">${c.rating}</span></td><td>${c.action}</td></tr>`).join('');
+}
+function renderDepts(){
+  document.getElementById('deptGrid').innerHTML=DEPTS.map(d=>`<div class="dept-card ${selDepts.has(d.id)?'sel':''}" onclick="toggleDept('${d.id}')"><i class="ti ${d.icon}"></i><div class="dn">${d.name}</div><div class="ds">${d.sub}</div></div>`).join('');
+}
+function toggleDept(id){
+  if(selDepts.has(id)){selDepts.delete(id);delete selFns[id];}else{selDepts.add(id);selFns[id]=selFns[id]||new Set(FNS[id].slice(0,3));}
   renderDepts();
 }
 
-// ═══════════ STEP 2 ═══════════
-function renderPrinciples() {
-  document.getElementById('principleGrid').innerHTML = PRINCIPLES.map(p => `
-    <div class="p-chip ${selPrinciples.has(p.id) ? 'sel' : ''}" onclick="togglePrinciple('${p.id}',this)">
-      <i class="ti ${p.icon}" aria-hidden="true"></i>
-      <div><div class="p-chip-lbl">${p.label}</div><div class="p-chip-sub">${p.sub}</div></div>
-    </div>`).join('');
+// ─── STEP 2 ───
+function renderPrinc(){
+  document.getElementById('principleGrid').innerHTML=PRINCIPLES.map(p=>`<div class="p-chip ${selPrinc.has(p.id)?'sel':''}" onclick="tPrinc('${p.id}',this)"><i class="ti ${p.icon}"></i><div><div class="p-chip-l">${p.label}</div><div class="p-chip-s">${p.sub}</div></div></div>`).join('');
 }
+function tPrinc(id,el){if(selPrinc.has(id))selPrinc.delete(id);else selPrinc.add(id);el.classList.toggle('sel');}
 
-function togglePrinciple(id, el) {
-  if (selPrinciples.has(id)) selPrinciples.delete(id);
-  else selPrinciples.add(id);
-  el.classList.toggle('sel');
-}
-
-// ═══════════ STEP 3 ═══════════
-function populateDeptSelect() {
-  const s = document.getElementById('selDept');
-  s.innerHTML = Array.from(selDepts).map(id => {
-    const d = DEPTS.find(x => x.id === id);
-    return `<option value="${id}">${d.name}</option>`;
-  }).join('');
+// ─── STEP 3 ───
+function populateDeptSel(){
+  document.getElementById('selDept').innerHTML=Array.from(selDepts).map(id=>{const d=DEPTS.find(x=>x.id===id);return`<option value="${id}">${d.name}</option>`;}).join('');
   onDeptChange();
 }
-
-function onDeptChange() {
-  const id = document.getElementById('selDept').value;
-  const fns = selFns[id] ? Array.from(selFns[id]) : [];
-  document.getElementById('selFn').innerHTML = fns.length
-    ? fns.map(f => `<option>${f}</option>`).join('')
-    : '<option>No functions selected</option>';
-  renderFnChips(id);
-  renderRiskList3();
+function onDeptChange(){
+  const id=document.getElementById('selDept').value;
+  const fns=selFns[id]?Array.from(selFns[id]):[];
+  document.getElementById('selFn').innerHTML=fns.length?fns.map(f=>`<option>${f}</option>`).join(''):'<option>No functions selected</option>';
+  renderFnChips(id);renderList3();
+  document.getElementById('aiPanel').style.display='none';
 }
-
-function renderFnChips(deptId) {
-  const area = document.getElementById('fnArea');
-  if (!deptId) { area.style.display = 'none'; return; }
-  area.style.display = 'block';
-  document.getElementById('fnDeptName').textContent = DEPTS.find(x => x.id === deptId)?.name || '';
-  const all = FNS[deptId] || [];
-  const sel = selFns[deptId] || new Set();
-  document.getElementById('fnChips').innerHTML = all.map(f => `
-    <span class="fn-chip ${sel.has(f) ? 'sel' : ''}" onclick="toggleFn('${deptId}','${f.replace(/'/g,"\\'")}',this)">${f}</span>`).join('');
+function renderFnChips(did){
+  const a=document.getElementById('fnArea');
+  if(!did){a.style.display='none';return;}
+  a.style.display='block';
+  document.getElementById('fnDeptName').textContent=DEPTS.find(x=>x.id===did)?.name||'';
+  const all=FNS[did]||[],sel=selFns[did]||new Set();
+  document.getElementById('fnChips').innerHTML=all.map(f=>`<span class="fn-chip ${sel.has(f)?'sel':''}" onclick="tFn('${did}','${f.replace(/'/g,"\\'")}',this)">${f}</span>`).join('');
 }
-
-function toggleFn(deptId, fn, el) {
-  if (!selFns[deptId]) selFns[deptId] = new Set();
-  if (selFns[deptId].has(fn)) selFns[deptId].delete(fn);
-  else selFns[deptId].add(fn);
+function tFn(did,fn,el){
+  if(!selFns[did])selFns[did]=new Set();
+  if(selFns[did].has(fn))selFns[did].delete(fn);else selFns[did].add(fn);
   el.classList.toggle('sel');
-  document.getElementById('selFn').innerHTML = Array.from(selFns[deptId]).map(f => `<option>${f}</option>`).join('');
+  document.getElementById('selFn').innerHTML=Array.from(selFns[did]).map(f=>`<option>${f}</option>`).join('');
 }
-
-function openAddForm() {
-  document.getElementById('addForm').style.display = 'flex';
-  document.getElementById('addForm').style.flexDirection = 'column';
+function openAddForm(){document.getElementById('addForm').style.cssText='display:flex;flex-direction:column';}
+function cancelAdd(){document.getElementById('addForm').style.display='none';}
+function saveManualRisk(){
+  const title=document.getElementById('rTitle').value.trim();
+  if(!title){alert('Please enter a risk title.');return;}
+  const did=document.getElementById('selDept').value,fn=document.getElementById('selFn').value,d=DEPTS.find(x=>x.id===did);
+  pushRisk({title,source:document.getElementById('rSource').value.trim(),category:document.getElementById('rCat').value,description:document.getElementById('rDesc').value.trim(),consequences:document.getElementById('rConseq').value.trim(),existing_controls:document.getElementById('rControls').value.trim(),owner:document.getElementById('rOwner').value.trim(),likelihood:0,consequence:0},did,d.name,fn,false);
+  cancelAdd();
+  ['rTitle','rSource','rDesc','rConseq','rControls','rOwner'].forEach(id=>document.getElementById(id).value='');
+  renderList3();
 }
-
-function cancelAddForm() { document.getElementById('addForm').style.display = 'none'; }
-
-function saveRisk() {
-  const title = document.getElementById('rTitle').value.trim();
-  if (!title) { alert('Please enter a risk title.'); return; }
-  const did = document.getElementById('selDept').value;
-  const fn  = document.getElementById('selFn').value;
-  const d   = DEPTS.find(x => x.id === did);
-  const counter = risks.filter(r => r.deptId === did).length + 1;
-  risks.push({
-    id: did.toUpperCase() + '-' + String(counter).padStart(3,'0'),
-    deptId: did, deptName: d.name, fn,
-    title,
-    source:   document.getElementById('rSource').value.trim(),
-    cat:      document.getElementById('rCat').value,
-    desc:     document.getElementById('rDesc').value.trim(),
-    conseq:   document.getElementById('rConseq').value.trim(),
-    opp:      document.getElementById('rOpp').value.trim(),
-    controls: document.getElementById('rControls').value.trim(),
-    owner:    document.getElementById('rOwner').value.trim(),
-    L: 0, C: 0, score: 0,
-    ctrlEffect: '', analysisNotes: '',
-    evalDecision: '',
-    treatOption: '', treatActions: '',
-    resL: 0, resC: 0,
-    treatOwner: '', treatDate: '', treatKRI: '',
-    residualAccept: '',
-  });
-  cancelAddForm();
-  ['rTitle','rSource','rDesc','rConseq','rOpp','rControls','rOwner'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
-  renderRiskList3();
-}
-
-function deleteRisk(i) {
-  if (!confirm('Delete this risk?')) return;
-  risks.splice(i, 1);
-  renderRiskList3();
-}
-
-function renderRiskList3() {
-  const did = document.getElementById('selDept')?.value;
-  const fn  = document.getElementById('selFn')?.value;
-  document.getElementById('riskCountLbl').textContent =
-    `${risks.length} total · ${risks.filter(r => r.deptId === did && r.fn === fn).length} for this selection`;
-  const list = document.getElementById('riskList3');
-  const filtered = risks.filter(r => r.deptId === did && r.fn === fn);
-  if (!filtered.length) {
-    list.innerHTML = `<div class="empty"><i class="ti ti-plus-circle"></i>No risks identified for this function yet. Click "Identify risk" to add.</div>`;
-    return;
-  }
-  list.innerHTML = filtered.map(r => {
-    const gi = risks.indexOf(r);
-    return `<div class="risk-item">
-      <div class="ri-body">
-        <div class="ri-title">${r.title}</div>
-        <div class="ri-meta">
-          <span class="rid">${r.id}</span>
-          <span>${r.cat}</span>
-          ${r.source ? `<span>Source: ${r.source}</span>` : ''}
-          ${r.owner ? `<span>Owner: ${r.owner}</span>` : ''}
-        </div>
-      </div>
-      <div class="ri-right">
-        <button class="btn-del" onclick="deleteRisk(${gi})" title="Delete risk"><i class="ti ti-trash"></i></button>
-      </div>
-    </div>`;
+function delRisk(i){if(!confirm('Delete this risk?'))return;risks.splice(i,1);renderList3();}
+function renderList3(){
+  const did=document.getElementById('selDept')?.value,fn=document.getElementById('selFn')?.value;
+  document.getElementById('riskCountLbl').textContent=`${risks.length} total · ${risks.filter(r=>r.deptId===did&&r.fn===fn).length} for this selection`;
+  const list=document.getElementById('riskList3'),filt=risks.filter(r=>r.deptId===did&&r.fn===fn);
+  if(!filt.length){list.innerHTML=`<div class="empty"><i class="ti ti-plus-circle"></i>No risks for this function yet.</div>`;return;}
+  list.innerHTML=filt.map(r=>{
+    const gi=risks.indexOf(r),rv=r.score?rat(r.score):null;
+    return `<div class="ri"><div class="ri-body"><div class="ri-title">${r.title}</div><div class="ri-meta"><span class="rid">${r.id}</span><span>${r.cat}</span>${r.isAI?'<span class="t-ai"><i class="ti ti-robot" style="font-size:9px"></i>AI</span>':'<span class="t-man">Manual</span>'}${r.source?`<span>Source: ${r.source}</span>`:''}${r.owner?`<span>Owner: ${r.owner}</span>`:''}</div></div><div class="ri-right">${rv?`<div class="sb ${rv.sc}">${r.score}</div><span class="rb ${rv.b}">${rv.l}</span>`:''}<button class="btn-del" onclick="delRisk(${gi})"><i class="ti ti-trash"></i></button></div></div>`;
   }).join('');
 }
 
-// ═══════════ STEP 4 ═══════════
-function buildMatrix() {
-  const g = document.getElementById('matrixGrid');
-  let html = '';
-  for (let l = 5; l >= 1; l--) {
-    html += `<div class="mcell mc-ax" title="Likelihood ${l}">${['Rare','Unlikely','Possible','Likely','Certain'][l-1]}</div>`;
-    for (let c = 1; c <= 5; c++) {
-      html += `<div class="mcell ${getCellClass(l,c)}" id="mg_${l}_${c}" onclick="setLC(${l},${c})" title="L${l}×C${c}=${l*c}">${l*c}</div>`;
-    }
+// ─── STEP 4 ───
+function buildMatrix(){
+  let h='';
+  for(let l=5;l>=1;l--){h+=`<div class="mc ax">${['Rare','Unlikely','Possible','Likely','Certain'][l-1]}</div>`;for(let c=1;c<=5;c++)h+=`<div class="mc ${cls(l,c)}" id="mg_${l}_${c}" onclick="setLC(${l},${c})">${l*c}</div>`;}
+  h+='<div class="mc" style="background:transparent"></div>';
+  ['Minor','Moderate','Major','Severe','Catastrophic'].forEach(t=>{h+=`<div class="mc ax h">${t}</div>`;});
+  document.getElementById('matrixGrid').innerHTML=h;
+  document.getElementById('likeCells').innerHTML=[1,2,3,4,5].map(v=>`<div class="pc ${cls(v,1)}" id="lp_${v}" onclick="setL4(${v})">${v}</div>`).join('');
+  document.getElementById('consCells').innerHTML=[1,2,3,4,5].map(v=>`<div class="pc ${cls(1,v)}" id="cp_${v}" onclick="setC4(${v})">${v}</div>`).join('');
+}
+function popAnalysisSel(){
+  document.getElementById('selRA').innerHTML=risks.length?risks.map((r,i)=>`<option value="${i}">${r.id} — ${r.title.slice(0,50)}</option>`).join(''):'<option value="">No risks yet</option>';
+  if(risks.length)loadAnalysis();
+}
+function loadAnalysis(){
+  const i=parseInt(document.getElementById('selRA').value);
+  if(isNaN(i)||!risks[i]){document.getElementById('analysisArea').style.display='none';return;}
+  aIdx=i;const r=risks[i];
+  document.getElementById('analysisArea').style.display='block';
+  document.getElementById('aRiskTitle').textContent=r.id+' — '+r.title;
+  curL=r.L||0;curC=r.C||0;
+  document.getElementById('ctrlEffect').value=r.ctrlEffect||'';
+  document.getElementById('analysisNotes').value=r.analysisNotes||'';
+  refreshMx();
+  document.getElementById('analysisBadge').innerHTML=r.isAI?'<span class="t-ai" style="font-size:11px"><i class="ti ti-robot" style="font-size:10px"></i>AI pre-scored</span>':'';
+}
+function setL4(v){curL=v;refreshMx();}
+function setC4(v){curC=v;refreshMx();}
+function setLC(l,c){curL=l;curC=c;refreshMx();}
+function refreshMx(){
+  for(let l=1;l<=5;l++)for(let c=1;c<=5;c++){const el=document.getElementById(`mg_${l}_${c}`);if(el)el.classList.toggle('sel',l===curL&&c===curC);}
+  for(let v=1;v<=5;v++){
+    const lp=document.getElementById(`lp_${v}`),cp=document.getElementById(`cp_${v}`);
+    if(lp){lp.classList.toggle('sel',v===curL);lp.style.opacity=v===curL?'1':'.55';}
+    if(cp){cp.classList.toggle('sel',v===curC);cp.style.opacity=v===curC?'1':'.55';}
   }
-  html += '<div class="mcell" style="background:transparent"></div>';
-  ['Minor','Moderate','Major','Severe','Catastrophic'].forEach(t => {
-    html += `<div class="mcell mc-ax h">${t}</div>`;
-  });
-  g.innerHTML = html;
+  const p=document.getElementById('scorePreview');
+  if(curL&&curC){const s=curL*curC,rv=rat(s);p.innerHTML=`<strong style="font-family:var(--mono)">Inherent score: ${s}</strong> &nbsp;<span class="rb ${rv.b}">${rv.l}</span><br><span style="font-size:10px;color:var(--txm);margin-top:3px;display:block">L${curL} × C${curC} = ${s} · ${rv.l}</span>`;}
+  else p.textContent='Select likelihood and consequence to compute inherent risk score.';
+}
+function saveAnalysis(){
+  if(aIdx<0){alert('Select a risk.');return;}
+  if(!curL||!curC){alert('Set likelihood and consequence.');return;}
+  const r=risks[aIdx];r.L=curL;r.C=curC;r.score=curL*curC;r.ctrlEffect=document.getElementById('ctrlEffect').value;r.analysisNotes=document.getElementById('analysisNotes').value;
+  const rv=rat(r.score);
+  document.getElementById('analysisBadge').innerHTML=`<div class="sb ${rv.sc}">${r.score}</div><span class="rb ${rv.b}" style="margin-left:4px">${rv.l}</span>${r.isAI?'<span class="t-ai" style="margin-left:4px;font-size:10px"><i class="ti ti-robot" style="font-size:9px"></i>AI</span>':''}`;
+  renderList4();renderAnalProg();
+}
+function renderList4(){
+  const list=document.getElementById('riskList4');
+  if(!risks.length){list.innerHTML=`<div class="empty"><i class="ti ti-chart-bar"></i>No risks to analyse.</div>`;return;}
+  list.innerHTML=risks.map((r,i)=>{const done=r.L>0&&r.C>0,rv=done?rat(r.score):null;return`<div class="ri click" onclick="document.getElementById('selRA').value=${i};loadAnalysis()"><div class="ri-body"><div class="ri-title">${r.id} — ${r.title}</div><div class="ri-meta"><span class="t-dept">${r.deptName}</span><span class="t-fn">${r.fn}</span>${r.isAI?'<span class="t-ai"><i class="ti ti-robot" style="font-size:9px"></i>AI</span>':''}</div></div><div class="ri-right">${done?`<div class="sb ${rv.sc}">${r.score}</div><span class="rb ${rv.b}">${rv.l}</span>`:'<span style="font-size:10px;color:var(--txm)">Not analysed</span>'}</div></div>`;}).join('');
+}
+function renderAnalProg(){const done=risks.filter(r=>r.L>0&&r.C>0).length;document.getElementById('analysisProgress').textContent=`${done} of ${risks.length} analysed`;}
 
-  document.getElementById('likeCells').innerHTML = [1,2,3,4,5].map(v =>
-    `<div class="pick-cell ${getCellClass(v,1)}" id="lp_${v}" onclick="setL4(${v})">${v}</div>`
-  ).join('');
-  document.getElementById('consCells').innerHTML = [1,2,3,4,5].map(v =>
-    `<div class="pick-cell ${getCellClass(1,v)}" id="cp_${v}" onclick="setC4(${v})">${v}</div>`
-  ).join('');
+// ─── STEP 5 ───
+function renderEval(){
+  const c={cr:0,hi:0,me:0,lo:0,vl:0};risks.forEach(r=>{if(!r.score)return;if(r.score>=15)c.cr++;else if(r.score>=8)c.hi++;else if(r.score>=4)c.me++;else if(r.score>=2)c.lo++;else c.vl++;});
+  document.getElementById('evalStats').innerHTML=`<div class="stat"><div class="stat-n" style="color:#ff8585">${c.cr}</div><div class="stat-l">Critical</div></div><div class="stat"><div class="stat-n" style="color:#ffb87a">${c.hi}</div><div class="stat-l">High</div></div><div class="stat"><div class="stat-n" style="color:#ffe066">${c.me}</div><div class="stat-l">Medium</div></div><div class="stat"><div class="stat-n" style="color:#6de0ae">${c.lo}</div><div class="stat-l">Low</div></div><div class="stat"><div class="stat-n" style="color:var(--txd)">${risks.length}</div><div class="stat-l">Total</div></div>`;
+  const sorted=[...risks].sort((a,b)=>b.score-a.score);
+  if(!sorted.length){document.getElementById('evalList').innerHTML=`<div class="empty"><i class="ti ti-scale"></i>No risks to evaluate.</div>`;return;}
+  document.getElementById('evalList').innerHTML=sorted.map(r=>{const gi=risks.indexOf(r),rv=r.score?rat(r.score):null;return`<div class="ri" style="margin-bottom:5px"><div class="ri-body"><div class="ri-title">${r.id} — ${r.title}</div><div class="ri-meta"><span class="t-dept">${r.deptName}</span><span class="t-fn">${r.fn}</span>${r.isAI?'<span class="t-ai"><i class="ti ti-robot" style="font-size:9px"></i>AI</span>':''}</div><div style="margin-top:7px;display:flex;align-items:center;gap:7px;flex-wrap:wrap"><label style="font-size:10px;color:var(--txm)">Evaluation decision (Cl. 6.4.4):</label><select onchange="risks[${gi}].evalDecision=this.value" style="font-size:11px;padding:4px 8px;border:1px solid var(--bd);border-radius:4px;background:var(--s2);color:var(--tx);max-width:340px"><option value="">— select —</option>${EVAL_OPTS.map(d=>`<option value="${d}" ${r.evalDecision===d?'selected':''}>${d}</option>`).join('')}</select></div></div><div class="ri-right">${rv?`<div class="sb ${rv.sc}">${r.score}</div><span class="rb ${rv.b}">${rv.l}</span>`:'<span style="font-size:10px;color:var(--txm)">Not analysed</span>'}</div></div>`;}).join('');
 }
 
-function populateAnalysisSelect() {
-  document.getElementById('selRiskAnalysis').innerHTML = risks.length
-    ? risks.map((r,i) => `<option value="${i}">${r.id} — ${r.title.slice(0,50)}</option>`).join('')
-    : '<option value="">No risks identified yet</option>';
-  if (risks.length) loadAnalysis();
+// ─── STEP 6 ───
+function popTreatSel(){document.getElementById('selRT').innerHTML=risks.length?risks.map((r,i)=>`<option value="${i}">${r.id} — ${r.title.slice(0,50)}</option>`).join(''):'<option>No risks yet</option>';if(risks.length)loadTreatment();}
+function loadTreatment(){
+  const i=parseInt(document.getElementById('selRT').value);if(isNaN(i)||!risks[i]){document.getElementById('treatArea').style.display='none';return;}
+  tIdx=i;const r=risks[i];document.getElementById('treatArea').style.display='block';document.getElementById('tRiskTitle').textContent=r.id+' — '+r.title;
+  tOpt=r.treatOption||'';renderTreatGrid();
+  document.getElementById('treatActions').value=r.treatActions||'';document.getElementById('resL').value=r.resL||'';document.getElementById('resC').value=r.resC||'';
+  document.getElementById('treatOwner').value=r.treatOwner||'';document.getElementById('treatDate').value=r.treatDate||'';document.getElementById('treatKRI').value=r.treatKRI||'';document.getElementById('residualAccept').value=r.residualAccept||'';
 }
-
-function loadAnalysis() {
-  const i = parseInt(document.getElementById('selRiskAnalysis').value);
-  if (isNaN(i) || !risks[i]) { document.getElementById('analysisArea').style.display = 'none'; return; }
-  analysisRiskIdx = i;
-  const r = risks[i];
-  document.getElementById('analysisArea').style.display = 'block';
-  document.getElementById('analysisRiskTitle').textContent = r.id + ' — ' + r.title;
-  curL = r.L || 0; curC = r.C || 0;
-  document.getElementById('ctrlEffect').value = r.ctrlEffect || '';
-  document.getElementById('analysisNotes').value = r.analysisNotes || '';
-  refreshMatrixUI();
-}
-
-function setL4(v) { curL = v; refreshMatrixUI(); }
-function setC4(v) { curC = v; refreshMatrixUI(); }
-function setLC(l, c) { curL = l; curC = c; refreshMatrixUI(); }
-
-function refreshMatrixUI() {
-  for (let l = 1; l <= 5; l++) for (let c = 1; c <= 5; c++) {
-    const el = document.getElementById(`mg_${l}_${c}`);
-    if (el) el.classList.toggle('sel', l === curL && c === curC);
-  }
-  for (let v = 1; v <= 5; v++) {
-    const lp = document.getElementById(`lp_${v}`);
-    const cp = document.getElementById(`cp_${v}`);
-    if (lp) { lp.classList.toggle('sel', v === curL); lp.style.opacity = v === curL ? '1' : '0.55'; }
-    if (cp) { cp.classList.toggle('sel', v === curC); cp.style.opacity = v === curC ? '1' : '0.55'; }
-  }
-  const preview = document.getElementById('scorePreview');
-  if (curL && curC) {
-    const s = curL * curC;
-    const r = getRating(s);
-    preview.innerHTML = `<strong style="font-family:var(--mono)">Inherent risk score: ${s}</strong> &nbsp;<span class="rbadge ${r.badge}">${r.label}</span><br><span style="font-size:10px;color:var(--text-muted);margin-top:4px;display:block">L${curL} × C${curC} = ${s} · Rating: ${r.label}</span>`;
-  } else {
-    preview.textContent = 'Select likelihood and consequence above to compute inherent risk score.';
-  }
-}
-
-function saveAnalysis() {
-  if (analysisRiskIdx < 0) { alert('Select a risk to analyse.'); return; }
-  if (!curL || !curC) { alert('Select likelihood and consequence values.'); return; }
-  const r = risks[analysisRiskIdx];
-  r.L = curL; r.C = curC; r.score = curL * curC;
-  r.ctrlEffect = document.getElementById('ctrlEffect').value;
-  r.analysisNotes = document.getElementById('analysisNotes').value;
-  const rat = getRating(r.score);
-  document.getElementById('analysisBadge').innerHTML =
-    `<div class="score-box ${rat.sc}">${r.score}</div><span class="rbadge ${rat.badge}" style="margin-left:4px">${rat.label}</span>`;
-  renderRiskList4();
-  renderAnalysisProgress();
-}
-
-function renderRiskList4() {
-  const list = document.getElementById('riskList4');
-  if (!risks.length) { list.innerHTML = `<div class="empty"><i class="ti ti-chart-bar"></i>No risks identified yet.</div>`; return; }
-  list.innerHTML = risks.map((r, i) => {
-    const done = r.L > 0 && r.C > 0;
-    const rat  = done ? getRating(r.score) : null;
-    return `<div class="risk-item clickable" onclick="document.getElementById('selRiskAnalysis').value=${i};loadAnalysis()">
-      <div class="ri-body">
-        <div class="ri-title">${r.id} — ${r.title}</div>
-        <div class="ri-meta">
-          <span class="tag-dept">${r.deptName}</span>
-          <span class="tag-fn">${r.fn}</span>
-          ${r.ctrlEffect ? `<span>${r.ctrlEffect}</span>` : ''}
-        </div>
-      </div>
-      <div class="ri-right">
-        ${done
-          ? `<div class="score-box ${rat.sc}">${r.score}</div><span class="rbadge ${rat.badge}">${rat.label}</span>`
-          : `<span style="font-size:10px;color:var(--text-muted)">Not analysed</span>`}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderAnalysisProgress() {
-  const done = risks.filter(r => r.L > 0 && r.C > 0).length;
-  document.getElementById('analysisProgress').textContent = `${done} of ${risks.length} risks analysed`;
-}
-
-// ═══════════ STEP 5 ═══════════
-function renderEvaluation() {
-  const cnt = {cr:0,hi:0,me:0,lo:0,vl:0};
-  risks.forEach(r => {
-    if (!r.score) return;
-    if (r.score >= 15) cnt.cr++;
-    else if (r.score >= 8) cnt.hi++;
-    else if (r.score >= 4) cnt.me++;
-    else if (r.score >= 2) cnt.lo++;
-    else cnt.vl++;
-  });
-  document.getElementById('evalStats').innerHTML = `
-    <div class="stat-c"><div class="stat-n" style="color:#ff8585">${cnt.cr}</div><div class="stat-l">Critical</div></div>
-    <div class="stat-c"><div class="stat-n" style="color:#ffb87a">${cnt.hi}</div><div class="stat-l">High</div></div>
-    <div class="stat-c"><div class="stat-n" style="color:#ffe066">${cnt.me}</div><div class="stat-l">Medium</div></div>
-    <div class="stat-c"><div class="stat-n" style="color:#6de0ae">${cnt.lo}</div><div class="stat-l">Low</div></div>
-    <div class="stat-c"><div class="stat-n" style="color:var(--text-dim)">${risks.length}</div><div class="stat-l">Total</div></div>`;
-
-  const sorted = [...risks].sort((a,b) => b.score - a.score);
-  if (!sorted.length) {
-    document.getElementById('evalList').innerHTML = `<div class="empty"><i class="ti ti-scale"></i>No risks to evaluate. Add and analyse risks first.</div>`;
-    return;
-  }
-  document.getElementById('evalList').innerHTML = sorted.map(r => {
-    const gi  = risks.indexOf(r);
-    const rat = r.score ? getRating(r.score) : null;
-    return `<div class="risk-item" style="margin-bottom:6px">
-      <div class="ri-body">
-        <div class="ri-title">${r.id} — ${r.title}</div>
-        <div class="ri-meta"><span class="tag-dept">${r.deptName}</span><span class="tag-fn">${r.fn}</span></div>
-        <div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <label style="font-size:10px;color:var(--text-muted)">Evaluation decision (Cl. 6.4.4):</label>
-          <select onchange="risks[${gi}].evalDecision=this.value" style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--surface-2);color:var(--text);max-width:340px">
-            <option value="">— select evaluation decision —</option>
-            ${EVAL_DECISIONS.map(d => `<option value="${d}" ${r.evalDecision===d?'selected':''}>${d}</option>`).join('')}
-          </select>
-        </div>
-      </div>
-      <div class="ri-right">
-        ${rat ? `<div class="score-box ${rat.sc}">${r.score}</div><span class="rbadge ${rat.badge}">${rat.label}</span>` : `<span style="font-size:10px;color:var(--text-muted)">Not analysed</span>`}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ═══════════ STEP 6 ═══════════
-function populateTreatSelect() {
-  document.getElementById('selRiskTreat').innerHTML = risks.length
-    ? risks.map((r,i) => `<option value="${i}">${r.id} — ${r.title.slice(0,50)}</option>`).join('')
-    : '<option>No risks identified yet</option>';
-  if (risks.length) loadTreatment();
-}
-
-function loadTreatment() {
-  const i = parseInt(document.getElementById('selRiskTreat').value);
-  if (isNaN(i) || !risks[i]) { document.getElementById('treatArea').style.display = 'none'; return; }
-  treatRiskIdx = i;
-  const r = risks[i];
-  document.getElementById('treatArea').style.display = 'block';
-  document.getElementById('treatRiskTitle').textContent = r.id + ' — ' + r.title;
-  treatSelOpt = r.treatOption || '';
-  renderTreatGrid();
-  document.getElementById('treatActions').value = r.treatActions || '';
-  document.getElementById('resL').value = r.resL || '';
-  document.getElementById('resC').value = r.resC || '';
-  document.getElementById('treatOwner').value = r.treatOwner || '';
-  document.getElementById('treatDate').value = r.treatDate || '';
-  document.getElementById('treatKRI').value = r.treatKRI || '';
-  document.getElementById('residualAccept').value = r.residualAccept || '';
-}
-
-function renderTreatGrid() {
-  document.getElementById('treatGrid').innerHTML = TREAT_OPTIONS.map(t => `
-    <div class="treat-card ${treatSelOpt === t.id ? 'sel' : ''}" onclick="selectTreat('${t.id}',this)">
-      <div class="treat-title"><i class="ti ${t.icon}" aria-hidden="true"></i>${t.label}</div>
-      <div class="treat-sub">${t.sub}</div>
-    </div>`).join('');
-}
-
-function selectTreat(id, el) {
-  treatSelOpt = id;
-  document.querySelectorAll('.treat-card').forEach(c => c.classList.remove('sel'));
-  el.classList.add('sel');
-}
-
-function saveTreatment() {
-  if (treatRiskIdx < 0) { alert('Select a risk.'); return; }
-  const r = risks[treatRiskIdx];
-  r.treatOption = treatSelOpt;
-  r.treatActions = document.getElementById('treatActions').value;
-  r.resL = parseInt(document.getElementById('resL').value) || 0;
-  r.resC = parseInt(document.getElementById('resC').value) || 0;
-  r.treatOwner = document.getElementById('treatOwner').value;
-  r.treatDate  = document.getElementById('treatDate').value;
-  r.treatKRI   = document.getElementById('treatKRI').value;
-  r.residualAccept = document.getElementById('residualAccept').value;
+function renderTreatGrid(){document.getElementById('treatGrid').innerHTML=TREATS.map(t=>`<div class="tc ${tOpt===t.id?'sel':''}" onclick="selTreat('${t.id}',this)"><div class="tc-t"><i class="ti ${t.icon}"></i>${t.label}</div><div class="tc-s">${t.sub}</div></div>`).join('');}
+function selTreat(id,el){tOpt=id;document.querySelectorAll('.tc').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');}
+function saveTreatment(){
+  if(tIdx<0){alert('Select a risk.');return;}
+  const r=risks[tIdx];r.treatOption=tOpt;r.treatActions=document.getElementById('treatActions').value;r.resL=parseInt(document.getElementById('resL').value)||0;r.resC=parseInt(document.getElementById('resC').value)||0;r.treatOwner=document.getElementById('treatOwner').value;r.treatDate=document.getElementById('treatDate').value;r.treatKRI=document.getElementById('treatKRI').value;r.residualAccept=document.getElementById('residualAccept').value;
   renderTreatList();
 }
+function renderTreatList(){
+  const done=risks.filter(r=>r.treatOption).length;document.getElementById('treatProgress').textContent=`${done} of ${risks.length} complete`;
+  document.getElementById('treatList').innerHTML=risks.map((r,i)=>{const o=TREATS.find(t=>t.id===r.treatOption);return`<div class="ri click" onclick="document.getElementById('selRT').value=${i};loadTreatment()"><div class="ri-body"><div class="ri-title">${r.id} — ${r.title}</div><div class="ri-meta">${o?`<span>${o.label}</span>`:''}${r.treatDate?`<span>Target: ${r.treatDate}</span>`:''}${r.treatOwner?`<span>Owner: ${r.treatOwner}</span>`:''}</div></div><div class="ri-right">${o?'<span class="rb rb-lo">Planned</span>':'<span style="font-size:10px;color:var(--txm)">Not planned</span>'}</div></div>`;}).join('');
+}
 
-function renderTreatList() {
-  const done = risks.filter(r => r.treatOption).length;
-  document.getElementById('treatProgress').textContent = `${done} of ${risks.length} complete`;
-  document.getElementById('treatList').innerHTML = risks.map((r, i) => {
-    const opt = TREAT_OPTIONS.find(t => t.id === r.treatOption);
-    return `<div class="risk-item clickable" onclick="document.getElementById('selRiskTreat').value=${i};loadTreatment()">
-      <div class="ri-body">
-        <div class="ri-title">${r.id} — ${r.title}</div>
-        <div class="ri-meta">
-          ${opt ? `<span>${opt.label}</span>` : ''}
-          ${r.treatDate ? `<span>Target: ${r.treatDate}</span>` : ''}
-          ${r.treatOwner ? `<span>Owner: ${r.treatOwner}</span>` : ''}
-          ${r.residualAccept ? `<span>${r.residualAccept}</span>` : ''}
-        </div>
-      </div>
-      <div class="ri-right">
-        ${opt ? `<span class="rbadge rb-lo">Planned</span>` : `<span style="font-size:10px;color:var(--text-muted)">Not planned</span>`}
-      </div>
-    </div>`;
+// ─── STEP 7 ───
+function renderReg(){
+  const c={cr:0,hi:0,me:0,lo:0,vl:0};risks.forEach(r=>{if(!r.score)return;if(r.score>=15)c.cr++;else if(r.score>=8)c.hi++;else if(r.score>=4)c.me++;else if(r.score>=2)c.lo++;else c.vl++;});
+  document.getElementById('regStats').innerHTML=`<div class="stat"><div class="stat-n" style="color:#ff8585">${c.cr}</div><div class="stat-l">Critical</div></div><div class="stat"><div class="stat-n" style="color:#ffb87a">${c.hi}</div><div class="stat-l">High</div></div><div class="stat"><div class="stat-n" style="color:#ffe066">${c.me}</div><div class="stat-l">Medium</div></div><div class="stat"><div class="stat-n" style="color:#6de0ae">${c.lo}</div><div class="stat-l">Low</div></div><div class="stat"><div class="stat-n" style="color:var(--txd)">${risks.length}</div><div class="stat-l">Total</div></div>`;
+  const fb=document.getElementById('regFilter');
+  fb.innerHTML=`<span style="font-size:10px;color:var(--txm);font-family:var(--mono)">Filter:</span>${['all','Critical','High','Medium','Low'].map(f=>`<span class="ftag ${filterRating===f.toLowerCase()?'on':''}" onclick="setF('${f.toLowerCase()}',this)">${f==='all'?'All':f}</span>`).join('')}<span class="ftag ${filterRating==='ai'?'on':''}" onclick="setF('ai',this)"><i class="ti ti-robot" style="font-size:10px;vertical-align:-1px"></i> AI only</span>`;
+  document.getElementById('monReview').textContent=`${document.getElementById('fwReview')?.value||'Quarterly'} review cycle · Risks monitored against KRIs · Integrated into governance reporting`;
+  renderRegTable();
+}
+function setF(v,el){filterRating=v;document.querySelectorAll('#regFilter .ftag').forEach(t=>t.classList.remove('on'));el.classList.add('on');renderRegTable();}
+function renderRegTable(){
+  let sorted=[...risks].sort((a,b)=>b.score-a.score);
+  if(filterRating==='ai')sorted=sorted.filter(r=>r.isAI);
+  else if(filterRating!=='all')sorted=sorted.filter(r=>r.score&&rat(r.score).l.toLowerCase()===filterRating);
+  if(!sorted.length){document.getElementById('regBody').innerHTML=`<tr><td colspan="20" style="text-align:center;padding:28px;color:var(--txm)">No risks match this filter.</td></tr>`;return;}
+  document.getElementById('regBody').innerHTML=sorted.map(r=>{
+    const rv=r.score?rat(r.score):null,rS=(r.resL&&r.resC)?r.resL*r.resC:null,rRv=rS?rat(rS):null,o=TREATS.find(t=>t.id===r.treatOption);
+    return`<tr><td class="rid">${r.id}</td><td>${r.isAI?'<span class="t-ai"><i class="ti ti-robot" style="font-size:9px"></i>AI</span>':'<span class="t-man">Manual</span>'}</td><td><span class="t-dept">${r.deptName}</span></td><td><span class="t-fn">${r.fn}</span></td><td style="font-weight:600;color:var(--tx)">${r.title}</td><td style="color:var(--txm)">${r.cat}</td><td style="color:var(--txm)">${r.source||'—'}</td><td style="color:var(--txm)">${r.controls||'—'}</td><td style="text-align:center;font-family:var(--mono);font-weight:700">${r.L||'—'}</td><td style="text-align:center;font-family:var(--mono);font-weight:700">${r.C||'—'}</td><td style="text-align:center">${rv?`<div class="sb ${rv.sc}" style="margin:auto">${r.score}</div>`:'—'}</td><td>${rv?`<span class="rb ${rv.b}">${rv.l}</span>`:'—'}</td><td style="color:var(--txm)">${r.ctrlEffect||'—'}</td><td style="color:var(--txm)">${r.evalDecision||'—'}</td><td>${o?`<strong>${o.label}</strong>`:'—'}</td><td style="text-align:center">${rRv?`<div class="sb ${rRv.sc}" style="margin:auto">${rS}</div>`:'—'}</td><td style="color:var(--txm)">${r.residualAccept||'—'}</td><td style="color:var(--txm)">${r.owner||'—'}</td><td style="color:var(--txm)">${r.treatKRI||'—'}</td><td style="color:var(--txm);white-space:nowrap">${r.treatDate||'—'}</td></tr>`;
   }).join('');
 }
 
-// ═══════════ STEP 7 ═══════════
-function renderRegister() {
-  const cnt = {cr:0,hi:0,me:0,lo:0,vl:0};
-  risks.forEach(r => {
-    if (!r.score) return;
-    if (r.score >= 15) cnt.cr++;
-    else if (r.score >= 8) cnt.hi++;
-    else if (r.score >= 4) cnt.me++;
-    else if (r.score >= 2) cnt.lo++;
-    else cnt.vl++;
-  });
-  document.getElementById('regStats').innerHTML = `
-    <div class="stat-c"><div class="stat-n" style="color:#ff8585">${cnt.cr}</div><div class="stat-l">Critical</div></div>
-    <div class="stat-c"><div class="stat-n" style="color:#ffb87a">${cnt.hi}</div><div class="stat-l">High</div></div>
-    <div class="stat-c"><div class="stat-n" style="color:#ffe066">${cnt.me}</div><div class="stat-l">Medium</div></div>
-    <div class="stat-c"><div class="stat-n" style="color:#6de0ae">${cnt.lo}</div><div class="stat-l">Low</div></div>
-    <div class="stat-c"><div class="stat-n" style="color:var(--text-dim)">${risks.length}</div><div class="stat-l">Total</div></div>`;
-
-  const fb = document.getElementById('regFilter');
-  fb.innerHTML = `<span style="font-size:10px;color:var(--text-muted);font-family:var(--mono)">Filter:</span>
-    ${['all','Critical','High','Medium','Low'].map(f =>
-      `<span class="ftag ${filterRating === f.toLowerCase() ? 'on' : ''}" onclick="setRegFilter('${f.toLowerCase()}',this)">${f === 'all' ? 'All ratings' : f}</span>`
-    ).join('')}`;
-
-  document.getElementById('monReview').textContent =
-    `${document.getElementById('fwReview')?.value || 'Quarterly'} review cycle · Risks monitored against KRIs · Integrated into governance reporting`;
-
-  renderRegTable();
+// ─── CSV EXPORT ───
+function exportCSV(){
+  if(!risks.length){alert('No risks to export.');return;}
+  const H=['Risk ID','Source','Department','Function','Risk Title','Category','Risk Source','Consequences','Existing Controls','Likelihood','Consequence','Inherent Score','Rating','Control Effectiveness','Evaluation Decision','Treatment Option','Residual L','Residual C','Residual Score','Residual Acceptable','Risk Owner','Treatment Actions','KRI / Measure','Target Date'];
+  const rows=[...risks].sort((a,b)=>b.score-a.score).map(r=>{const o=TREATS.find(t=>t.id===r.treatOption),rS=(r.resL&&r.resC)?r.resL*r.resC:'';return[r.id,r.isAI?'AI-Generated':'Manual',r.deptName,r.fn,r.title,r.cat,r.source,r.conseq,r.controls,r.L||'',r.C||'',r.score||'',r.score?rat(r.score).l:'',r.ctrlEffect,r.evalDecision,o?o.label:'',r.resL||'',r.resC||'',rS,r.residualAccept,r.owner,r.treatActions,r.treatKRI,r.treatDate].map(v=>`"${String(v||'').replace(/"/g,'""')}"`);});
+  const n=document.getElementById('orgName')?.value||'Enterprise';
+  const csv=[H.map(h=>`"${h}"`).join(','),...rows.map(r=>r.join(','))].join('\n');
+  const b=new Blob([csv],{type:'text/csv;charset=utf-8;'}),u=URL.createObjectURL(b),a=document.createElement('a');
+  a.href=u;a.download=`${n.replace(/\s+/g,'_')}_ISO31000_Risk_Register_${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(u);
 }
 
-function setRegFilter(v, el) {
-  filterRating = v;
-  document.querySelectorAll('#regFilter .ftag').forEach(t => t.classList.remove('on'));
-  el.classList.add('on');
-  renderRegTable();
+// ─── NAVIGATION ───
+function goStep(n){
+  if(n>1&&selDepts.size===0){alert('Please select at least one department in Step 1.');return;}
+  for(let i=1;i<=7;i++){document.getElementById('p'+i).classList.toggle('active',i===n);const s=document.getElementById('sn'+i);s.classList.toggle('active',i===n);s.classList.toggle('done',i<n);}
+  document.getElementById('progLbl').textContent=`Step ${n} / 7`;document.getElementById('progFill').style.width=Math.round(n/7*100)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===2)renderPrinc();
+  if(n===3)populateDeptSel();
+  if(n===4){buildMatrix();popAnalysisSel();renderList4();renderAnalProg();}
+  if(n===5)renderEval();
+  if(n===6){popTreatSel();renderTreatList();}
+  if(n===7)renderReg();
 }
 
-function renderRegTable() {
-  const sorted = [...risks].sort((a,b) => b.score - a.score);
-  const filt = filterRating === 'all' ? sorted
-    : sorted.filter(r => r.score && getRating(r.score).label.toLowerCase() === filterRating);
-
-  if (!filt.length) {
-    document.getElementById('regBody').innerHTML =
-      `<tr><td colspan="19" style="text-align:center;padding:32px;color:var(--text-muted)">No risks in register. Return to Step 3 to add risks.</td></tr>`;
-    return;
-  }
-
-  document.getElementById('regBody').innerHTML = filt.map(r => {
-    const rat = r.score ? getRating(r.score) : null;
-    const resScore = (r.resL && r.resC) ? r.resL * r.resC : null;
-    const resRat   = resScore ? getRating(resScore) : null;
-    const opt      = TREAT_OPTIONS.find(t => t.id === r.treatOption);
-    return `<tr>
-      <td class="rid">${r.id}</td>
-      <td><span class="tag-dept">${r.deptName}</span></td>
-      <td><span class="tag-fn">${r.fn}</span></td>
-      <td style="font-weight:600;color:var(--text)">${r.title}</td>
-      <td style="color:var(--text-muted)">${r.cat}</td>
-      <td style="color:var(--text-muted)">${r.source || '—'}</td>
-      <td style="color:var(--text-muted)">${r.controls || '—'}</td>
-      <td style="text-align:center;font-family:var(--mono);font-weight:700">${r.L || '—'}</td>
-      <td style="text-align:center;font-family:var(--mono);font-weight:700">${r.C || '—'}</td>
-      <td style="text-align:center">${rat ? `<div class="score-box ${rat.sc}" style="margin:auto">${r.score}</div>` : '—'}</td>
-      <td>${rat ? `<span class="rbadge ${rat.badge}">${rat.label}</span>` : '—'}</td>
-      <td style="color:var(--text-muted)">${r.ctrlEffect || '—'}</td>
-      <td style="color:var(--text-muted)">${r.evalDecision || '—'}</td>
-      <td>${opt ? `<strong>${opt.label}</strong>` : '—'}</td>
-      <td style="text-align:center">${resRat ? `<div class="score-box ${resRat.sc}" style="margin:auto">${resScore}</div>` : '—'}</td>
-      <td style="color:var(--text-muted)">${r.residualAccept || '—'}</td>
-      <td style="color:var(--text-muted)">${r.owner || '—'}</td>
-      <td style="color:var(--text-muted)">${r.treatKRI || '—'}</td>
-      <td style="color:var(--text-muted);white-space:nowrap">${r.treatDate || '—'}</td>
-    </tr>`;
-  }).join('');
-}
-
-// ═══════════ CSV EXPORT ═══════════
-function exportCSV() {
-  if (!risks.length) { alert('No risks to export.'); return; }
-  const headers = ['Risk ID','Department','Function','Risk Title','Category','Risk Source','Consequences',
-    'Existing Controls','Likelihood','Consequence','Inherent Score','Rating','Control Effectiveness',
-    'Evaluation Decision','Treatment Option','Residual L','Residual C','Residual Score',
-    'Residual Acceptable','Risk Owner','Treatment Actions','KRI / Measure','Target Date'];
-  const rows = [...risks].sort((a,b) => b.score - a.score).map(r => {
-    const opt = TREAT_OPTIONS.find(t => t.id === r.treatOption);
-    const resScore = (r.resL && r.resC) ? r.resL * r.resC : '';
-    const rat = r.score ? getRating(r.score).label : '';
-    return [
-      r.id, r.deptName, r.fn, r.title, r.cat, r.source, r.conseq, r.controls,
-      r.L || '', r.C || '', r.score || '', rat, r.ctrlEffect, r.evalDecision,
-      opt ? opt.label : '', r.resL || '', r.resC || '', resScore,
-      r.residualAccept, r.owner, r.treatActions, r.treatKRI, r.treatDate
-    ].map(v => `"${String(v).replace(/"/g,'""')}"`);
-  });
-
-  const orgName = document.getElementById('orgName')?.value || 'Enterprise';
-  const csv = [headers.map(h => `"${h}"`).join(','), ...rows.map(r => r.join(','))].join('\n');
-  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = `${orgName.replace(/\s+/g,'_')}_ISO31000_Risk_Register_${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-// ═══════════ NAVIGATION ═══════════
-function goStep(n) {
-  if (n > 1 && selDepts.size === 0) {
-    alert('Please select at least one department in Step 1 before proceeding.');
-    return;
-  }
-  currentStep = n;
-  for (let i = 1; i <= 7; i++) {
-    document.getElementById('p'  + i).classList.toggle('active', i === n);
-    const sn = document.getElementById('sn' + i);
-    sn.classList.toggle('active', i === n);
-    sn.classList.toggle('done',   i < n);
-  }
-  document.getElementById('progressLabel').textContent = `Step ${n} / 7`;
-  document.getElementById('progressFill').style.width  = Math.round((n / 7) * 100) + '%';
-
-  // Scroll to top of content
-  window.scrollTo({top: 0, behavior: 'smooth'});
-
-  if (n === 2) renderPrinciples();
-  if (n === 3) populateDeptSelect();
-  if (n === 4) { buildMatrix(); populateAnalysisSelect(); renderRiskList4(); renderAnalysisProgress(); }
-  if (n === 5) renderEvaluation();
-  if (n === 6) { populateTreatSelect(); renderTreatList(); }
-  if (n === 7) renderRegister();
-}
-
-// ═══════════ INIT ═══════════
-renderCriteria();
-renderDepts();
+// ─── INIT ───
+renderCrit();renderDepts();
+setTimeout(()=>{if(!apiKey)openApiModal();},600);
 </script>
 </body>
 </html>
