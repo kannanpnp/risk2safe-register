@@ -3,899 +3,1858 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Enterprise Risk Register</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>ISO 31000:2018 — Enterprise Risk Register Builder</title>
+<meta name="description" content="Enterprise Risk Register Builder aligned to BS ISO 31000:2018 Risk Management Guidelines. Department-based risk identification, analysis, evaluation and treatment planning.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
-  :root {
-    --bg: #0d0f14;
-    --surface: #161920;
-    --surface2: #1e2229;
-    --border: #2a2f3a;
-    --border2: #353c4a;
-    --text: #e2e6ee;
-    --text-dim: #8892a4;
-    --text-muted: #4f5a6e;
-    --accent: #f0a500;
-    --accent2: #e05c2a;
-    --critical: #e03535;
-    --high: #e07a2a;
-    --medium: #c5b100;
-    --low: #2e9e5e;
-    --very-low: #3b7abf;
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'IBM Plex Sans', sans-serif;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 13px;
-    line-height: 1.5;
-    min-height: 100vh;
-  }
-
-  /* HEADER */
-  .header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 20px 32px;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 24px;
-  }
-
-  .header-left { flex: 1; }
-
-  .org-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--accent);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  .doc-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-  }
-
-  .doc-subtitle {
-    font-size: 12px;
-    color: var(--text-dim);
-    margin-top: 4px;
-    font-weight: 300;
-  }
-
-  .header-meta {
-    display: grid;
-    grid-template-columns: auto auto auto auto;
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-    font-family: var(--mono);
-    font-size: 10px;
-  }
-
-  .meta-cell {
-    background: var(--surface2);
-    padding: 8px 14px;
-  }
-
-  .meta-label { color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2px; }
-  .meta-value { color: var(--text); font-weight: 600; }
-
-  /* MATRIX SECTION */
-  .section {
-    padding: 24px 32px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-
-  .section-tag {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    background: rgba(240,165,0,0.08);
-    border: 1px solid rgba(240,165,0,0.2);
-    padding: 3px 8px;
-    border-radius: 2px;
-  }
-
-  .section-title {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-dim);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  /* RISK MATRIX */
-  .matrix-wrap {
-    display: flex;
-    gap: 32px;
-    align-items: flex-start;
-  }
-
-  .matrix-container { flex-shrink: 0; }
-
-  .matrix-title {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-muted);
-    text-align: center;
-    margin-bottom: 8px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .matrix-grid {
-    display: grid;
-    grid-template-columns: 28px repeat(5, 52px);
-    grid-template-rows: repeat(5, 40px) 28px;
-    gap: 2px;
-  }
-
-  .matrix-cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 2px;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 600;
-    cursor: default;
-    transition: transform 0.15s, filter 0.15s;
-    position: relative;
-  }
-
-  .matrix-cell:hover { transform: scale(1.08); filter: brightness(1.3); z-index: 2; }
-
-  .cell-empty { background: transparent; }
-  .cell-axis-label {
-    background: transparent;
-    font-size: 9px;
-    color: var(--text-muted);
-    font-family: var(--mono);
-    font-weight: 400;
-    letter-spacing: 0.05em;
-  }
-
-  .c-critical { background: rgba(224,53,53,0.85); color: #fff; }
-  .c-high { background: rgba(224,122,42,0.80); color: #fff; }
-  .c-medium { background: rgba(197,177,0,0.75); color: #000; }
-  .c-low { background: rgba(46,158,94,0.70); color: #fff; }
-  .c-very-low { background: rgba(59,122,191,0.65); color: #fff; }
-
-  .risk-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #fff;
-    border: 1.5px solid rgba(0,0,0,0.4);
-    position: absolute;
-    pointer-events: none;
-  }
-
-  .y-axis-wrap {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-right: 4px;
-    position: relative;
-  }
-
-  .y-axis-label {
-    font-size: 9px;
-    font-family: var(--mono);
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    text-align: center;
-  }
-
-  .x-axis-label {
-    font-size: 9px;
-    font-family: var(--mono);
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    text-align: center;
-    margin-top: 6px;
-  }
-
-  /* LEGEND */
-  .legend {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 14px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-  }
-
-  .legend-title {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--text-muted);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--text-dim);
-  }
-
-  .legend-swatch {
-    width: 14px;
-    height: 14px;
-    border-radius: 2px;
-    flex-shrink: 0;
-  }
-
-  /* FILTERS */
-  .filters {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .filter-label {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--text-muted);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .filter-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    color: var(--text-dim);
-    padding: 4px 10px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    transition: all 0.15s;
-  }
-
-  .filter-btn:hover, .filter-btn.active {
-    background: rgba(240,165,0,0.12);
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  /* TABLE */
-  .table-wrap {
-    overflow-x: auto;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 1100px;
-  }
-
-  thead tr {
-    background: var(--surface2);
-    border-bottom: 2px solid var(--border2);
-  }
-
-  th {
-    padding: 9px 12px;
-    text-align: left;
-    font-family: var(--mono);
-    font-size: 9px;
-    font-weight: 600;
-    color: var(--text-muted);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  tbody tr {
-    border-bottom: 1px solid var(--border);
-    transition: background 0.12s;
-  }
-
-  tbody tr:hover { background: rgba(255,255,255,0.03); }
-
-  tbody tr.hidden { display: none; }
-
-  td {
-    padding: 10px 12px;
-    vertical-align: top;
-    font-size: 12px;
-    color: var(--text-dim);
-  }
-
-  td:first-child {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-muted);
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  .risk-title {
-    font-weight: 600;
-    color: var(--text);
-    font-size: 12px;
-    margin-bottom: 2px;
-  }
-
-  .risk-desc {
-    font-size: 11px;
-    color: var(--text-muted);
-    line-height: 1.4;
-  }
-
-  .badge {
-    display: inline-block;
-    padding: 2px 7px;
-    border-radius: 2px;
-    font-family: var(--mono);
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  .badge-critical { background: rgba(224,53,53,0.2); color: #ff7a7a; border: 1px solid rgba(224,53,53,0.35); }
-  .badge-high { background: rgba(224,122,42,0.2); color: #ffad6e; border: 1px solid rgba(224,122,42,0.35); }
-  .badge-medium { background: rgba(197,177,0,0.15); color: #e6d040; border: 1px solid rgba(197,177,0,0.3); }
-  .badge-low { background: rgba(46,158,94,0.15); color: #5de096; border: 1px solid rgba(46,158,94,0.3); }
-  .badge-very-low { background: rgba(59,122,191,0.15); color: #7ab5f0; border: 1px solid rgba(59,122,191,0.3); }
-
-  .score-box {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 3px;
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 700;
-  }
-
-  .score-critical { background: rgba(224,53,53,0.25); color: #ff7a7a; }
-  .score-high { background: rgba(224,122,42,0.25); color: #ffad6e; }
-  .score-medium { background: rgba(197,177,0,0.2); color: #e6d040; }
-  .score-low { background: rgba(46,158,94,0.2); color: #5de096; }
-  .score-very-low { background: rgba(59,122,191,0.2); color: #7ab5f0; }
-
-  .status-pill {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 10px;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-
-  .status-open { background: rgba(224,53,53,0.15); color: #ff8585; }
-  .status-progress { background: rgba(240,165,0,0.12); color: #ffcc55; }
-  .status-review { background: rgba(59,122,191,0.15); color: #7ab5f0; }
-  .status-closed { background: rgba(46,158,94,0.15); color: #5de096; }
-
-  .owner-tag {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    background: var(--surface2);
-    padding: 2px 6px;
-    border-radius: 2px;
-    border: 1px solid var(--border2);
-    white-space: nowrap;
-  }
-
-  .date-cell {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-muted);
-    white-space: nowrap;
-  }
-
-  .controls {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  .control-item {
-    font-size: 10px;
-    color: var(--text-muted);
-    padding-left: 10px;
-    position: relative;
-  }
-
-  .control-item::before {
-    content: '›';
-    position: absolute;
-    left: 0;
-    color: var(--accent);
-  }
-
-  /* SUMMARY STATS */
-  .stats-bar {
-    display: flex;
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 20px;
-  }
-
-  .stat-cell {
-    flex: 1;
-    background: var(--surface2);
-    padding: 12px 16px;
-    text-align: center;
-  }
-
-  .stat-num {
-    font-family: var(--mono);
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 1;
-    margin-bottom: 3px;
-  }
-
-  .stat-lbl {
-    font-size: 9px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-family: var(--mono);
-  }
-
-  /* FOOTER */
-  .footer {
-    padding: 14px 32px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .footer-note {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--text-muted);
-    letter-spacing: 0.08em;
-  }
-
-  .version-tag {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--accent);
-    background: rgba(240,165,0,0.08);
-    border: 1px solid rgba(240,165,0,0.2);
-    padding: 3px 8px;
-    border-radius: 2px;
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .header { flex-direction: column; }
-    .header-meta { grid-template-columns: 1fr 1fr; }
-    .matrix-wrap { flex-direction: column; }
-    .section { padding: 16px; }
-    .header { padding: 16px; }
-  }
+/* ═══════════════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════════════ */
+:root {
+  --bg:          #0e1117;
+  --surface-1:   #161b25;
+  --surface-2:   #1c2130;
+  --surface-3:   #222840;
+  --border:      #2a3148;
+  --border2:     #343d5c;
+  --text:        #e2e8f5;
+  --text-dim:    #8b96b2;
+  --text-muted:  #505878;
+  --accent:      #4f83f5;
+  --accent-bg:   rgba(79,131,245,0.10);
+  --accent-bdr:  rgba(79,131,245,0.30);
+  --success:     #2db87a;
+  --success-bg:  rgba(45,184,122,0.10);
+  --success-bdr: rgba(45,184,122,0.30);
+  --warning:     #f0a500;
+  --warning-bg:  rgba(240,165,0,0.10);
+  --warning-bdr: rgba(240,165,0,0.25);
+  --critical:    #e03535;
+  --high:        #e07a2a;
+  --medium:      #c9aa00;
+  --low:         #2db87a;
+  --vlow:        #4f83f5;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Inter', sans-serif;
+  --radius: 6px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.35);
+}
+
+/* ═══════════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+input, textarea, select, button {
+  font-family: var(--sans);
+  font-size: 13px;
+}
+
+input, textarea, select {
+  background: var(--surface-1);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 7px 10px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s;
+}
+input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+textarea { resize: vertical; min-height: 60px; }
+select option { background: var(--surface-2); }
+
+/* ═══════════════════════════════════════════════════
+   TOP HEADER
+═══════════════════════════════════════════════════ */
+.app-header {
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 16px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.header-brand i { font-size: 20px; color: var(--accent); }
+
+.header-brand-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.iso-badge {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid var(--accent-bdr);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  font-family: var(--mono);
+  letter-spacing: 0.05em;
+}
+
+.header-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  max-width: 320px;
+}
+
+.progress-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.progress-track {
+  flex: 1;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* ═══════════════════════════════════════════════════
+   STEP NAV
+═══════════════════════════════════════════════════ */
+.step-nav {
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.step-nav::-webkit-scrollbar { display: none; }
+
+.snav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border);
+  border-bottom: 2px solid transparent;
+  min-width: 90px;
+  text-align: center;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  user-select: none;
+}
+.snav:hover { color: var(--text-dim); background: rgba(255,255,255,0.03); }
+.snav.active { color: var(--accent); background: var(--accent-bg); border-bottom-color: var(--accent); }
+.snav.done { color: var(--success); }
+.snav i { font-size: 16px; }
+.snav .clause {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+.snav.active .clause { color: var(--accent); opacity: 0.7; }
+.snav.done .clause { color: var(--success); opacity: 0.7; }
+
+/* ═══════════════════════════════════════════════════
+   MAIN CONTENT
+═══════════════════════════════════════════════════ */
+.main-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+/* ═══════════════════════════════════════════════════
+   PANELS
+═══════════════════════════════════════════════════ */
+.panel { display: none; flex-direction: column; gap: 16px; }
+.panel.active { display: flex; }
+
+/* ═══════════════════════════════════════════════════
+   SECTION LABELS & CLAUSE REFS
+═══════════════════════════════════════════════════ */
+.sec-lbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+
+.clause-ref {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-bdr);
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+}
+
+/* ═══════════════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════════════ */
+.card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ═══════════════════════════════════════════════════
+   ALERT BOXES
+═══════════════════════════════════════════════════ */
+.info-box {
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-bdr);
+  color: var(--accent);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  line-height: 1.5;
+}
+.info-box i { flex-shrink: 0; margin-top: 1px; }
+
+.warn-box {
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-bdr);
+  color: var(--warning);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+/* ═══════════════════════════════════════════════════
+   FORM
+═══════════════════════════════════════════════════ */
+.fgrp { display: flex; flex-direction: column; gap: 4px; }
+.fgrp label { font-size: 11px; color: var(--text-dim); font-weight: 500; }
+
+.form-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+/* ═══════════════════════════════════════════════════
+   DEPT GRID
+═══════════════════════════════════════════════════ */
+.dept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 8px; }
+
+.dept-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.dept-card:hover { border-color: var(--border2); }
+.dept-card.sel { border-color: var(--accent); background: var(--accent-bg); }
+.dept-card i { font-size: 18px; color: var(--text-muted); display: block; margin-bottom: 6px; transition: color 0.15s; }
+.dept-card.sel i { color: var(--accent); }
+.dept-card .dn { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.dept-card.sel .dn { color: var(--accent); }
+.dept-card .ds { font-size: 10px; color: var(--text-muted); }
+
+/* ═══════════════════════════════════════════════════
+   PRINCIPLE CHIPS
+═══════════════════════════════════════════════════ */
+.principle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+.p-chip {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  transition: all 0.15s;
+}
+.p-chip:hover { border-color: var(--border2); }
+.p-chip.sel { border-color: var(--accent); background: var(--accent-bg); }
+.p-chip i { font-size: 16px; color: var(--text-muted); margin-top: 1px; flex-shrink: 0; }
+.p-chip.sel i { color: var(--accent); }
+.p-chip-lbl { font-size: 12px; font-weight: 600; color: var(--text); }
+.p-chip.sel .p-chip-lbl { color: var(--accent); }
+.p-chip-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+/* ═══════════════════════════════════════════════════
+   CRITERIA TABLE
+═══════════════════════════════════════════════════ */
+.crit-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+
+.crit-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+.crit-table th {
+  background: var(--surface-3);
+  padding: 8px 12px;
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.crit-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text-dim); }
+.crit-table tr:last-child td { border-bottom: none; }
+.crit-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* ═══════════════════════════════════════════════════
+   CONTEXT GRID
+═══════════════════════════════════════════════════ */
+.ctx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.ctx-box {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+}
+.ctx-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ctx-title i { color: var(--accent); }
+
+/* ═══════════════════════════════════════════════════
+   RISK FORM
+═══════════════════════════════════════════════════ */
+.risk-form {
+  background: var(--surface-1);
+  border: 1px solid var(--accent-bdr);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ═══════════════════════════════════════════════════
+   RISK LIST
+═══════════════════════════════════════════════════ */
+.risk-list { display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; padding-right: 2px; }
+.risk-list::-webkit-scrollbar { width: 4px; }
+.risk-list::-webkit-scrollbar-track { background: var(--surface-1); }
+.risk-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+.risk-item {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  transition: border-color 0.12s;
+}
+.risk-item:hover { border-color: var(--border2); }
+.risk-item.clickable { cursor: pointer; }
+.ri-body { flex: 1; min-width: 0; }
+.ri-title { font-size: 12px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ri-meta { font-size: 10px; color: var(--text-muted); margin-top: 3px; display: flex; gap: 8px; flex-wrap: wrap; }
+.ri-right { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+
+/* ═══════════════════════════════════════════════════
+   FUNCTION CHIPS
+═══════════════════════════════════════════════════ */
+.fn-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+.fn-chip {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--text-dim);
+  background: var(--surface-2);
+  transition: all 0.12s;
+}
+.fn-chip:hover { border-color: var(--border2); }
+.fn-chip.sel { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+
+/* ═══════════════════════════════════════════════════
+   RISK MATRIX
+═══════════════════════════════════════════════════ */
+.matrix-wrap { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+.matrix-area { flex-shrink: 0; }
+
+.matrix-grid {
+  display: grid;
+  grid-template-columns: 48px repeat(5, 42px);
+  grid-template-rows: repeat(5, 42px) 48px;
+  gap: 3px;
+}
+
+.mcell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s, opacity 0.12s;
+  opacity: 0.55;
+  border: 2px solid transparent;
+  user-select: none;
+}
+.mcell:not(.mc-ax):hover { transform: scale(1.1); opacity: 1; z-index: 2; }
+.mcell.sel { opacity: 1; transform: scale(1.1); border-color: var(--text); z-index: 2; }
+
+.mc-ax {
+  background: transparent;
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--text-muted);
+  opacity: 1;
+  cursor: default;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  letter-spacing: 0.07em;
+  text-align: center;
+}
+.mc-ax.h { writing-mode: horizontal-tb; transform: none; font-size: 9px; }
+
+.mc-vl { background: rgba(79,131,245,0.25); color: #90b8ff; }
+.mc-lo { background: rgba(45,184,122,0.25); color: #6de0ae; }
+.mc-me { background: rgba(201,170,0,0.25); color: #ffe066; }
+.mc-hi { background: rgba(224,122,42,0.25); color: #ffb87a; }
+.mc-cr { background: rgba(224,53,53,0.30); color: #ff8585; }
+
+.matrix-controls { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 12px; }
+
+.pick-row { display: flex; gap: 4px; }
+.pick-cell {
+  width: 38px; height: 38px;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 12px; font-weight: 700;
+  cursor: pointer;
+  opacity: 0.55;
+  border: 2px solid transparent;
+  transition: all 0.12s;
+}
+.pick-cell:hover { opacity: 1; transform: scale(1.05); }
+.pick-cell.sel { opacity: 1; border-color: var(--text); transform: scale(1.08); }
+
+.score-preview {
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* ═══════════════════════════════════════════════════
+   BADGES & SCORE BOXES
+═══════════════════════════════════════════════════ */
+.rbadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.rb-cr { background: rgba(224,53,53,0.2); color: #ff8585; border: 1px solid rgba(224,53,53,0.35); }
+.rb-hi { background: rgba(224,122,42,0.2); color: #ffb87a; border: 1px solid rgba(224,122,42,0.35); }
+.rb-me { background: rgba(201,170,0,0.15); color: #ffe066; border: 1px solid rgba(201,170,0,0.30); }
+.rb-lo { background: rgba(45,184,122,0.15); color: #6de0ae; border: 1px solid rgba(45,184,122,0.30); }
+.rb-vl { background: rgba(79,131,245,0.15); color: #90b8ff; border: 1px solid rgba(79,131,245,0.30); }
+
+.score-box {
+  width: 30px; height: 30px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+.sc-cr { background: rgba(224,53,53,0.25); color: #ff8585; }
+.sc-hi { background: rgba(224,122,42,0.25); color: #ffb87a; }
+.sc-me { background: rgba(201,170,0,0.20); color: #ffe066; }
+.sc-lo { background: rgba(45,184,122,0.20); color: #6de0ae; }
+.sc-vl { background: rgba(79,131,245,0.20); color: #90b8ff; }
+
+/* ═══════════════════════════════════════════════════
+   TAGS
+═══════════════════════════════════════════════════ */
+.tag-dept {
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 600;
+  background: rgba(130,100,255,0.15);
+  color: #b09fff;
+  border: 1px solid rgba(130,100,255,0.25);
+}
+.tag-fn {
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-size: 9px;
+  background: var(--surface-3);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.rid { font-family: var(--mono); font-size: 9px; color: var(--text-muted); }
+
+/* ═══════════════════════════════════════════════════
+   TREATMENT CARDS
+═══════════════════════════════════════════════════ */
+.treat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.treat-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.treat-card:hover { border-color: var(--border2); }
+.treat-card.sel { border-color: var(--accent); background: var(--accent-bg); }
+.treat-title {
+  font-size: 12px; font-weight: 600; color: var(--text);
+  display: flex; align-items: center; gap: 8px; margin-bottom: 3px;
+}
+.treat-card.sel .treat-title { color: var(--accent); }
+.treat-sub { font-size: 10px; color: var(--text-muted); line-height: 1.4; }
+
+/* ═══════════════════════════════════════════════════
+   STATS ROW
+═══════════════════════════════════════════════════ */
+.stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.stat-c {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+.stat-n { font-family: var(--mono); font-size: 24px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+.stat-l { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; font-family: var(--mono); }
+
+/* ═══════════════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════════════ */
+.btn-row { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; padding-top: 4px; }
+
+.btn {
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border2);
+  background: var(--surface-2);
+  color: var(--text);
+  transition: all 0.12s;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+.btn:hover { background: var(--surface-3); border-color: var(--accent); }
+
+.btn-accent { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+.btn-accent:hover { background: rgba(79,131,245,0.2); }
+
+.btn-success { background: var(--success-bg); border-color: var(--success); color: var(--success); }
+.btn-success:hover { background: rgba(45,184,122,0.2); }
+
+.btn-del {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-muted); padding: 4px; border-radius: 4px;
+  display: inline-flex; align-items: center;
+  transition: all 0.12s;
+}
+.btn-del:hover { color: #ff8585; background: rgba(224,53,53,0.1); }
+
+.add-btn {
+  width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px;
+  border: 1px dashed var(--border2);
+  border-radius: 8px;
+  background: none;
+  color: var(--text-dim);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.add-btn:hover { background: var(--surface-2); border-color: var(--accent); color: var(--accent); }
+
+/* ═══════════════════════════════════════════════════
+   FILTER BAR
+═══════════════════════════════════════════════════ */
+.filter-bar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.ftag {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--text-dim);
+  background: var(--surface-2);
+  transition: all 0.12s;
+  font-family: var(--mono);
+  letter-spacing: 0.04em;
+}
+.ftag:hover, .ftag.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+
+/* ═══════════════════════════════════════════════════
+   REGISTER TABLE
+═══════════════════════════════════════════════════ */
+.reg-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+.reg-wrap::-webkit-scrollbar { height: 6px; }
+.reg-wrap::-webkit-scrollbar-track { background: var(--surface-1); }
+.reg-wrap::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+.reg-table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+.reg-table th {
+  padding: 9px 11px;
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-3);
+  white-space: nowrap;
+}
+.reg-table td { padding: 9px 11px; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 11px; color: var(--text-dim); }
+.reg-table tr:last-child td { border-bottom: none; }
+.reg-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* ═══════════════════════════════════════════════════
+   MONITORING GRID
+═══════════════════════════════════════════════════ */
+.mon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mon-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+.mon-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.mon-title i { color: var(--accent); font-size: 14px; }
+
+/* ═══════════════════════════════════════════════════
+   DEPT GROUP HEADER
+═══════════════════════════════════════════════════ */
+.dept-grp-hdr {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 8px 0 5px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* ═══════════════════════════════════════════════════
+   EMPTY STATE
+═══════════════════════════════════════════════════ */
+.empty { text-align: center; padding: 28px 16px; color: var(--text-muted); font-size: 12px; }
+.empty i { font-size: 28px; display: block; margin-bottom: 8px; color: var(--border2); }
+
+/* ═══════════════════════════════════════════════════
+   SEPARATOR
+═══════════════════════════════════════════════════ */
+.sep { height: 1px; background: var(--border); }
+
+/* ═══════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════ */
+.app-footer {
+  background: var(--surface-1);
+  border-top: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════ */
+@media (max-width: 700px) {
+  .form-2, .form-3, .ctx-grid, .principle-grid, .treat-grid, .mon-grid { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: repeat(3, 1fr); }
+  .main-content { padding: 16px 12px 48px; }
+  .matrix-wrap { flex-direction: column; }
+}
+
+@media print {
+  .app-header, .step-nav, .btn-row, .add-btn, .app-footer { display: none !important; }
+  .panel { display: flex !important; }
+  .reg-wrap { overflow: visible; }
+  .reg-table { min-width: unset; }
+}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="header-left">
-    <div class="org-label">Enterprise Risk Management</div>
-    <div class="doc-title">RISK REGISTER</div>
-    <div class="doc-subtitle">Consolidated Risk Inventory · Likelihood × Consequence Assessment · Treatment Tracking</div>
+<!-- ═══════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════ -->
+<header class="app-header">
+  <div class="header-brand">
+    <i class="ti ti-shield-half-filled"></i>
+    <span class="header-brand-text">Enterprise Risk Register Builder</span>
+    <span class="iso-badge">ISO 31000:2018</span>
   </div>
-  <div class="header-meta">
-    <div class="meta-cell">
-      <div class="meta-label">Doc ID</div>
-      <div class="meta-value">ERM-RR-001</div>
-    </div>
-    <div class="meta-cell">
-      <div class="meta-label">Version</div>
-      <div class="meta-value">Rev 3.1</div>
-    </div>
-    <div class="meta-cell">
-      <div class="meta-label">Review Date</div>
-      <div class="meta-value">Q2 2026</div>
-    </div>
-    <div class="meta-cell">
-      <div class="meta-label">Owner</div>
-      <div class="meta-value">Risk &amp; Assurance</div>
-    </div>
+  <div class="header-progress">
+    <span class="progress-label" id="progressLabel">Step 1 / 7</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:14%"></div></div>
   </div>
-</div>
+</header>
 
-<!-- RISK MATRIX SECTION -->
-<div class="section">
-  <div class="section-header">
-    <div class="section-tag">5×5 Matrix</div>
-    <div class="section-title">Risk Likelihood × Consequence</div>
+<!-- ═══════════════════════════════════════════════
+     STEP NAV
+═══════════════════════════════════════════════ -->
+<nav class="step-nav" aria-label="Risk management process steps">
+  <div class="snav active" id="sn1" onclick="goStep(1)" title="Clause 6.3">
+    <i class="ti ti-building"></i><span>Scope & Context</span><span class="clause">Cl. 6.3</span>
   </div>
-  <div class="matrix-wrap">
-    <div>
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div class="y-axis-wrap" style="height:230px;">
-          <div class="y-axis-label">Likelihood →</div>
+  <div class="snav" id="sn2" onclick="goStep(2)" title="Clause 4 & 5">
+    <i class="ti ti-check-circle"></i><span>Principles</span><span class="clause">Cl. 4–5</span>
+  </div>
+  <div class="snav" id="sn3" onclick="goStep(3)" title="Clause 6.4.2">
+    <i class="ti ti-search"></i><span>Identification</span><span class="clause">Cl. 6.4.2</span>
+  </div>
+  <div class="snav" id="sn4" onclick="goStep(4)" title="Clause 6.4.3">
+    <i class="ti ti-chart-bar"></i><span>Analysis</span><span class="clause">Cl. 6.4.3</span>
+  </div>
+  <div class="snav" id="sn5" onclick="goStep(5)" title="Clause 6.4.4">
+    <i class="ti ti-scale"></i><span>Evaluation</span><span class="clause">Cl. 6.4.4</span>
+  </div>
+  <div class="snav" id="sn6" onclick="goStep(6)" title="Clause 6.5">
+    <i class="ti ti-tool"></i><span>Treatment</span><span class="clause">Cl. 6.5</span>
+  </div>
+  <div class="snav" id="sn7" onclick="goStep(7)" title="Clause 6.6–6.7">
+    <i class="ti ti-report-analytics"></i><span>Register</span><span class="clause">Cl. 6.6–6.7</span>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     MAIN CONTENT
+═══════════════════════════════════════════════ -->
+<main class="main-content">
+
+<!-- ══════════ STEP 1: SCOPE, CONTEXT & CRITERIA ══════════ -->
+<section class="panel active" id="p1" aria-label="Scope context and criteria">
+  <div class="clause-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 6.3 — Scope, context and criteria</div>
+  <div class="info-box">
+    <i class="ti ti-info-circle"></i>
+    <span>Define the scope of risk management activities (Cl. 6.3.2), the external and internal context in which the organisation seeks to achieve its objectives (Cl. 6.3.3), and the criteria used to evaluate the significance of risk (Cl. 6.3.4).</span>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-building-factory-2"></i>Organisation & scope (Cl. 6.3.2)</div>
+    <div class="form-2">
+      <div class="fgrp"><label>Organisation name</label><input type="text" id="orgName" placeholder="e.g. Dragon Oil Ltd"></div>
+      <div class="fgrp"><label>Assessment scope</label><input type="text" id="orgScope" placeholder="e.g. Turkmenistan upstream operations"></div>
+    </div>
+    <div class="form-2" style="margin-top:10px">
+      <div class="fgrp"><label>Review period</label><input type="text" id="orgPeriod" placeholder="e.g. Q2–Q3 2026"></div>
+      <div class="fgrp"><label>Risk appetite statement</label><input type="text" id="orgAppetite" placeholder="e.g. Zero tolerance for process safety fatalities"></div>
+    </div>
+  </div>
+
+  <div class="ctx-grid">
+    <div class="ctx-box">
+      <div class="ctx-title"><i class="ti ti-world"></i>External context (Cl. 6.3.3)</div>
+      <textarea id="extCtx" placeholder="Regulatory environment, host country legal framework, geopolitical factors, market/commodity prices, social/cultural factors, technology landscape, external stakeholder expectations, contractual relationships, competitive environment..."></textarea>
+    </div>
+    <div class="ctx-box">
+      <div class="ctx-title"><i class="ti ti-building"></i>Internal context (Cl. 6.3.3)</div>
+      <textarea id="intCtx" placeholder="Vision, mission and values, governance structure and policies, organisational roles and accountabilities, strategy and objectives, capabilities and resources, culture and human factors, standards and guidelines adopted, internal stakeholder relationships, data and information systems..."></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-list-details"></i>Risk criteria — likelihood & consequence scale (Cl. 6.3.4)</div>
+    <div class="crit-wrap">
+      <table class="crit-table">
+        <thead>
+          <tr>
+            <th>Level</th>
+            <th>Likelihood descriptor</th>
+            <th>Consequence descriptor</th>
+            <th>Rating</th>
+            <th>Required management action</th>
+          </tr>
+        </thead>
+        <tbody id="critBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-layout-grid"></i>Select departments for this risk assessment</div>
+    <div class="dept-grid" id="deptGrid"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-accent" onclick="goStep(2)"><i class="ti ti-arrow-right"></i>Next: principles</button>
+  </div>
+</section>
+
+<!-- ══════════ STEP 2: PRINCIPLES & FRAMEWORK ══════════ -->
+<section class="panel" id="p2" aria-label="Principles and framework">
+  <div class="clause-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 4 Principles · Clause 5 Framework</div>
+  <div class="info-box">
+    <i class="ti ti-info-circle"></i>
+    <span>The purpose of risk management is the creation and protection of value (Cl. 4). Confirm which principles your framework upholds. These guide how risk management is integrated into governance and operations (Cl. 5).</span>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-check-circle"></i>Risk management principles (Cl. 4) — select all that apply</div>
+    <div class="principle-grid" id="principleGrid"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-hierarchy-2"></i>Framework elements (Cl. 5)</div>
+    <div class="form-2">
+      <div class="fgrp">
+        <label>Leadership & commitment (Cl. 5.2)</label>
+        <select id="fwLeadership">
+          <option>Top management accountable; Board oversight in place</option>
+          <option>Risk policy issued; roles and authorities assigned</option>
+          <option>Resources allocated; framework implemented</option>
+          <option>Under development</option>
+        </select>
+      </div>
+      <div class="fgrp">
+        <label>Integration approach (Cl. 5.3)</label>
+        <select id="fwIntegration">
+          <option>Fully integrated into governance and operations</option>
+          <option>Integrated at operational level</option>
+          <option>Partially integrated</option>
+          <option>Standalone risk management function</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-2" style="margin-top:10px">
+      <div class="fgrp"><label>Communication & consultation plan (Cl. 5.4.5)</label><input type="text" id="fwComms" placeholder="e.g. Quarterly Risk Committee, department workshops, management briefings"></div>
+      <div class="fgrp">
+        <label>Framework review cycle (Cl. 5.6)</label>
+        <select id="fwReview"><option>Monthly</option><option>Quarterly</option><option>Bi-annually</option><option>Annually</option></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn" onclick="goStep(1)"><i class="ti ti-arrow-left"></i>Back</button>
+    <button class="btn btn-accent" onclick="goStep(3)"><i class="ti ti-arrow-right"></i>Next: risk identification</button>
+  </div>
+</section>
+
+<!-- ══════════ STEP 3: RISK IDENTIFICATION ══════════ -->
+<section class="panel" id="p3" aria-label="Risk identification">
+  <div class="clause-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 6.4.2 Risk identification</div>
+  <div class="info-box">
+    <i class="ti ti-info-circle"></i>
+    <span>Find, recognise and describe risks that might help or prevent the organisation achieving its objectives (Cl. 6.4.2). Consider: risk sources (Cl. 3.4), causes and events, threats and opportunities, vulnerabilities, changes in context, consequences (Cl. 3.6), and biases or assumptions of those involved.</span>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+      <div class="fgrp" style="flex:1;min-width:150px"><label>Department</label><select id="selDept" onchange="onDeptChange()"></select></div>
+      <div class="fgrp" style="flex:1;min-width:150px"><label>Key function</label><select id="selFn"></select></div>
+      <button class="btn btn-accent" onclick="openAddForm()" style="margin-bottom:0;flex-shrink:0"><i class="ti ti-plus"></i>Identify risk</button>
+    </div>
+
+    <div id="fnArea" style="display:none;margin-top:12px">
+      <div class="sec-lbl">Key functions for <span id="fnDeptName"></span> — toggle to include / exclude</div>
+      <div class="fn-wrap" id="fnChips"></div>
+    </div>
+  </div>
+
+  <!-- Add risk form -->
+  <div id="addForm" style="display:none" class="risk-form">
+    <div class="sec-lbl">New risk identification entry (Cl. 6.4.2)</div>
+    <div class="fgrp"><label>Risk title / event description</label><input type="text" id="rTitle" placeholder="e.g. Uncontrolled hydrocarbon release at separator train"></div>
+    <div class="form-2">
+      <div class="fgrp"><label>Risk source (Cl. 3.4) — element giving rise to risk</label><input type="text" id="rSource" placeholder="e.g. Aging process equipment, degraded SIS, human error"></div>
+      <div class="fgrp">
+        <label>Risk category</label>
+        <select id="rCat">
+          <option>Process Safety</option><option>HSE / Occupational Health</option><option>Asset Integrity</option>
+          <option>Operational Reliability</option><option>Financial</option><option>Compliance / Legal / Regulatory</option>
+          <option>Cybersecurity / OT-IT</option><option>Human Capital</option><option>Supply Chain</option>
+          <option>Reputational</option><option>Environmental</option><option>Emergency Management / BCM</option>
+          <option>Project / Capital</option><option>Strategic</option>
+        </select>
+      </div>
+    </div>
+    <div class="fgrp"><label>Risk description — scenario, causes, triggers, vulnerabilities (Cl. 6.4.2)</label><textarea id="rDesc" placeholder="Describe the risk scenario: what could happen, under what conditions, what causes or triggers are involved, what vulnerabilities exist..."></textarea></div>
+    <div class="form-2">
+      <div class="fgrp"><label>Potential consequences — tangible & intangible (Cl. 3.6)</label><input type="text" id="rConseq" placeholder="e.g. Fatality, facility damage, regulatory shutdown, reputational harm, financial penalty"></div>
+      <div class="fgrp"><label>Threats & opportunities (Cl. 6.4.2)</label><input type="text" id="rOpp" placeholder="e.g. Threat: LOPC leading to explosion. Opportunity: improved inspection protocol if addressed"></div>
+    </div>
+    <div class="form-2">
+      <div class="fgrp"><label>Existing controls (Cl. 3.8)</label><input type="text" id="rControls" placeholder="e.g. BPCS, SIS, PTW system, HAZOP completed 2024, RBI programme"></div>
+      <div class="fgrp"><label>Risk owner (Cl. 5.4.3)</label><input type="text" id="rOwner" placeholder="e.g. VP Operations"></div>
+    </div>
+    <div class="btn-row" style="padding-top:0">
+      <button class="btn" onclick="cancelAddForm()">Cancel</button>
+      <button class="btn btn-accent" onclick="saveRisk()"><i class="ti ti-check"></i>Save risk</button>
+    </div>
+  </div>
+
+  <div>
+    <div class="sec-lbl" style="margin-bottom:8px">Identified risks — <span id="riskCountLbl">0 total</span></div>
+    <div class="risk-list" id="riskList3"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn" onclick="goStep(2)"><i class="ti ti-arrow-left"></i>Back</button>
+    <button class="btn btn-accent" onclick="goStep(4)"><i class="ti ti-arrow-right"></i>Next: risk analysis</button>
+  </div>
+</section>
+
+<!-- ══════════ STEP 4: RISK ANALYSIS ══════════ -->
+<section class="panel" id="p4" aria-label="Risk analysis">
+  <div class="clause-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 6.4.3 Risk analysis</div>
+  <div class="info-box">
+    <i class="ti ti-info-circle"></i>
+    <span>Comprehend the nature of risk and its characteristics including level of risk (Cl. 6.4.3). Analysis considers: likelihood of events and consequences, nature and magnitude of consequences, control effectiveness, complexity and connectivity, time-related factors, sensitivity and confidence levels. Analysis may be qualitative, quantitative or a combination.</span>
+  </div>
+
+  <div class="card">
+    <div class="form-2" style="margin-bottom:12px">
+      <div class="fgrp">
+        <label>Select risk to analyse</label>
+        <select id="selRiskAnalysis" onchange="loadAnalysis()"></select>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:8px" id="analysisBadge"></div>
+    </div>
+
+    <div id="analysisArea" style="display:none">
+      <div class="sec-lbl" style="margin-bottom:4px">Risk: <span id="analysisRiskTitle" style="color:var(--text);text-transform:none;letter-spacing:0"></span></div>
+      <div class="matrix-wrap">
+        <div class="matrix-area">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-muted);text-align:center;margin-bottom:6px;letter-spacing:.08em;text-transform:uppercase">5 × 5 Likelihood × Consequence matrix</div>
+          <div style="display:flex;align-items:flex-end;gap:6px">
+            <div style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase">Likelihood →</div>
+            <div>
+              <div class="matrix-grid" id="matrixGrid"></div>
+              <div style="font-size:9px;color:var(--text-muted);text-align:center;margin-top:6px;letter-spacing:.08em;text-transform:uppercase">Consequence →</div>
+            </div>
+          </div>
         </div>
+        <div class="matrix-controls">
+          <div>
+            <div class="sec-lbl">Likelihood (1 = Rare → 5 = Certain)</div>
+            <div class="pick-row" id="likeCells"></div>
+          </div>
+          <div>
+            <div class="sec-lbl">Consequence (1 = Minor → 5 = Catastrophic)</div>
+            <div class="pick-row" id="consCells"></div>
+          </div>
+          <div class="score-preview" id="scorePreview">Select likelihood and consequence above to compute inherent risk score.</div>
+          <div class="fgrp">
+            <label>Control effectiveness (Cl. 6.4.3)</label>
+            <select id="ctrlEffect">
+              <option value="">— assess control effectiveness —</option>
+              <option>Effective — controls performing as designed</option>
+              <option>Partially effective — some gaps identified</option>
+              <option>Ineffective — controls need significant strengthening</option>
+              <option>Not yet assessed</option>
+            </select>
+          </div>
+          <div class="fgrp">
+            <label>Analysis basis — assumptions, biases, data limitations (Cl. 6.4.3)</label>
+            <textarea id="analysisNotes" style="min-height:50px" placeholder="Document the basis of judgement: data sources, expert opinion used, assumptions made, uncertainties acknowledged, biases considered..."></textarea>
+          </div>
+          <button class="btn btn-accent" onclick="saveAnalysis()"><i class="ti ti-check"></i>Save analysis</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="sec-lbl" style="margin-bottom:8px">Analysis progress — <span id="analysisProgress">0 of 0 risks analysed</span></div>
+    <div class="risk-list" id="riskList4"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn" onclick="goStep(3)"><i class="ti ti-arrow-left"></i>Back</button>
+    <button class="btn btn-accent" onclick="goStep(5)"><i class="ti ti-arrow-right"></i>Next: risk evaluation</button>
+  </div>
+</section>
+
+<!-- ══════════ STEP 5: RISK EVALUATION ══════════ -->
+<section class="panel" id="p5" aria-label="Risk evaluation">
+  <div class="clause-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 6.4.4 Risk evaluation</div>
+  <div class="info-box">
+    <i class="ti ti-info-circle"></i>
+    <span>Compare risk analysis results with risk criteria to determine where action is required (Cl. 6.4.4). Evaluation outcomes: do nothing further · consider treatment options · undertake further analysis · maintain existing controls · reconsider objectives. Decisions should account for wider context and actual/perceived consequences to stakeholders.</span>
+  </div>
+
+  <div class="stats-row" id="evalStats"></div>
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-scale"></i>Evaluation decisions — align each risk to an ISO 31000 Cl. 6.4.4 outcome</div>
+    <div id="evalList"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn" onclick="goStep(4)"><i class="ti ti-arrow-left"></i>Back</button>
+    <button class="btn btn-accent" onclick="goStep(6)"><i class="ti ti-arrow-right"></i>Next: risk treatment</button>
+  </div>
+</section>
+
+<!-- ══════════ STEP 6: RISK TREATMENT ══════════ -->
+<section class="panel" id="p6" aria-label="Risk treatment">
+  <div class="clause-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Clause 6.5 Risk treatment</div>
+  <div class="info-box">
+    <i class="ti ti-info-circle"></i>
+    <span>Select and implement options for addressing risk (Cl. 6.5.1–6.5.3). Treatment is an iterative process: formulate options → select → plan → implement → assess effectiveness → decide if residual risk is acceptable → if not, take further treatment. Treatment can introduce new risks that must themselves be managed.</span>
+  </div>
+
+  <div class="card">
+    <div class="fgrp" style="margin-bottom:12px">
+      <label>Select risk to plan treatment</label>
+      <select id="selRiskTreat" onchange="loadTreatment()" style="max-width:520px"></select>
+    </div>
+
+    <div id="treatArea" style="display:none">
+      <div class="sec-lbl" style="margin-bottom:4px">Risk: <span id="treatRiskTitle" style="color:var(--text);text-transform:none;letter-spacing:0"></span></div>
+      <div class="sep" style="margin:8px 0"></div>
+      <div class="sec-lbl">Treatment option (Cl. 6.5.2)</div>
+      <div class="treat-grid" id="treatGrid"></div>
+      <div class="sep" style="margin:12px 0"></div>
+      <div class="form-2">
+        <div class="fgrp"><label>Proposed treatment actions (Cl. 6.5.3)</label><textarea id="treatActions" placeholder="Describe specific actions to implement the chosen treatment option, the expected benefits to be gained, and resources required..."></textarea></div>
         <div>
-          <div class="matrix-title">CONSEQUENCE →</div>
-          <div class="matrix-grid" id="matrixGrid">
-            <!-- Row 5: Certain -->
-            <div class="matrix-cell cell-axis-label" style="font-size:8px; writing-mode:vertical-rl; transform:rotate(180deg); text-align:center;">Certain</div>
-            <div class="matrix-cell c-high" title="5×1=5">5</div>
-            <div class="matrix-cell c-high" title="5×2=10">10</div>
-            <div class="matrix-cell c-critical" title="5×3=15">15</div>
-            <div class="matrix-cell c-critical" title="5×4=20">20</div>
-            <div class="matrix-cell c-critical" title="5×5=25">25</div>
-            <!-- Row 4: Likely -->
-            <div class="matrix-cell cell-axis-label" style="font-size:8px; writing-mode:vertical-rl; transform:rotate(180deg); text-align:center;">Likely</div>
-            <div class="matrix-cell c-medium" title="4×1=4">4</div>
-            <div class="matrix-cell c-high" title="4×2=8">8</div>
-            <div class="matrix-cell c-high" title="4×3=12">12</div>
-            <div class="matrix-cell c-critical" title="4×4=16">16</div>
-            <div class="matrix-cell c-critical" title="4×5=20">20</div>
-            <!-- Row 3: Possible -->
-            <div class="matrix-cell cell-axis-label" style="font-size:8px; writing-mode:vertical-rl; transform:rotate(180deg); text-align:center;">Possible</div>
-            <div class="matrix-cell c-low" title="3×1=3">3</div>
-            <div class="matrix-cell c-medium" title="3×2=6">6</div>
-            <div class="matrix-cell c-high" title="3×3=9">9</div>
-            <div class="matrix-cell c-high" title="3×4=12">12</div>
-            <div class="matrix-cell c-critical" title="3×5=15">15</div>
-            <!-- Row 2: Unlikely -->
-            <div class="matrix-cell cell-axis-label" style="font-size:8px; writing-mode:vertical-rl; transform:rotate(180deg); text-align:center;">Unlikely</div>
-            <div class="matrix-cell c-very-low" title="2×1=2">2</div>
-            <div class="matrix-cell c-low" title="2×2=4">4</div>
-            <div class="matrix-cell c-medium" title="2×3=6">6</div>
-            <div class="matrix-cell c-high" title="2×4=8">8</div>
-            <div class="matrix-cell c-high" title="2×5=10">10</div>
-            <!-- Row 1: Rare -->
-            <div class="matrix-cell cell-axis-label" style="font-size:8px; writing-mode:vertical-rl; transform:rotate(180deg); text-align:center;">Rare</div>
-            <div class="matrix-cell c-very-low" title="1×1=1">1</div>
-            <div class="matrix-cell c-very-low" title="1×2=2">2</div>
-            <div class="matrix-cell c-low" title="1×3=3">3</div>
-            <div class="matrix-cell c-medium" title="1×4=4">4</div>
-            <div class="matrix-cell c-medium" title="1×5=5">5</div>
-            <!-- X-axis labels -->
-            <div class="matrix-cell cell-empty"></div>
-            <div class="matrix-cell cell-axis-label" style="font-size:8px;">Minor</div>
-            <div class="matrix-cell cell-axis-label" style="font-size:8px;">Moderate</div>
-            <div class="matrix-cell cell-axis-label" style="font-size:8px;">Major</div>
-            <div class="matrix-cell cell-axis-label" style="font-size:8px;">Severe</div>
-            <div class="matrix-cell cell-axis-label" style="font-size:8px;">Catastrophic</div>
+          <div class="fgrp"><label>Target residual likelihood (1–5)</label>
+            <select id="resL"><option value="">— select —</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+          </div>
+          <div class="fgrp" style="margin-top:8px"><label>Target residual consequence (1–5)</label>
+            <select id="resC"><option value="">— select —</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- LEGEND -->
-    <div class="legend">
-      <div class="legend-title">Risk Rating</div>
-      <div class="legend-item"><div class="legend-swatch" style="background:rgba(224,53,53,0.8);"></div><div><strong style="color:#ff7a7a;">CRITICAL</strong> — Score 15–25<br><span style="font-size:10px;">Immediate escalation, Board visibility</span></div></div>
-      <div class="legend-item"><div class="legend-swatch" style="background:rgba(224,122,42,0.75);"></div><div><strong style="color:#ffad6e;">HIGH</strong> — Score 8–14<br><span style="font-size:10px;">Senior management action within 30 days</span></div></div>
-      <div class="legend-item"><div class="legend-swatch" style="background:rgba(197,177,0,0.7);"></div><div><strong style="color:#e6d040;">MEDIUM</strong> — Score 4–7<br><span style="font-size:10px;">Management action within 90 days</span></div></div>
-      <div class="legend-item"><div class="legend-swatch" style="background:rgba(46,158,94,0.65);"></div><div><strong style="color:#5de096;">LOW</strong> — Score 2–3<br><span style="font-size:10px;">Monitor; routine controls</span></div></div>
-      <div class="legend-item"><div class="legend-swatch" style="background:rgba(59,122,191,0.6);"></div><div><strong style="color:#7ab5f0;">VERY LOW</strong> — Score 1<br><span style="font-size:10px;">Accept; periodic review</span></div></div>
-
-      <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border);">
-        <div class="legend-title" style="margin-bottom:6px;">Treatment Strategy</div>
-        <div style="font-size:10px; color:var(--text-muted); line-height:1.8;">
-          <span style="color:var(--accent);">T</span> — Tolerate &nbsp;
-          <span style="color:var(--accent);">R</span> — Treat<br>
-          <span style="color:var(--accent);">X</span> — Transfer &nbsp;
-          <span style="color:var(--accent);">E</span> — Terminate
-        </div>
+      <div class="form-3" style="margin-top:10px">
+        <div class="fgrp"><label>Accountable person (Cl. 6.5.3)</label><input type="text" id="treatOwner" placeholder="Accountable for implementing the plan"></div>
+        <div class="fgrp"><label>Target completion date</label><input type="text" id="treatDate" placeholder="e.g. Q3 2026"></div>
+        <div class="fgrp"><label>Performance measure / KRI</label><input type="text" id="treatKRI" placeholder="e.g. Zero LOPC events, PSV test rate ≥95%"></div>
       </div>
+      <div class="fgrp" style="margin-top:10px">
+        <label>Remaining (residual) risk — is it acceptable? If not, further treatment required (Cl. 6.5.2)</label>
+        <select id="residualAccept">
+          <option value="">— assess residual risk acceptability —</option>
+          <option>Acceptable — residual risk within risk criteria</option>
+          <option>Acceptable with conditions — ongoing monitoring required</option>
+          <option>Not acceptable — further treatment required</option>
+          <option>Pending — treatment not yet implemented</option>
+        </select>
+      </div>
+      <button class="btn btn-accent" onclick="saveTreatment()" style="margin-top:12px"><i class="ti ti-check"></i>Save treatment plan</button>
     </div>
   </div>
-</div>
 
-<!-- RISK REGISTER TABLE -->
-<div class="section">
-  <div class="section-header">
-    <div class="section-tag">Risk Inventory</div>
-    <div class="section-title">Risk Register — Active &amp; Monitored Risks</div>
+  <div>
+    <div class="sec-lbl" style="margin-bottom:8px">Treatment plans — <span id="treatProgress">0 of 0 complete</span></div>
+    <div class="risk-list" id="treatList"></div>
   </div>
 
-  <!-- Summary Stats -->
-  <div class="stats-bar">
-    <div class="stat-cell"><div class="stat-num" style="color:#ff7a7a;" id="cntCritical">3</div><div class="stat-lbl">Critical</div></div>
-    <div class="stat-cell"><div class="stat-num" style="color:#ffad6e;" id="cntHigh">4</div><div class="stat-lbl">High</div></div>
-    <div class="stat-cell"><div class="stat-num" style="color:#e6d040;" id="cntMedium">3</div><div class="stat-lbl">Medium</div></div>
-    <div class="stat-cell"><div class="stat-num" style="color:#5de096;" id="cntLow">2</div><div class="stat-lbl">Low</div></div>
-    <div class="stat-cell"><div class="stat-num" style="color:var(--text-dim);" id="cntTotal">12</div><div class="stat-lbl">Total</div></div>
-    <div class="stat-cell"><div class="stat-num" style="color:#7ab5f0;" id="cntOpen">7</div><div class="stat-lbl">Open</div></div>
-    <div class="stat-cell"><div class="stat-num" style="color:#ffcc55;" id="cntProgress">4</div><div class="stat-lbl">In Progress</div></div>
+  <div class="btn-row">
+    <button class="btn" onclick="goStep(5)"><i class="ti ti-arrow-left"></i>Back</button>
+    <button class="btn btn-success" onclick="goStep(7)"><i class="ti ti-report-analytics"></i>Generate register</button>
   </div>
+</section>
 
-  <!-- Filters -->
-  <div class="filters" style="margin-bottom:16px;">
-    <span class="filter-label">Filter:</span>
-    <button class="filter-btn active" onclick="filterTable('all', this)">All</button>
-    <button class="filter-btn" onclick="filterTable('critical', this)">Critical</button>
-    <button class="filter-btn" onclick="filterTable('high', this)">High</button>
-    <button class="filter-btn" onclick="filterTable('medium', this)">Medium</button>
-    <button class="filter-btn" onclick="filterTable('low', this)">Low</button>
-    <button class="filter-btn" onclick="filterTable('open', this)">Open</button>
-    <button class="filter-btn" onclick="filterTable('progress', this)">In Progress</button>
-    <button class="filter-btn" onclick="filterTable('closed', this)">Closed</button>
-  </div>
+<!-- ══════════ STEP 7: REGISTER & REPORT ══════════ -->
+<section class="panel" id="p7" aria-label="Risk register and reporting">
+  <div class="clause-ref"><i class="ti ti-book"></i>ISO 31000:2018 — Cl. 6.6 Monitoring & review · Cl. 6.7 Recording & reporting</div>
 
-  <div class="table-wrap">
-    <table id="riskTable">
+  <div class="stats-row" id="regStats"></div>
+
+  <div class="filter-bar" id="regFilter"></div>
+
+  <div class="reg-wrap">
+    <table class="reg-table" id="regTable">
       <thead>
         <tr>
           <th>Risk ID</th>
-          <th style="min-width:200px;">Risk Title / Description</th>
+          <th>Department</th>
+          <th>Function</th>
+          <th style="min-width:150px">Risk title</th>
           <th>Category</th>
-          <th>Likelihood</th>
-          <th>Consequence</th>
-          <th>Inherent Score</th>
+          <th>Risk source (Cl. 3.4)</th>
+          <th>Existing controls</th>
+          <th>L</th><th>C</th>
+          <th>Score</th>
           <th>Rating</th>
-          <th>Current Controls</th>
-          <th>Residual Score</th>
-          <th>Treatment</th>
-          <th>Risk Owner</th>
-          <th>Status</th>
-          <th>Review Date</th>
+          <th>Control eff.</th>
+          <th>Evaluation decision (Cl. 6.4.4)</th>
+          <th>Treatment option (Cl. 6.5.2)</th>
+          <th>Residual score</th>
+          <th>Residual acceptable</th>
+          <th>Risk owner</th>
+          <th>KRI / measure</th>
+          <th>Target date</th>
         </tr>
       </thead>
-      <tbody>
-        <!-- CRITICAL RISKS -->
-        <tr data-rating="critical" data-status="open">
-          <td>ERM-001</td>
-          <td><div class="risk-title">Major Process Safety Incident</div><div class="risk-desc">Uncontrolled hydrocarbon release leading to fire, explosion, or toxic event at critical facility</div></td>
-          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">HSE / Process</span></td>
-          <td style="text-align:center;">3</td>
-          <td style="text-align:center;">5</td>
-          <td><div class="score-box score-critical">15</div></td>
-          <td><span class="badge badge-critical">Critical</span></td>
-          <td><div class="controls"><div class="control-item">BPCS &amp; SIS layer protection</div><div class="control-item">PTW system enforced</div><div class="control-item">HAZOP completed 2024</div></div></td>
-          <td><div class="score-box score-high">9</div></td>
-          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R</td>
-          <td><span class="owner-tag">VP Operations</span></td>
-          <td><span class="status-pill status-progress">In Progress</span></td>
-          <td class="date-cell">Jun 2026</td>
-        </tr>
-        <tr data-rating="critical" data-status="open">
-          <td>ERM-002</td>
-          <td><div class="risk-title">Cybersecurity Breach — OT/IT Systems</div><div class="risk-desc">Ransomware or APT attack compromising operational technology and causing production shutdown</div></td>
-          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Technology</span></td>
-          <td style="text-align:center;">4</td>
-          <td style="text-align:center;">4</td>
-          <td><div class="score-box score-critical">16</div></td>
-          <td><span class="badge badge-critical">Critical</span></td>
-          <td><div class="controls"><div class="control-item">OT/IT network segmentation</div><div class="control-item">24/7 SOC monitoring</div><div class="control-item">Incident response plan (IRP)</div></div></td>
-          <td><div class="score-box score-high">8</div></td>
-          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R/X</td>
-          <td><span class="owner-tag">CISO</span></td>
-          <td><span class="status-pill status-open">Open</span></td>
-          <td class="date-cell">May 2026</td>
-        </tr>
-        <tr data-rating="critical" data-status="open">
-          <td>ERM-003</td>
-          <td><div class="risk-title">Regulatory Non-Compliance — Environmental</div><div class="risk-desc">Failure to meet updated GHG emissions regulations resulting in permit revocation or significant penalty</div></td>
-          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Compliance</span></td>
-          <td style="text-align:center;">3</td>
-          <td style="text-align:center;">5</td>
-          <td><div class="score-box score-critical">15</div></td>
-          <td><span class="badge badge-critical">Critical</span></td>
-          <td><div class="controls"><div class="control-item">Environmental mgmt system (ISO 14001)</div><div class="control-item">Monthly LDAR monitoring</div></div></td>
-          <td><div class="score-box score-medium">6</div></td>
-          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R</td>
-          <td><span class="owner-tag">Chief HSE Officer</span></td>
-          <td><span class="status-pill status-progress">In Progress</span></td>
-          <td class="date-cell">Apr 2026</td>
-        </tr>
-        <!-- HIGH RISKS -->
-        <tr data-rating="high" data-status="open">
-          <td>ERM-004</td>
-          <td><div class="risk-title">Supply Chain Disruption</div><div class="risk-desc">Critical spare parts or chemical supply failure causing extended unplanned production outage</div></td>
-          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Operational</span></td>
-          <td style="text-align:center;">4</td>
-          <td style="text-align:center;">3</td>
-          <td><div class="score-box score-high">12</div></td>
-          <td><span class="badge badge-high">High</span></td>
-          <td><div class="controls"><div class="control-item">Critical spares inventory buffer</div><div class="control-item">Dual-source supplier qualification</div></div></td>
-          <td><div class="score-box score-medium">6</div></td>
-          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R</td>
-          <td><span class="owner-tag">Supply Chain Dir.</span></td>
-          <td><span class="status-pill status-open">Open</span></td>
-          <td class="date-cell">Jul 2026</td>
-        </tr>
-        <tr data-rating="high" data-status="progress">
-          <td>ERM-005</td>
-          <td><div class="risk-title">Key Talent Attrition — Technical Workforce</div><div class="risk-desc">Loss of critical engineering and operations expertise reducing capability and increasing risk exposure</div></td>
-          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Human Capital</span></td>
-          <td style="text-align:center;">4</td>
-          <td style="text-align:center;">3</td>
-          <td><div class="score-box score-high">12</div></td>
-          <td><span class="badge badge-high">High</span></td>
-          <td><div class="controls"><div class="control-item">Succession planning programme</div><div class="control-item">Competency framework (CMS)</div></div></td>
-          <td><div class="score-box score-medium">6</div></td>
-          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R</td>
-          <td><span class="owner-tag">CHRO</span></td>
-          <td><span class="status-pill status-progress">In Progress</span></td>
-          <td class="date-cell">Q3 2026</td>
-        </tr>
-        <tr data-rating="high" data-status="open">
-          <td>ERM-006</td>
-          <td><div class="risk-title">Third-Party / Contractor HSE Incident</div><div class="risk-desc">Serious injury or fatality involving contracted workforce due to inadequate oversight or competency</div></td>
-          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">HSE / Contractor</span></td>
-          <td style="text-align:center;">3</td>
-          <td style="text-align:center;">4</td>
-          <td><div class="score-box score-high">12</div></td>
-          <td><span class="badge badge-high">High</span></td>
-          <td><div class="controls"><div class="control-item">Contractor HSE pre-qualification</div><div class="control-item">Site supervision &amp; walkthrough audits</div><div class="control-item">Consequence management procedure</div></div></td>
-          <td><div class="score-box score-medium">6</div></td>
-          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R</td>
-          <td><span class="owner-tag">VP HSE</span></td>
-          <td><span class="status-pill status-open">Open</span></td>
-          <td class="date-cell">Jun 2026</td>
-        </tr>
-        <tr data-rating="high" data-status="progress">
-          <td>ERM-007</td>
-          <td><div class="risk-title">Asset Integrity Failure — Aging Infrastructure</div><div class="risk-desc">Structural degradation or corrosion of critical assets beyond design life leading to failure</div></td>
-          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Asset Integrity</span></td>
-          <td style="text-align:center;">2</td>
-          <td style="text-align:center;">5</td>
-          <td><div class="score-box score-high">10</div></td>
-          <td><span class="badge badge-high">High</span></td>
-          <td><div class="controls"><div class="control-item">Risk-based inspection (RBI) programme</div><div class="control-item">Corrosion monitoring system</div></div></td>
-          <td><div class="score-box score-medium">5</div></td>
-          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R</td>
-          <td><span class="owner-tag">Chief Engineer</span></td>
-          <td><span class="status-pill status-progress">In Progress</span></td>
-          <td class="date-cell">Sep 2026</td>
-        </tr>
-        <!-- MEDIUM RISKS -->
-        <tr data-rating="medium" data-status="progress">
-          <td>ERM-008</td>
-          <td><div class="risk-title">Currency &amp; Commodity Price Volatility</div><div class="risk-desc">Adverse movement in oil/gas prices or FX rates materially impacting revenue and project economics</div></td>
-          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Financial</span></td>
-          <td style="text-align:center;">3</td>
-          <td style="text-align:center;">2</td>
-          <td><div class="score-box score-medium">6</div></td>
-          <td><span class="badge badge-medium">Medium</span></td>
-          <td><div class="controls"><div class="control-item">Hedging programme in place</div><div class="control-item">Scenario-based budget model</div></div></td>
-          <td><div class="score-box score-low">3</div></td>
-          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">X</td>
-          <td><span class="owner-tag">CFO</span></td>
-          <td><span class="status-pill status-progress">In Progress</span></td>
-          <td class="date-cell">Q3 2026</td>
-        </tr>
-        <tr data-rating="medium" data-status="open">
-          <td>ERM-009</td>
-          <td><div class="risk-title">Emergency Response Capability Gap</div><div class="risk-desc">Inadequately resourced IMT/ERT leading to delayed or ineffective response to a Tier 2/3 emergency</div></td>
-          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Emergency Mgmt</span></td>
-          <td style="text-align:center;">2</td>
-          <td style="text-align:center;">3</td>
-          <td><div class="score-box score-medium">6</div></td>
-          <td><span class="badge badge-medium">Medium</span></td>
-          <td><div class="controls"><div class="control-item">MERP &amp; LERP maintained</div><div class="control-item">Annual full-scale exercise</div></div></td>
-          <td><div class="score-box score-low">3</div></td>
-          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R</td>
-          <td><span class="owner-tag">Emergency Resp. Lead</span></td>
-          <td><span class="status-pill status-open">Open</span></td>
-          <td class="date-cell">Aug 2026</td>
-        </tr>
-        <tr data-rating="medium" data-status="review">
-          <td>ERM-010</td>
-          <td><div class="risk-title">Project Cost &amp; Schedule Overrun</div><div class="risk-desc">Major capital project delay or budget overrun impacting organizational financial targets</div></td>
-          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Project</span></td>
-          <td style="text-align:center;">3</td>
-          <td style="text-align:center;">2</td>
-          <td><div class="score-box score-medium">6</div></td>
-          <td><span class="badge badge-medium">Medium</span></td>
-          <td><div class="controls"><div class="control-item">Stage-gate project governance</div><div class="control-item">Earned Value Mgmt (EVM)</div></div></td>
-          <td><div class="score-box score-low">3</div></td>
-          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">R</td>
-          <td><span class="owner-tag">PMO Director</span></td>
-          <td><span class="status-pill status-review">Under Review</span></td>
-          <td class="date-cell">Jul 2026</td>
-        </tr>
-        <!-- LOW RISKS -->
-        <tr data-rating="low" data-status="closed">
-          <td>ERM-011</td>
-          <td><div class="risk-title">Road Transport Incident — Fleet</div><div class="risk-desc">Vehicle collision or road traffic incident involving company fleet causing injury or reputational harm</div></td>
-          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Road Safety</span></td>
-          <td style="text-align:center;">2</td>
-          <td style="text-align:center;">2</td>
-          <td><div class="score-box score-low">4</div></td>
-          <td><span class="badge badge-low">Low</span></td>
-          <td><div class="controls"><div class="control-item">IVMS / telematics installed</div><div class="control-item">Defensive driving training</div><div class="control-item">Journey management plan</div></div></td>
-          <td><div class="score-box score-very-low">2</div></td>
-          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">T</td>
-          <td><span class="owner-tag">Road Safety Mgr.</span></td>
-          <td><span class="status-pill status-closed">Closed</span></td>
-          <td class="date-cell">Dec 2026</td>
-        </tr>
-        <tr data-rating="low" data-status="closed">
-          <td>ERM-012</td>
-          <td><div class="risk-title">Reputational Risk — Social Media</div><div class="risk-desc">Negative viral social media coverage following operational incident or leadership conduct</div></td>
-          <td><span style="color:var(--accent); font-size:10px; font-family:var(--mono);">Reputational</span></td>
-          <td style="text-align:center;">2</td>
-          <td style="text-align:center;">2</td>
-          <td><div class="score-box score-low">4</div></td>
-          <td><span class="badge badge-low">Low</span></td>
-          <td><div class="controls"><div class="control-item">Media policy &amp; spokesperson training</div><div class="control-item">Crisis comms plan activated</div></div></td>
-          <td><div class="score-box score-very-low">2</div></td>
-          <td style="text-align:center; font-family:var(--mono); color:var(--accent); font-size:11px;">T</td>
-          <td><span class="owner-tag">Comms Director</span></td>
-          <td><span class="status-pill status-closed">Closed</span></td>
-          <td class="date-cell">Dec 2026</td>
-        </tr>
-      </tbody>
+      <tbody id="regBody"></tbody>
     </table>
   </div>
-</div>
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-eye"></i>Monitoring & review plan (Cl. 6.6)</div>
+    <div class="mon-grid">
+      <div class="mon-card">
+        <div class="mon-title"><i class="ti ti-calendar"></i>Review frequency</div>
+        <div style="font-size:11px;color:var(--text-dim)" id="monReview">—</div>
+      </div>
+      <div class="mon-card">
+        <div class="mon-title"><i class="ti ti-users"></i>Stakeholder reporting (Cl. 6.7)</div>
+        <div style="font-size:11px;color:var(--text-dim)">Board: Quarterly · Senior management: Monthly · Department heads: Weekly (Critical only)</div>
+      </div>
+      <div class="mon-card">
+        <div class="mon-title"><i class="ti ti-refresh"></i>Re-assessment triggers</div>
+        <div style="font-size:11px;color:var(--text-dim)">Change in external/internal context · New critical or high risk · Control failure or near-miss · Post-incident review · Regulatory change</div>
+      </div>
+      <div class="mon-card">
+        <div class="mon-title"><i class="ti ti-file-text"></i>Recording & reporting (Cl. 6.7)</div>
+        <div style="font-size:11px;color:var(--text-dim)">Register maintained in document management system · Outcomes reported through governance cycle · Audit trail of changes maintained · Communication to relevant stakeholders as appropriate</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn" onclick="goStep(6)"><i class="ti ti-arrow-left"></i>Back</button>
+    <button class="btn" onclick="window.print()"><i class="ti ti-printer"></i>Print register</button>
+    <button class="btn btn-accent" onclick="exportCSV()"><i class="ti ti-download"></i>Export CSV</button>
+  </div>
+</section>
+
+</main>
 
 <!-- FOOTER -->
-<div class="footer">
-  <div class="footer-note">CONFIDENTIAL — FOR INTERNAL USE ONLY · Enterprise Risk Management · Review Cycle: Quarterly · Next Full Review: Q3 2026</div>
-  <div class="version-tag">ERM-RR-001 · Rev 3.1 · Apr 2026</div>
-</div>
+<footer class="app-footer">
+  <span>Enterprise Risk Register Builder · Aligned to BS ISO 31000:2018 Risk Management — Guidelines</span>
+  <span>Risk2Safe · H²S Consultants · Built for GitHub Pages</span>
+</footer>
 
+<!-- ═══════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════ -->
 <script>
-  function filterTable(type, btn) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const rows = document.querySelectorAll('#riskTable tbody tr');
-    rows.forEach(row => {
-      if (type === 'all') {
-        row.classList.remove('hidden');
-      } else if (['critical','high','medium','low'].includes(type)) {
-        row.classList.toggle('hidden', row.dataset.rating !== type);
-      } else if (type === 'open') {
-        row.classList.toggle('hidden', row.dataset.status !== 'open');
-      } else if (type === 'progress') {
-        row.classList.toggle('hidden', row.dataset.status !== 'progress');
-      } else if (type === 'closed') {
-        row.classList.toggle('hidden', row.dataset.status !== 'closed' && row.dataset.status !== 'review');
-      }
-    });
+// ═══════════ REFERENCE DATA ═══════════
+
+const DEPTS = [
+  {id:'ops',  name:'Operations',       icon:'ti-settings-2',      sub:'Production & maintenance'},
+  {id:'hse',  name:'HSE',              icon:'ti-shield-check',    sub:'Safety, health & environment'},
+  {id:'ps',   name:'Process Safety',   icon:'ti-flame',           sub:'Hazard & barrier management'},
+  {id:'fin',  name:'Finance',          icon:'ti-coin',            sub:'Treasury, reporting & audit'},
+  {id:'hr',   name:'Human Resources',  icon:'ti-users',           sub:'Talent, payroll & L&D'},
+  {id:'it',   name:'IT / Cybersecurity',icon:'ti-lock',           sub:'Infrastructure & data security'},
+  {id:'sc',   name:'Supply Chain',     icon:'ti-truck',           sub:'Procurement & logistics'},
+  {id:'legal',name:'Legal & Compliance',icon:'ti-scale',          sub:'Regulatory & contracts'},
+  {id:'pm',   name:'Projects',         icon:'ti-chart-gantt',     sub:'Capex & project delivery'},
+  {id:'em',   name:'Emergency Mgmt',   icon:'ti-urgent',          sub:'Crisis & business continuity'},
+  {id:'env',  name:'Environment',      icon:'ti-leaf',            sub:'Emissions & sustainability'},
+  {id:'comms',name:'Communications',   icon:'ti-speakerphone',    sub:'Corporate affairs & media'},
+];
+
+const FNS = {
+  ops:  ['Production operations','Maintenance planning & execution','Turnaround management','Utilities management','Equipment reliability','Shift operations control'],
+  hse:  ['HSE governance & policy','Occupational health management','Incident investigation','Permit-to-work (PTW)','Audit & inspection','Safety training & competency'],
+  ps:   ['HAZOP & risk studies','Barrier & SCE management','LOPC prevention & control','Management of change (MOC)','Process alarm management','PSV & safety device integrity'],
+  fin:  ['Financial reporting & disclosure','Treasury & cash flow management','Tax compliance','Capital allocation & budgeting','Internal audit','Cost control & forecasting'],
+  hr:   ['Talent acquisition & retention','Performance management','Payroll & benefits','Learning & development','Workforce planning','Employee relations & conduct'],
+  it:   ['IT infrastructure management','Cybersecurity operations (SOC)','OT/IT integration & segmentation','Data governance & privacy','IT disaster recovery','User access management'],
+  sc:   ['Procurement strategy','Vendor qualification & management','Critical spares inventory','Logistics & import/export','Contract management','Quality assurance'],
+  legal:['Regulatory compliance monitoring','Contract review & negotiation','Litigation management','Permits, licences & authorisations','Ethics, conduct & anti-bribery','Data privacy (GDPR/local law)'],
+  pm:   ['Project governance & assurance','Cost & schedule control (EVM)','Engineering & design management','Contractor HSE & performance','Commissioning & start-up','Project change management'],
+  em:   ['Emergency response planning (MERP/LERP)','Crisis management (CMT)','Business continuity planning (BCP)','Training & full-scale exercises','Tier 1/2/3 escalation management','Mutual aid coordination'],
+  env:  ['GHG emissions monitoring & reporting','Waste management','Water management & discharge','Environmental permits & compliance','Biodiversity impact management','Environmental audit & assurance'],
+  comms:['Media relations & PR','Internal communications','CSR & ESG reporting','Crisis communications','Stakeholder engagement','Brand & reputation management'],
+};
+
+const PRINCIPLES = [
+  {id:'integrated', icon:'ti-link',        label:'Integrated',                   sub:'Integral part of all organisational activities (Cl. 4a)'},
+  {id:'structured', icon:'ti-layout-grid', label:'Structured & comprehensive',   sub:'Consistent and comparable results (Cl. 4b)'},
+  {id:'customized', icon:'ti-adjustments', label:'Customized',                   sub:'Proportionate to context and objectives (Cl. 4c)'},
+  {id:'inclusive',  icon:'ti-users',       label:'Inclusive',                    sub:'Timely stakeholder involvement enables informed decisions (Cl. 4d)'},
+  {id:'dynamic',    icon:'ti-refresh',     label:'Dynamic',                      sub:'Anticipates, detects, acknowledges and responds to change (Cl. 4e)'},
+  {id:'bestinfo',   icon:'ti-database',    label:'Best available information',   sub:'Based on historical, current and future expectations (Cl. 4f)'},
+  {id:'human',      icon:'ti-heart',       label:'Human & cultural factors',     sub:'Behaviour and culture considered at every level and stage (Cl. 4g)'},
+  {id:'continual',  icon:'ti-trending-up', label:'Continual improvement',        sub:'Continually improved through learning and experience (Cl. 4h)'},
+];
+
+const CRITERIA_DATA = [
+  {level:'5', like:'Certain (>90% probability in the period)',   cons:'Catastrophic — multiple fatalities / irreversible total loss', rating:'Critical', action:'Immediate Board escalation; mandatory activity cessation until risk reduced'},
+  {level:'4', like:'Likely (50–90% probability)',                cons:'Severe — single fatality / major permit breach / very significant financial loss', rating:'High', action:'Senior management action plan within 30 days; monthly reporting'},
+  {level:'3', like:'Possible (10–50% probability)',              cons:'Major — serious injury / significant process deviation / major financial loss', rating:'Medium', action:'Management action within 90 days; quarterly monitoring'},
+  {level:'2', like:'Unlikely (1–10% probability)',               cons:'Moderate — minor injury / minor regulatory non-conformance / moderate loss', rating:'Low', action:'Routine monitoring; review at next scheduled cycle; controls maintained'},
+  {level:'1', like:'Rare (<1% probability)',                     cons:'Minor — negligible impact on objectives; first aid only; minimal financial loss', rating:'Very Low', action:'Accept and monitor periodically; document and review annually'},
+];
+
+const TREAT_OPTIONS = [
+  {id:'avoid',  icon:'ti-ban',        label:'Avoid (Terminate)',  sub:'Decide not to start or continue the activity giving rise to the risk (Cl. 6.5.2)'},
+  {id:'reduce', icon:'ti-arrow-down', label:'Reduce (Treat)',     sub:'Change likelihood and/or consequences; implement or strengthen controls (Cl. 6.5.2)'},
+  {id:'share',  icon:'ti-share',      label:'Share (Transfer)',   sub:'Share risk via contracts, insurance, joint ventures, or outsourcing (Cl. 6.5.2)'},
+  {id:'retain', icon:'ti-check',      label:'Retain (Tolerate)',  sub:'Retain risk by informed decision where treatment cost exceeds benefit (Cl. 6.5.2)'},
+];
+
+const EVAL_DECISIONS = [
+  'Do nothing further',
+  'Consider risk treatment options',
+  'Undertake further analysis to better understand the risk',
+  'Maintain existing controls',
+  'Reconsider objectives',
+];
+
+// ═══════════ STATE ═══════════
+let selDepts    = new Set(['ops','hse','ps']);
+let selFns      = {};
+let selPrinciples = new Set(PRINCIPLES.map(p => p.id));
+let risks       = [];
+let curL = 0, curC = 0;
+let analysisRiskIdx = -1;
+let treatRiskIdx    = -1;
+let treatSelOpt     = '';
+let filterRating    = 'all';
+let currentStep     = 1;
+
+// Init default functions
+['ops','hse','ps'].forEach(id => { selFns[id] = new Set(FNS[id].slice(0,3)); });
+
+// ═══════════ HELPERS ═══════════
+function getRating(score) {
+  if (score >= 15) return {label:'Critical', badge:'rb-cr', sc:'sc-cr'};
+  if (score >= 8)  return {label:'High',     badge:'rb-hi', sc:'sc-hi'};
+  if (score >= 4)  return {label:'Medium',   badge:'rb-me', sc:'sc-me'};
+  if (score >= 2)  return {label:'Low',      badge:'rb-lo', sc:'sc-lo'};
+  return                   {label:'Very Low', badge:'rb-vl', sc:'sc-vl'};
+}
+
+function getCellClass(l, c) {
+  const s = l * c;
+  if (s >= 15) return 'mc-cr';
+  if (s >= 8)  return 'mc-hi';
+  if (s >= 4)  return 'mc-me';
+  if (s >= 2)  return 'mc-lo';
+  return 'mc-vl';
+}
+
+// ═══════════ STEP 1 ═══════════
+function renderCriteria() {
+  const RBCLS = ['rb-cr','rb-hi','rb-me','rb-lo','rb-vl'];
+  document.getElementById('critBody').innerHTML = CRITERIA_DATA.map((c, i) => `
+    <tr>
+      <td style="font-weight:700;color:var(--text);font-family:var(--mono)">${c.level}</td>
+      <td>${c.like}</td>
+      <td>${c.cons}</td>
+      <td><span class="rbadge ${RBCLS[i]}">${c.rating}</span></td>
+      <td>${c.action}</td>
+    </tr>`).join('');
+}
+
+function renderDepts() {
+  document.getElementById('deptGrid').innerHTML = DEPTS.map(d => `
+    <div class="dept-card ${selDepts.has(d.id) ? 'sel' : ''}" onclick="toggleDept('${d.id}')">
+      <i class="ti ${d.icon}" aria-hidden="true"></i>
+      <div class="dn">${d.name}</div>
+      <div class="ds">${d.sub}</div>
+    </div>`).join('');
+}
+
+function toggleDept(id) {
+  if (selDepts.has(id)) { selDepts.delete(id); delete selFns[id]; }
+  else { selDepts.add(id); selFns[id] = selFns[id] || new Set(FNS[id].slice(0,3)); }
+  renderDepts();
+}
+
+// ═══════════ STEP 2 ═══════════
+function renderPrinciples() {
+  document.getElementById('principleGrid').innerHTML = PRINCIPLES.map(p => `
+    <div class="p-chip ${selPrinciples.has(p.id) ? 'sel' : ''}" onclick="togglePrinciple('${p.id}',this)">
+      <i class="ti ${p.icon}" aria-hidden="true"></i>
+      <div><div class="p-chip-lbl">${p.label}</div><div class="p-chip-sub">${p.sub}</div></div>
+    </div>`).join('');
+}
+
+function togglePrinciple(id, el) {
+  if (selPrinciples.has(id)) selPrinciples.delete(id);
+  else selPrinciples.add(id);
+  el.classList.toggle('sel');
+}
+
+// ═══════════ STEP 3 ═══════════
+function populateDeptSelect() {
+  const s = document.getElementById('selDept');
+  s.innerHTML = Array.from(selDepts).map(id => {
+    const d = DEPTS.find(x => x.id === id);
+    return `<option value="${id}">${d.name}</option>`;
+  }).join('');
+  onDeptChange();
+}
+
+function onDeptChange() {
+  const id = document.getElementById('selDept').value;
+  const fns = selFns[id] ? Array.from(selFns[id]) : [];
+  document.getElementById('selFn').innerHTML = fns.length
+    ? fns.map(f => `<option>${f}</option>`).join('')
+    : '<option>No functions selected</option>';
+  renderFnChips(id);
+  renderRiskList3();
+}
+
+function renderFnChips(deptId) {
+  const area = document.getElementById('fnArea');
+  if (!deptId) { area.style.display = 'none'; return; }
+  area.style.display = 'block';
+  document.getElementById('fnDeptName').textContent = DEPTS.find(x => x.id === deptId)?.name || '';
+  const all = FNS[deptId] || [];
+  const sel = selFns[deptId] || new Set();
+  document.getElementById('fnChips').innerHTML = all.map(f => `
+    <span class="fn-chip ${sel.has(f) ? 'sel' : ''}" onclick="toggleFn('${deptId}','${f.replace(/'/g,"\\'")}',this)">${f}</span>`).join('');
+}
+
+function toggleFn(deptId, fn, el) {
+  if (!selFns[deptId]) selFns[deptId] = new Set();
+  if (selFns[deptId].has(fn)) selFns[deptId].delete(fn);
+  else selFns[deptId].add(fn);
+  el.classList.toggle('sel');
+  document.getElementById('selFn').innerHTML = Array.from(selFns[deptId]).map(f => `<option>${f}</option>`).join('');
+}
+
+function openAddForm() {
+  document.getElementById('addForm').style.display = 'flex';
+  document.getElementById('addForm').style.flexDirection = 'column';
+}
+
+function cancelAddForm() { document.getElementById('addForm').style.display = 'none'; }
+
+function saveRisk() {
+  const title = document.getElementById('rTitle').value.trim();
+  if (!title) { alert('Please enter a risk title.'); return; }
+  const did = document.getElementById('selDept').value;
+  const fn  = document.getElementById('selFn').value;
+  const d   = DEPTS.find(x => x.id === did);
+  const counter = risks.filter(r => r.deptId === did).length + 1;
+  risks.push({
+    id: did.toUpperCase() + '-' + String(counter).padStart(3,'0'),
+    deptId: did, deptName: d.name, fn,
+    title,
+    source:   document.getElementById('rSource').value.trim(),
+    cat:      document.getElementById('rCat').value,
+    desc:     document.getElementById('rDesc').value.trim(),
+    conseq:   document.getElementById('rConseq').value.trim(),
+    opp:      document.getElementById('rOpp').value.trim(),
+    controls: document.getElementById('rControls').value.trim(),
+    owner:    document.getElementById('rOwner').value.trim(),
+    L: 0, C: 0, score: 0,
+    ctrlEffect: '', analysisNotes: '',
+    evalDecision: '',
+    treatOption: '', treatActions: '',
+    resL: 0, resC: 0,
+    treatOwner: '', treatDate: '', treatKRI: '',
+    residualAccept: '',
+  });
+  cancelAddForm();
+  ['rTitle','rSource','rDesc','rConseq','rOpp','rControls','rOwner'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  renderRiskList3();
+}
+
+function deleteRisk(i) {
+  if (!confirm('Delete this risk?')) return;
+  risks.splice(i, 1);
+  renderRiskList3();
+}
+
+function renderRiskList3() {
+  const did = document.getElementById('selDept')?.value;
+  const fn  = document.getElementById('selFn')?.value;
+  document.getElementById('riskCountLbl').textContent =
+    `${risks.length} total · ${risks.filter(r => r.deptId === did && r.fn === fn).length} for this selection`;
+  const list = document.getElementById('riskList3');
+  const filtered = risks.filter(r => r.deptId === did && r.fn === fn);
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty"><i class="ti ti-plus-circle"></i>No risks identified for this function yet. Click "Identify risk" to add.</div>`;
+    return;
   }
+  list.innerHTML = filtered.map(r => {
+    const gi = risks.indexOf(r);
+    return `<div class="risk-item">
+      <div class="ri-body">
+        <div class="ri-title">${r.title}</div>
+        <div class="ri-meta">
+          <span class="rid">${r.id}</span>
+          <span>${r.cat}</span>
+          ${r.source ? `<span>Source: ${r.source}</span>` : ''}
+          ${r.owner ? `<span>Owner: ${r.owner}</span>` : ''}
+        </div>
+      </div>
+      <div class="ri-right">
+        <button class="btn-del" onclick="deleteRisk(${gi})" title="Delete risk"><i class="ti ti-trash"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════ STEP 4 ═══════════
+function buildMatrix() {
+  const g = document.getElementById('matrixGrid');
+  let html = '';
+  for (let l = 5; l >= 1; l--) {
+    html += `<div class="mcell mc-ax" title="Likelihood ${l}">${['Rare','Unlikely','Possible','Likely','Certain'][l-1]}</div>`;
+    for (let c = 1; c <= 5; c++) {
+      html += `<div class="mcell ${getCellClass(l,c)}" id="mg_${l}_${c}" onclick="setLC(${l},${c})" title="L${l}×C${c}=${l*c}">${l*c}</div>`;
+    }
+  }
+  html += '<div class="mcell" style="background:transparent"></div>';
+  ['Minor','Moderate','Major','Severe','Catastrophic'].forEach(t => {
+    html += `<div class="mcell mc-ax h">${t}</div>`;
+  });
+  g.innerHTML = html;
+
+  document.getElementById('likeCells').innerHTML = [1,2,3,4,5].map(v =>
+    `<div class="pick-cell ${getCellClass(v,1)}" id="lp_${v}" onclick="setL4(${v})">${v}</div>`
+  ).join('');
+  document.getElementById('consCells').innerHTML = [1,2,3,4,5].map(v =>
+    `<div class="pick-cell ${getCellClass(1,v)}" id="cp_${v}" onclick="setC4(${v})">${v}</div>`
+  ).join('');
+}
+
+function populateAnalysisSelect() {
+  document.getElementById('selRiskAnalysis').innerHTML = risks.length
+    ? risks.map((r,i) => `<option value="${i}">${r.id} — ${r.title.slice(0,50)}</option>`).join('')
+    : '<option value="">No risks identified yet</option>';
+  if (risks.length) loadAnalysis();
+}
+
+function loadAnalysis() {
+  const i = parseInt(document.getElementById('selRiskAnalysis').value);
+  if (isNaN(i) || !risks[i]) { document.getElementById('analysisArea').style.display = 'none'; return; }
+  analysisRiskIdx = i;
+  const r = risks[i];
+  document.getElementById('analysisArea').style.display = 'block';
+  document.getElementById('analysisRiskTitle').textContent = r.id + ' — ' + r.title;
+  curL = r.L || 0; curC = r.C || 0;
+  document.getElementById('ctrlEffect').value = r.ctrlEffect || '';
+  document.getElementById('analysisNotes').value = r.analysisNotes || '';
+  refreshMatrixUI();
+}
+
+function setL4(v) { curL = v; refreshMatrixUI(); }
+function setC4(v) { curC = v; refreshMatrixUI(); }
+function setLC(l, c) { curL = l; curC = c; refreshMatrixUI(); }
+
+function refreshMatrixUI() {
+  for (let l = 1; l <= 5; l++) for (let c = 1; c <= 5; c++) {
+    const el = document.getElementById(`mg_${l}_${c}`);
+    if (el) el.classList.toggle('sel', l === curL && c === curC);
+  }
+  for (let v = 1; v <= 5; v++) {
+    const lp = document.getElementById(`lp_${v}`);
+    const cp = document.getElementById(`cp_${v}`);
+    if (lp) { lp.classList.toggle('sel', v === curL); lp.style.opacity = v === curL ? '1' : '0.55'; }
+    if (cp) { cp.classList.toggle('sel', v === curC); cp.style.opacity = v === curC ? '1' : '0.55'; }
+  }
+  const preview = document.getElementById('scorePreview');
+  if (curL && curC) {
+    const s = curL * curC;
+    const r = getRating(s);
+    preview.innerHTML = `<strong style="font-family:var(--mono)">Inherent risk score: ${s}</strong> &nbsp;<span class="rbadge ${r.badge}">${r.label}</span><br><span style="font-size:10px;color:var(--text-muted);margin-top:4px;display:block">L${curL} × C${curC} = ${s} · Rating: ${r.label}</span>`;
+  } else {
+    preview.textContent = 'Select likelihood and consequence above to compute inherent risk score.';
+  }
+}
+
+function saveAnalysis() {
+  if (analysisRiskIdx < 0) { alert('Select a risk to analyse.'); return; }
+  if (!curL || !curC) { alert('Select likelihood and consequence values.'); return; }
+  const r = risks[analysisRiskIdx];
+  r.L = curL; r.C = curC; r.score = curL * curC;
+  r.ctrlEffect = document.getElementById('ctrlEffect').value;
+  r.analysisNotes = document.getElementById('analysisNotes').value;
+  const rat = getRating(r.score);
+  document.getElementById('analysisBadge').innerHTML =
+    `<div class="score-box ${rat.sc}">${r.score}</div><span class="rbadge ${rat.badge}" style="margin-left:4px">${rat.label}</span>`;
+  renderRiskList4();
+  renderAnalysisProgress();
+}
+
+function renderRiskList4() {
+  const list = document.getElementById('riskList4');
+  if (!risks.length) { list.innerHTML = `<div class="empty"><i class="ti ti-chart-bar"></i>No risks identified yet.</div>`; return; }
+  list.innerHTML = risks.map((r, i) => {
+    const done = r.L > 0 && r.C > 0;
+    const rat  = done ? getRating(r.score) : null;
+    return `<div class="risk-item clickable" onclick="document.getElementById('selRiskAnalysis').value=${i};loadAnalysis()">
+      <div class="ri-body">
+        <div class="ri-title">${r.id} — ${r.title}</div>
+        <div class="ri-meta">
+          <span class="tag-dept">${r.deptName}</span>
+          <span class="tag-fn">${r.fn}</span>
+          ${r.ctrlEffect ? `<span>${r.ctrlEffect}</span>` : ''}
+        </div>
+      </div>
+      <div class="ri-right">
+        ${done
+          ? `<div class="score-box ${rat.sc}">${r.score}</div><span class="rbadge ${rat.badge}">${rat.label}</span>`
+          : `<span style="font-size:10px;color:var(--text-muted)">Not analysed</span>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderAnalysisProgress() {
+  const done = risks.filter(r => r.L > 0 && r.C > 0).length;
+  document.getElementById('analysisProgress').textContent = `${done} of ${risks.length} risks analysed`;
+}
+
+// ═══════════ STEP 5 ═══════════
+function renderEvaluation() {
+  const cnt = {cr:0,hi:0,me:0,lo:0,vl:0};
+  risks.forEach(r => {
+    if (!r.score) return;
+    if (r.score >= 15) cnt.cr++;
+    else if (r.score >= 8) cnt.hi++;
+    else if (r.score >= 4) cnt.me++;
+    else if (r.score >= 2) cnt.lo++;
+    else cnt.vl++;
+  });
+  document.getElementById('evalStats').innerHTML = `
+    <div class="stat-c"><div class="stat-n" style="color:#ff8585">${cnt.cr}</div><div class="stat-l">Critical</div></div>
+    <div class="stat-c"><div class="stat-n" style="color:#ffb87a">${cnt.hi}</div><div class="stat-l">High</div></div>
+    <div class="stat-c"><div class="stat-n" style="color:#ffe066">${cnt.me}</div><div class="stat-l">Medium</div></div>
+    <div class="stat-c"><div class="stat-n" style="color:#6de0ae">${cnt.lo}</div><div class="stat-l">Low</div></div>
+    <div class="stat-c"><div class="stat-n" style="color:var(--text-dim)">${risks.length}</div><div class="stat-l">Total</div></div>`;
+
+  const sorted = [...risks].sort((a,b) => b.score - a.score);
+  if (!sorted.length) {
+    document.getElementById('evalList').innerHTML = `<div class="empty"><i class="ti ti-scale"></i>No risks to evaluate. Add and analyse risks first.</div>`;
+    return;
+  }
+  document.getElementById('evalList').innerHTML = sorted.map(r => {
+    const gi  = risks.indexOf(r);
+    const rat = r.score ? getRating(r.score) : null;
+    return `<div class="risk-item" style="margin-bottom:6px">
+      <div class="ri-body">
+        <div class="ri-title">${r.id} — ${r.title}</div>
+        <div class="ri-meta"><span class="tag-dept">${r.deptName}</span><span class="tag-fn">${r.fn}</span></div>
+        <div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <label style="font-size:10px;color:var(--text-muted)">Evaluation decision (Cl. 6.4.4):</label>
+          <select onchange="risks[${gi}].evalDecision=this.value" style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--surface-2);color:var(--text);max-width:340px">
+            <option value="">— select evaluation decision —</option>
+            ${EVAL_DECISIONS.map(d => `<option value="${d}" ${r.evalDecision===d?'selected':''}>${d}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="ri-right">
+        ${rat ? `<div class="score-box ${rat.sc}">${r.score}</div><span class="rbadge ${rat.badge}">${rat.label}</span>` : `<span style="font-size:10px;color:var(--text-muted)">Not analysed</span>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════ STEP 6 ═══════════
+function populateTreatSelect() {
+  document.getElementById('selRiskTreat').innerHTML = risks.length
+    ? risks.map((r,i) => `<option value="${i}">${r.id} — ${r.title.slice(0,50)}</option>`).join('')
+    : '<option>No risks identified yet</option>';
+  if (risks.length) loadTreatment();
+}
+
+function loadTreatment() {
+  const i = parseInt(document.getElementById('selRiskTreat').value);
+  if (isNaN(i) || !risks[i]) { document.getElementById('treatArea').style.display = 'none'; return; }
+  treatRiskIdx = i;
+  const r = risks[i];
+  document.getElementById('treatArea').style.display = 'block';
+  document.getElementById('treatRiskTitle').textContent = r.id + ' — ' + r.title;
+  treatSelOpt = r.treatOption || '';
+  renderTreatGrid();
+  document.getElementById('treatActions').value = r.treatActions || '';
+  document.getElementById('resL').value = r.resL || '';
+  document.getElementById('resC').value = r.resC || '';
+  document.getElementById('treatOwner').value = r.treatOwner || '';
+  document.getElementById('treatDate').value = r.treatDate || '';
+  document.getElementById('treatKRI').value = r.treatKRI || '';
+  document.getElementById('residualAccept').value = r.residualAccept || '';
+}
+
+function renderTreatGrid() {
+  document.getElementById('treatGrid').innerHTML = TREAT_OPTIONS.map(t => `
+    <div class="treat-card ${treatSelOpt === t.id ? 'sel' : ''}" onclick="selectTreat('${t.id}',this)">
+      <div class="treat-title"><i class="ti ${t.icon}" aria-hidden="true"></i>${t.label}</div>
+      <div class="treat-sub">${t.sub}</div>
+    </div>`).join('');
+}
+
+function selectTreat(id, el) {
+  treatSelOpt = id;
+  document.querySelectorAll('.treat-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function saveTreatment() {
+  if (treatRiskIdx < 0) { alert('Select a risk.'); return; }
+  const r = risks[treatRiskIdx];
+  r.treatOption = treatSelOpt;
+  r.treatActions = document.getElementById('treatActions').value;
+  r.resL = parseInt(document.getElementById('resL').value) || 0;
+  r.resC = parseInt(document.getElementById('resC').value) || 0;
+  r.treatOwner = document.getElementById('treatOwner').value;
+  r.treatDate  = document.getElementById('treatDate').value;
+  r.treatKRI   = document.getElementById('treatKRI').value;
+  r.residualAccept = document.getElementById('residualAccept').value;
+  renderTreatList();
+}
+
+function renderTreatList() {
+  const done = risks.filter(r => r.treatOption).length;
+  document.getElementById('treatProgress').textContent = `${done} of ${risks.length} complete`;
+  document.getElementById('treatList').innerHTML = risks.map((r, i) => {
+    const opt = TREAT_OPTIONS.find(t => t.id === r.treatOption);
+    return `<div class="risk-item clickable" onclick="document.getElementById('selRiskTreat').value=${i};loadTreatment()">
+      <div class="ri-body">
+        <div class="ri-title">${r.id} — ${r.title}</div>
+        <div class="ri-meta">
+          ${opt ? `<span>${opt.label}</span>` : ''}
+          ${r.treatDate ? `<span>Target: ${r.treatDate}</span>` : ''}
+          ${r.treatOwner ? `<span>Owner: ${r.treatOwner}</span>` : ''}
+          ${r.residualAccept ? `<span>${r.residualAccept}</span>` : ''}
+        </div>
+      </div>
+      <div class="ri-right">
+        ${opt ? `<span class="rbadge rb-lo">Planned</span>` : `<span style="font-size:10px;color:var(--text-muted)">Not planned</span>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════ STEP 7 ═══════════
+function renderRegister() {
+  const cnt = {cr:0,hi:0,me:0,lo:0,vl:0};
+  risks.forEach(r => {
+    if (!r.score) return;
+    if (r.score >= 15) cnt.cr++;
+    else if (r.score >= 8) cnt.hi++;
+    else if (r.score >= 4) cnt.me++;
+    else if (r.score >= 2) cnt.lo++;
+    else cnt.vl++;
+  });
+  document.getElementById('regStats').innerHTML = `
+    <div class="stat-c"><div class="stat-n" style="color:#ff8585">${cnt.cr}</div><div class="stat-l">Critical</div></div>
+    <div class="stat-c"><div class="stat-n" style="color:#ffb87a">${cnt.hi}</div><div class="stat-l">High</div></div>
+    <div class="stat-c"><div class="stat-n" style="color:#ffe066">${cnt.me}</div><div class="stat-l">Medium</div></div>
+    <div class="stat-c"><div class="stat-n" style="color:#6de0ae">${cnt.lo}</div><div class="stat-l">Low</div></div>
+    <div class="stat-c"><div class="stat-n" style="color:var(--text-dim)">${risks.length}</div><div class="stat-l">Total</div></div>`;
+
+  const fb = document.getElementById('regFilter');
+  fb.innerHTML = `<span style="font-size:10px;color:var(--text-muted);font-family:var(--mono)">Filter:</span>
+    ${['all','Critical','High','Medium','Low'].map(f =>
+      `<span class="ftag ${filterRating === f.toLowerCase() ? 'on' : ''}" onclick="setRegFilter('${f.toLowerCase()}',this)">${f === 'all' ? 'All ratings' : f}</span>`
+    ).join('')}`;
+
+  document.getElementById('monReview').textContent =
+    `${document.getElementById('fwReview')?.value || 'Quarterly'} review cycle · Risks monitored against KRIs · Integrated into governance reporting`;
+
+  renderRegTable();
+}
+
+function setRegFilter(v, el) {
+  filterRating = v;
+  document.querySelectorAll('#regFilter .ftag').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  renderRegTable();
+}
+
+function renderRegTable() {
+  const sorted = [...risks].sort((a,b) => b.score - a.score);
+  const filt = filterRating === 'all' ? sorted
+    : sorted.filter(r => r.score && getRating(r.score).label.toLowerCase() === filterRating);
+
+  if (!filt.length) {
+    document.getElementById('regBody').innerHTML =
+      `<tr><td colspan="19" style="text-align:center;padding:32px;color:var(--text-muted)">No risks in register. Return to Step 3 to add risks.</td></tr>`;
+    return;
+  }
+
+  document.getElementById('regBody').innerHTML = filt.map(r => {
+    const rat = r.score ? getRating(r.score) : null;
+    const resScore = (r.resL && r.resC) ? r.resL * r.resC : null;
+    const resRat   = resScore ? getRating(resScore) : null;
+    const opt      = TREAT_OPTIONS.find(t => t.id === r.treatOption);
+    return `<tr>
+      <td class="rid">${r.id}</td>
+      <td><span class="tag-dept">${r.deptName}</span></td>
+      <td><span class="tag-fn">${r.fn}</span></td>
+      <td style="font-weight:600;color:var(--text)">${r.title}</td>
+      <td style="color:var(--text-muted)">${r.cat}</td>
+      <td style="color:var(--text-muted)">${r.source || '—'}</td>
+      <td style="color:var(--text-muted)">${r.controls || '—'}</td>
+      <td style="text-align:center;font-family:var(--mono);font-weight:700">${r.L || '—'}</td>
+      <td style="text-align:center;font-family:var(--mono);font-weight:700">${r.C || '—'}</td>
+      <td style="text-align:center">${rat ? `<div class="score-box ${rat.sc}" style="margin:auto">${r.score}</div>` : '—'}</td>
+      <td>${rat ? `<span class="rbadge ${rat.badge}">${rat.label}</span>` : '—'}</td>
+      <td style="color:var(--text-muted)">${r.ctrlEffect || '—'}</td>
+      <td style="color:var(--text-muted)">${r.evalDecision || '—'}</td>
+      <td>${opt ? `<strong>${opt.label}</strong>` : '—'}</td>
+      <td style="text-align:center">${resRat ? `<div class="score-box ${resRat.sc}" style="margin:auto">${resScore}</div>` : '—'}</td>
+      <td style="color:var(--text-muted)">${r.residualAccept || '—'}</td>
+      <td style="color:var(--text-muted)">${r.owner || '—'}</td>
+      <td style="color:var(--text-muted)">${r.treatKRI || '—'}</td>
+      <td style="color:var(--text-muted);white-space:nowrap">${r.treatDate || '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══════════ CSV EXPORT ═══════════
+function exportCSV() {
+  if (!risks.length) { alert('No risks to export.'); return; }
+  const headers = ['Risk ID','Department','Function','Risk Title','Category','Risk Source','Consequences',
+    'Existing Controls','Likelihood','Consequence','Inherent Score','Rating','Control Effectiveness',
+    'Evaluation Decision','Treatment Option','Residual L','Residual C','Residual Score',
+    'Residual Acceptable','Risk Owner','Treatment Actions','KRI / Measure','Target Date'];
+  const rows = [...risks].sort((a,b) => b.score - a.score).map(r => {
+    const opt = TREAT_OPTIONS.find(t => t.id === r.treatOption);
+    const resScore = (r.resL && r.resC) ? r.resL * r.resC : '';
+    const rat = r.score ? getRating(r.score).label : '';
+    return [
+      r.id, r.deptName, r.fn, r.title, r.cat, r.source, r.conseq, r.controls,
+      r.L || '', r.C || '', r.score || '', rat, r.ctrlEffect, r.evalDecision,
+      opt ? opt.label : '', r.resL || '', r.resC || '', resScore,
+      r.residualAccept, r.owner, r.treatActions, r.treatKRI, r.treatDate
+    ].map(v => `"${String(v).replace(/"/g,'""')}"`);
+  });
+
+  const orgName = document.getElementById('orgName')?.value || 'Enterprise';
+  const csv = [headers.map(h => `"${h}"`).join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `${orgName.replace(/\s+/g,'_')}_ISO31000_Risk_Register_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ═══════════ NAVIGATION ═══════════
+function goStep(n) {
+  if (n > 1 && selDepts.size === 0) {
+    alert('Please select at least one department in Step 1 before proceeding.');
+    return;
+  }
+  currentStep = n;
+  for (let i = 1; i <= 7; i++) {
+    document.getElementById('p'  + i).classList.toggle('active', i === n);
+    const sn = document.getElementById('sn' + i);
+    sn.classList.toggle('active', i === n);
+    sn.classList.toggle('done',   i < n);
+  }
+  document.getElementById('progressLabel').textContent = `Step ${n} / 7`;
+  document.getElementById('progressFill').style.width  = Math.round((n / 7) * 100) + '%';
+
+  // Scroll to top of content
+  window.scrollTo({top: 0, behavior: 'smooth'});
+
+  if (n === 2) renderPrinciples();
+  if (n === 3) populateDeptSelect();
+  if (n === 4) { buildMatrix(); populateAnalysisSelect(); renderRiskList4(); renderAnalysisProgress(); }
+  if (n === 5) renderEvaluation();
+  if (n === 6) { populateTreatSelect(); renderTreatList(); }
+  if (n === 7) renderRegister();
+}
+
+// ═══════════ INIT ═══════════
+renderCriteria();
+renderDepts();
 </script>
 </body>
 </html>
